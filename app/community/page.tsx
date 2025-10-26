@@ -153,6 +153,9 @@ export default function CommunityPage() {
           images: imageUrls.length > 0 ? imageUrls : null,
           timestamp: new Date().toISOString(),
           authorId: user.id,
+          email: user.emailAddresses?.[0]?.emailAddress,
+          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.fullName || 'User',
+          avatar: user.imageUrl,
         }),
       });
 

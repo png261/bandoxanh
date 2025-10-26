@@ -16,10 +16,12 @@ datasource db {
 // User Model
 model User {
   id        Int     @id @default(autoincrement())
-  name      String
-  avatar    String
-  joinDate  String
-  bio       String
+  clerkId   String  @unique  // Clerk user ID
+  email     String  @unique
+  name      String?
+  avatar    String?
+  joinDate  String?
+  bio       String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
