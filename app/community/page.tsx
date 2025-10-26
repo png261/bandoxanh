@@ -395,32 +395,32 @@ export default function CommunityPage() {
         setCollapsed={setSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
-        <main className="container mx-auto px-4 sm:px-6 py-10 max-w-2xl">
+        <main className="container mx-auto px-4 sm:px-6 py-6 md:py-8 max-w-2xl">
           {/* Create Post Section */}
-          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 mb-8 border border-gray-100 dark:border-gray-700">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Cộng Đồng</h2>
+          <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-5 mb-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tạo bài viết</h2>
 
             {/* Post Input */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <textarea
                 value={newPostContent}
                 onChange={(e) => setNewPostContent(e.target.value)}
                 placeholder="Chia sẻ suy nghĩ của bạn về bảo vệ môi trường..."
-                className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none"
-                rows={4}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-darker text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none transition-all"
+                rows={3}
               />
 
               {/* Image Previews */}
               {previewUrls.length > 0 && (
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                   {previewUrls.map((url, index) => (
-                    <div key={index} className="relative">
-                      <img src={url} alt={`Preview ${index}`} className="w-full h-24 object-cover rounded-md border dark:border-gray-600" />
+                    <div key={index} className="relative group">
+                      <img src={url} alt={`Preview ${index}`} className="w-full h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600" />
                       <button
                         onClick={() => handleRemoveImage(index)}
-                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 hover:bg-black/70"
+                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-all"
                       >
-                        <XIcon className="w-4 h-4" />
+                        <XIcon className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ))}
@@ -428,13 +428,13 @@ export default function CommunityPage() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-3">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 text-brand-green font-semibold p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="flex items-center gap-2 text-brand-green font-medium px-3 py-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all"
                 >
-                  <ImageIcon className="w-6 h-6" />
-                  <span>Thêm ảnh</span>
+                  <ImageIcon className="w-5 h-5" />
+                  <span className="text-sm">Thêm ảnh</span>
                 </button>
 
                 <input
@@ -449,66 +449,70 @@ export default function CommunityPage() {
                 <button
                   onClick={handleCreatePost}
                   disabled={uploading || (newPostContent.trim() === '' && previewUrls.length === 0)}
-                  className="bg-brand-green text-white font-semibold py-2 px-6 rounded-lg hover:bg-brand-green-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="bg-brand-green text-white font-medium py-2 px-5 rounded-lg hover:bg-emerald-600 transition-all disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed shadow-sm hover:shadow-md text-sm"
                 >
-                  {uploading ? 'Đang đăng...' : 'Đăng'}
+                  {uploading ? 'Đang đăng...' : 'Đăng bài'}
                 </button>
               </div>
             </div>
           </div>
 
           {/* Posts Feed */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {loading ? (
-              <div className="text-center py-10">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-green mx-auto mb-4"></div>
-                <p className="text-gray-600 dark:text-gray-400">Đang tải bài viết...</p>
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-brand-green mx-auto mb-3"></div>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Đang tải bài viết...</p>
               </div>
             ) : posts.length === 0 ? (
-              <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-8 text-center border border-gray-100 dark:border-gray-700">
-                <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!</p>
+              <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ChatBubbleIcon className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết nào</p>
+                <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Hãy tạo bài viết đầu tiên!</p>
               </div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-700">
+                <div key={post.id} className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-5 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                   {/* Post Header */}
-                  <div className="flex items-start gap-4 mb-4">
+                  <div className="flex items-start gap-3 mb-3">
                     <button
                       onClick={() => router.push(`/profile/${post.author?.id}`)}
-                      className="flex-shrink-0 hover:opacity-75 transition-opacity"
+                      className="flex-shrink-0 hover:opacity-80 transition-opacity"
                     >
                       <img
                         src={post.author?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.author?.name || 'User')}
                         alt={post.author?.name}
-                        className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                        className="w-10 h-10 rounded-full object-cover border-2 border-gray-100 dark:border-gray-700"
                       />
                     </button>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <button
                         onClick={() => router.push(`/profile/${post.author?.id}`)}
-                        className="font-semibold text-gray-900 dark:text-white hover:text-brand-green dark:hover:text-brand-green-light transition-colors"
+                        className="font-semibold text-gray-900 dark:text-white hover:text-brand-green transition-colors text-sm"
                       >
                         {post.author?.name}
                       </button>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(post.createdAt)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(post.createdAt)}</p>
                     </div>
                     {/* Edit/Delete actions - only for post author */}
                     {user && post.author?.email === user?.emailAddresses?.[0]?.emailAddress && (
                       <div className="relative">
                         <button
                           onClick={() => setOpenActionMenu(openActionMenu === post.id ? null : post.id)}
-                          className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-                          title="Thêm actions"
+                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          title="Tùy chọn"
                         >
-                          <span className="text-xl">⋮</span>
+                          <span className="text-lg">⋮</span>
                         </button>
                         {openActionMenu === post.id && (
-                          <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-brand-gray-darker rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-600">
+                          <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-brand-gray-darker rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-600 py-1">
                             <button
                               onClick={() => handleEditPost(post.id)}
-                              className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white"
+                              className="w-full text-left px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300"
                             >
-                              Sửa bài viết
+                              Chỉnh sửa
                             </button>
                             <button
                               onClick={async () => {

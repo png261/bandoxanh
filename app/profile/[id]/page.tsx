@@ -43,7 +43,7 @@ export default function ProfilePage() {
   const { user: clerkUser } = useUser();
   const params = useParams();
   const router = useRouter();
-  const userId = params.id as string;
+  const userId = params?.id as string;
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userPosts, setUserPosts] = useState<PostDetail[]>([]);

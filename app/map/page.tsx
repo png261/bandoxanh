@@ -29,34 +29,34 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number): nu
 const StationCard: React.FC<{ station: Station & { distance: number | null } }> = ({ station }) => {
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`;
     return (
-    <div className="bg-white dark:bg-brand-gray-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-brand-green dark:hover:border-brand-green transition-colors duration-200 cursor-pointer">
-        <img src={station.image} alt={station.name} className="w-full h-32 object-cover" />
-        <div className="p-4">
-        <h3 className="font-semibold text-md text-brand-green-dark dark:text-brand-green-light">{station.name}</h3>
-        <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-1.5 flex items-start">
-            <MapPinIcon className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-            {station.address}
+    <div className="bg-white dark:bg-brand-gray-dark rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 cursor-pointer group">
+        <img src={station.image} alt={station.name} className="w-full h-24 object-cover group-hover:brightness-105 transition-all" />
+        <div className="p-3">
+        <h3 className="font-semibold text-sm text-brand-green-dark dark:text-brand-green-light truncate">{station.name}</h3>
+        <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1 flex items-start line-clamp-2">
+            <MapPinIcon className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+            <span className="line-clamp-2">{station.address}</span>
         </p>
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="mt-2 flex flex-wrap gap-1">
             {station.wasteTypes.map((type) => (
-            <span key={type} className="px-2 py-1 bg-brand-green-light text-brand-green-dark text-[11px] font-medium rounded-full">
+            <span key={type} className="px-1.5 py-0.5 bg-brand-green-light text-brand-green-dark text-[10px] font-medium rounded">
                 {type}
             </span>
             ))}
         </div>
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
             <a 
                 href={googleMapsUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
             >
-                <DirectionsIcon className="w-4 h-4" />
+                <DirectionsIcon className="w-3.5 h-3.5" />
                 Chỉ đường
             </a>
             {station.distance !== null && (
-                <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                <p className="text-xs font-semibold text-gray-600 dark:text-gray-300">
                     ~{station.distance.toFixed(1)} km
                 </p>
             )}
@@ -69,31 +69,31 @@ const StationCard: React.FC<{ station: Station & { distance: number | null } }> 
 const EventCard: React.FC<{ event: RecyclingEvent & { distance: number | null } }> = ({ event }) => {
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${event.lat},${event.lng}`;
     return (
-    <div className="bg-white dark:bg-brand-gray-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-purple-400 dark:hover:border-purple-500 transition-colors duration-200 cursor-pointer">
-      <img src={event.image} alt={event.name} className="w-full h-32 object-cover" />
-      <div className="p-4">
-        <h3 className="font-semibold text-md text-purple-700 dark:text-purple-400">{event.name}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 flex items-start">
-          <MapPinIcon className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-          {event.address}
+    <div className="bg-white dark:bg-brand-gray-dark rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-md transition-all duration-200 cursor-pointer group">
+      <img src={event.image} alt={event.name} className="w-full h-24 object-cover group-hover:brightness-105 transition-all" />
+      <div className="p-3">
+        <h3 className="font-semibold text-sm text-purple-700 dark:text-purple-400 truncate">{event.name}</h3>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-start line-clamp-2">
+          <MapPinIcon className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+          <span className="line-clamp-2">{event.address}</span>
         </p>
-        <div className="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
-          <CalendarIcon className="w-4 h-4 mr-1.5" />
-          <span>{event.date} - {event.time}</span>
+        <div className="mt-2 flex items-center text-xs text-gray-500 dark:text-gray-400">
+          <CalendarIcon className="w-3.5 h-3.5 mr-1" />
+          <span className="truncate">{event.date} - {event.time}</span>
         </div>
-         <div className="flex justify-between items-center mt-4">
+         <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
             <a 
                 href={googleMapsUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
             >
-                <DirectionsIcon className="w-4 h-4" />
+                <DirectionsIcon className="w-3.5 h-3.5" />
                 Chỉ đường
             </a>
             {event.distance !== null && (
-                <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                <p className="text-xs font-semibold text-gray-600 dark:text-gray-300">
                     ~{event.distance.toFixed(1)} km
                 </p>
             )}
@@ -303,42 +303,42 @@ function MapPage() {
 
   return (
     <div className="flex h-[calc(100vh-5rem)] md:h-screen w-full">
-        <div className={`absolute md:relative top-0 left-0 h-full flex-shrink-0 bg-white dark:bg-brand-gray-dark shadow-lg z-20 transition-all duration-300 ${isPanelOpen ? 'w-full md:w-[420px]' : 'w-0'}`}>
+        <div className={`absolute md:relative top-0 left-0 h-full flex-shrink-0 bg-white dark:bg-brand-gray-dark shadow-lg z-20 transition-all duration-300 ${isPanelOpen ? 'w-full md:w-[400px]' : 'w-0'}`}>
             <div className="h-full flex flex-col overflow-hidden">
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-3 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Tìm kiếm</h2>
-                        <button onClick={() => setIsPanelOpen(!isPanelOpen)} className="md:hidden p-1 text-gray-500 dark:text-gray-300">
-                            <ChevronDoubleLeftIcon className="w-6 h-6" />
+                        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Tìm kiếm</h2>
+                        <button onClick={() => setIsPanelOpen(!isPanelOpen)} className="md:hidden p-1 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                            <ChevronDoubleLeftIcon className="w-5 h-5" />
                         </button>
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-3">
                         <input
                             type="text"
                             placeholder="Tìm theo tên, địa chỉ..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-dark focus:outline-none focus:ring-2 focus:ring-brand-green"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-dark focus:outline-none focus:ring-2 focus:ring-brand-green"
                         />
                     </div>
                 </div>
 
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                    <div className="grid grid-cols-3 gap-2 mb-4">
-                        <button onClick={() => setViewMode('all')} className={`px-2 py-1.5 text-sm font-semibold rounded-lg ${viewMode === 'all' ? 'bg-brand-green text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}>Tất cả</button>
-                        <button onClick={() => setViewMode('stations')} className={`px-2 py-1.5 text-sm font-semibold rounded-lg ${viewMode === 'stations' ? 'bg-brand-green text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}>Trạm</button>
-                        <button onClick={() => setViewMode('events')} className={`px-2 py-1.5 text-sm font-semibold rounded-lg ${viewMode === 'events' ? 'bg-purple-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}>Sự kiện</button>
+                <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                    <div className="grid grid-cols-3 gap-1.5 mb-3">
+                        <button onClick={() => setViewMode('all')} className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-colors ${viewMode === 'all' ? 'bg-brand-green text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>Tất cả</button>
+                        <button onClick={() => setViewMode('stations')} className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-colors ${viewMode === 'stations' ? 'bg-brand-green text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>Trạm</button>
+                        <button onClick={() => setViewMode('events')} className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-colors ${viewMode === 'events' ? 'bg-purple-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>Sự kiện</button>
                     </div>
 
                     {viewMode !== 'events' && (
                         <div>
-                            <h3 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-300">Loại rác</h3>
-                            <div className="flex flex-wrap gap-2">
+                            <h3 className="text-xs font-semibold mb-2 text-gray-600 dark:text-gray-300">Loại rác</h3>
+                            <div className="flex flex-wrap gap-1.5">
                                 {Object.values(WasteType).map(type => (
                                     <button
                                         key={type}
                                         onClick={() => toggleWasteType(type)}
-                                        className={`px-2.5 py-1 text-xs font-semibold rounded-full border-2 transition-colors ${selectedWasteTypes.includes(type) ? 'bg-brand-green text-white border-brand-green' : 'bg-transparent text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-brand-green'}`}
+                                        className={`px-2 py-0.5 text-[10px] font-semibold rounded border-2 transition-colors ${selectedWasteTypes.includes(type) ? 'bg-brand-green text-white border-brand-green' : 'bg-transparent text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-brand-green'}`}
                                     >
                                         {type}
                                     </button>
@@ -348,8 +348,8 @@ function MapPage() {
                     )}
                     
                     {userLocation && (
-                        <div className="mt-4">
-                            <label htmlFor="distance" className="text-sm font-semibold text-gray-600 dark:text-gray-300">Khoảng cách: <span className="font-bold text-brand-green">{distanceFilter} km</span></label>
+                        <div className="mt-3">
+                            <label htmlFor="distance" className="text-xs font-semibold text-gray-600 dark:text-gray-300">Khoảng cách: <span className="font-bold text-brand-green">{distanceFilter} km</span></label>
                             <input
                                 id="distance"
                                 type="range"
@@ -357,15 +357,15 @@ function MapPage() {
                                 max={MAX_DISTANCE}
                                 value={distanceFilter}
                                 onChange={(e) => setDistanceFilter(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 mt-2"
+                                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 mt-2"
                                 style={{ accentColor: '#10B981' }}
                             />
                         </div>
                     )}
                 </div>
 
-                <div className="flex-grow overflow-y-auto p-4 space-y-3">
-                    <p className="text-sm font-semibold text-gray-500 mb-2">{filteredAndSortedItems.length} kết quả</p>
+                <div className="flex-grow overflow-y-auto p-3 space-y-2.5">
+                    <p className="text-xs font-semibold text-gray-500 mb-1.5">{filteredAndSortedItems.length} kết quả</p>
                     {filteredAndSortedItems.length > 0 ? (
                         filteredAndSortedItems.map(item => (
                             <div key={item.id} onMouseEnter={() => setHoveredItemId(item.id)} onMouseLeave={() => setHoveredItemId(null)} onClick={() => handleItemClick(item)}>
@@ -373,7 +373,10 @@ function MapPage() {
                             </div>
                         ))
                     ) : (
-                        <p className="text-center text-gray-500 dark:text-gray-400 mt-8">Không tìm thấy kết quả phù hợp.</p>
+                        <div className="text-center py-12">
+                            <MapPinIcon className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Không tìm thấy kết quả</p>
+                        </div>
                     )}
                 </div>
             </div>
@@ -382,10 +385,10 @@ function MapPage() {
         <div className="relative z-20 hidden md:block">
             <button
                 onClick={() => setIsPanelOpen(!isPanelOpen)}
-                className="absolute top-1/2 -translate-y-1/2 bg-white dark:bg-brand-gray-dark p-2 rounded-r-lg shadow-md border-y border-r border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-transform"
+                className="absolute top-1/2 -translate-y-1/2 bg-white dark:bg-brand-gray-dark p-1.5 rounded-r-lg shadow-sm border-y border-r border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all"
                 style={{ left: isPanelOpen ? '-1px' : '0' }}
             >
-                {isPanelOpen ? <ChevronDoubleLeftIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" /> : <ChevronDoubleRightIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />}
+                {isPanelOpen ? <ChevronDoubleLeftIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" /> : <ChevronDoubleRightIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />}
             </button>
         </div>
 

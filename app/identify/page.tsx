@@ -78,29 +78,29 @@ function IdentifyPageContent() {
   const suitableStation = analysis ? findSuitableStation(analysis.wasteType) : null;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-12">
-      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-8 rounded-xl">
-        <div className="grid md:grid-cols-2 gap-8">
+    <div className="max-w-5xl mx-auto space-y-8">
+      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-6 md:p-8 rounded-lg shadow-sm">
+        <div className="grid md:grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <div className="w-full h-80 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
+            <div className="w-full h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
               {previewUrl ? (
                 <img src={previewUrl} alt="Preview" className="max-h-full max-w-full object-contain rounded-md" />
               ) : (
                 <div className="text-center text-gray-500 dark:text-gray-400 p-4">
-                  <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-2 font-semibold">Xem trước hình ảnh</p>
-                  <p className="text-sm">Tải ảnh lên hoặc chụp ảnh mới để bắt đầu</p>
+                  <UploadIcon className="mx-auto h-10 w-10 text-gray-400" />
+                  <p className="mt-2 font-semibold text-sm">Xem trước hình ảnh</p>
+                  <p className="text-xs">Tải ảnh lên hoặc chụp ảnh mới để bắt đầu</p>
                 </div>
               )}
             </div>
             <button
               onClick={handleIdentifyClick}
               disabled={!image || isLoading}
-              className="mt-4 w-full bg-brand-green text-white font-bold py-3 px-6 rounded-lg hover:bg-brand-green-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+              className="mt-3 w-full bg-brand-green text-white font-semibold py-2.5 px-5 rounded-lg hover:bg-brand-green-dark hover:shadow-md transition-all disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
             >
               {isLoading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -108,25 +108,25 @@ function IdentifyPageContent() {
                 </>
               ) : (
                 <>
-                  <RecycleIcon className="h-6 w-6" /> Phân loại ngay
+                  <RecycleIcon className="h-5 w-5" /> Phân loại ngay
                 </>
               )}
             </button>
           </div>
 
           <div className="flex flex-col">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-6 px-4 rounded-lg hover:border-brand-green dark:hover:border-brand-green transition-colors h-full"
+                className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-5 px-3 rounded-lg hover:border-brand-green dark:hover:border-brand-green hover:shadow-sm transition-all h-full text-sm"
               >
-                <UploadIcon className="h-8 w-8 text-brand-green" /> Tải ảnh
+                <UploadIcon className="h-7 w-7 text-brand-green" /> Tải ảnh
               </button>
                <button
                  onClick={() => fileInputRef.current?.click()}
-                 className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-6 px-4 rounded-lg hover:border-brand-green dark:hover:border-brand-green transition-colors h-full"
+                 className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-5 px-3 rounded-lg hover:border-brand-green dark:hover:border-brand-green hover:shadow-sm transition-all h-full text-sm"
                >
-                <CameraIcon className="h-8 w-8 text-brand-green" /> Chụp ảnh
+                <CameraIcon className="h-7 w-7 text-brand-green" /> Chụp ảnh
                </button>
             </div>
 
@@ -139,21 +139,21 @@ function IdentifyPageContent() {
               className="hidden"
             />
             
-            <div className="mt-4 flex-grow flex flex-col">
-              {error && <p className="text-center text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded-md border border-red-200 dark:border-red-800">{error}</p>}
+            <div className="mt-3 flex-grow flex flex-col">
+              {error && <p className="text-center text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded-md border border-red-200 dark:border-red-800 text-sm">{error}</p>}
               
               {analysis ? (
                 <div className="p-4 bg-brand-green-light/30 dark:bg-brand-green/10 border border-brand-green/30 rounded-lg flex-grow">
-                  <h3 className="font-bold text-lg text-brand-green-dark dark:text-brand-green-light">Kết quả phân tích:</h3>
-                  <p className="mt-2"><strong>Loại rác:</strong> <span className="font-semibold text-brand-green">{analysis.wasteType}</span></p>
-                  <p className="mt-2"><strong>Gợi ý xử lý:</strong> {analysis.recyclingSuggestion}</p>
+                  <h3 className="font-bold text-base text-brand-green-dark dark:text-brand-green-light">Kết quả phân tích:</h3>
+                  <p className="mt-2 text-sm"><strong>Loại rác:</strong> <span className="font-semibold text-brand-green">{analysis.wasteType}</span></p>
+                  <p className="mt-2 text-sm"><strong>Gợi ý xử lý:</strong> {analysis.recyclingSuggestion}</p>
                   {suitableStation && (
-                    <div className="mt-4 pt-4 border-t border-brand-green/30">
-                      <h4 className="font-bold text-md text-brand-green-dark dark:text-brand-green-light">Trạm thu gom phù hợp:</h4>
-                      <div className="mt-2 p-3 bg-white dark:bg-gray-700/50 rounded-md border dark:border-gray-600">
-                        <p className="font-semibold">{suitableStation.name}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 flex items-start">
-                          <MapPinIcon className="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" />
+                    <div className="mt-3 pt-3 border-t border-brand-green/30">
+                      <h4 className="font-bold text-sm text-brand-green-dark dark:text-brand-green-light">Trạm thu gom phù hợp:</h4>
+                      <div className="mt-2 p-2.5 bg-white dark:bg-gray-700/50 rounded-md border dark:border-gray-600">
+                        <p className="font-semibold text-sm">{suitableStation.name}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 flex items-start mt-1">
+                          <MapPinIcon className="w-3.5 h-3.5 mr-1 mt-0.5 flex-shrink-0" />
                           {suitableStation.address}
                         </p>
                       </div>
@@ -161,7 +161,7 @@ function IdentifyPageContent() {
                   )}
                 </div>
               ) : !isLoading && !error && (
-                <div className="flex-grow flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-gray-500">
+                <div className="flex-grow flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-gray-500 text-sm">
                   <p>Kết quả phân tích sẽ hiển thị tại đây.</p>
                 </div>
               )}
@@ -170,16 +170,16 @@ function IdentifyPageContent() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-8 rounded-xl">
-        <h2 className="text-3xl font-bold text-brand-green-dark dark:text-brand-green-light mb-6 text-center">
+      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-6 md:p-8 rounded-lg shadow-sm">
+        <h2 className="text-2xl font-bold text-brand-green-dark dark:text-brand-green-light mb-5 text-center">
             Hướng dẫn phân loại rác
         </h2>
 
-        <div className="mb-8 border-b dark:border-gray-700 pb-8">
-            <h3 className="text-xl font-semibold text-brand-gray-dark dark:text-gray-200 mb-3">
+        <div className="mb-6 border-b dark:border-gray-700 pb-6">
+            <h3 className="text-lg font-semibold text-brand-gray-dark dark:text-gray-200 mb-2.5">
                 Cách sử dụng công cụ:
             </h3>
-            <ol className="list-decimal list-inside space-y-2 text-brand-gray-DEFAULT dark:text-gray-400">
+            <ol className="list-decimal list-inside space-y-1.5 text-sm text-brand-gray-DEFAULT dark:text-gray-400">
                 <li>Nhấn nút <strong>"Tải ảnh"</strong> hoặc <strong>"Chụp ảnh"</strong> để chọn hình ảnh rác thải bạn muốn phân loại.</li>
                 <li>Hình ảnh sẽ được hiển thị ở khung xem trước.</li>
                 <li>Nhấn nút <strong>"Phân loại ngay"</strong> để hệ thống AI của chúng tôi bắt đầu phân tích.</li>
@@ -188,16 +188,16 @@ function IdentifyPageContent() {
         </div>
 
         <div>
-            <h3 className="text-xl font-semibold text-brand-gray-dark dark:text-gray-200 mb-4">
+            <h3 className="text-lg font-semibold text-brand-gray-dark dark:text-gray-200 mb-3">
                 Ví dụ về các loại rác phổ biến:
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {wasteExamples.map((category) => (
-                  <div key={category.type} className="bg-gray-50 dark:bg-brand-gray-dark p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <h4 className="font-bold text-brand-green-dark dark:text-brand-green-light">
+                  <div key={category.type} className="bg-gray-50 dark:bg-brand-gray-dark p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <h4 className="font-bold text-sm text-brand-green-dark dark:text-brand-green-light">
                       {category.emoji} {category.type}
                     </h4>
-                    <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-1">{category.items}</p>
+                    <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1">{category.items}</p>
                   </div>
                 ))}
             </div>
@@ -243,7 +243,7 @@ export default function Identify() {
         setCollapsed={setIsSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
-        <main className="container mx-auto px-4 sm:px-6 py-10">
+        <main className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
           <IdentifyPageContent />
         </main>
       </div>
