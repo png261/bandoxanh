@@ -4,53 +4,59 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ImageGallery from '@/components/ImageGallery';
+import ImageViewer from '@/components/ImageViewer';
 import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
-import { useState, useEffect, useRef } from 'react';
-import { Theme } from '@/types';
+import { useEffect, useRef } from 'react';
 import React from 'react';
-
-interface DBPost {
-  id: string;
-  content: string;
-  images?: string | string[];
-  createdAt: string;
-  authorId: string;
-  author: {
-    id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-  };
-  comments: DBComment[];
-  _count?: {
-    likedBy?: number;
-  };
-}
-
-interface DBComment {
-  id: string;
-  content: string;
-  createdAt: string;
-  authorId: string;
-  author: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-}
+import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
 
 export default function CommunityPage() {
   const router = useRouter();
   const { user } = useUser();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState<Theme>('light');
-  const [posts, setPosts] = useState<DBPost[]>([]);
-  const [newPostContent, setNewPostContent] = useState('');
-  const [postImages, setPostImages] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Local state for edit/delete modals
+  const [editingPostId, setEditingPostId] = React.useState<string | null>(null);
+  const [editPostContent, setEditPostContent] = React.useState('');
+  const [openActionMenu, setOpenActionMenu] = React.useState<string | null>(null);
+  const [openCommentMenu, setOpenCommentMenu] = React.useState<string | null>(null);
+  const [editingCommentId, setEditingCommentId] = React.useState<string | null>(null);
+  const [editCommentContent, setEditCommentContent] = React.useState('');
+  const [imageViewer, setImageViewer] = React.useState<{ images: string[]; index: number } | null>(null);
+
+  // Zustand store
+  const {
+    isSidebarCollapsed,
+    setSidebarCollapsed,
+    theme,
+    setTheme,
+    toggleTheme,
+    posts,
+    setPosts,
+    newPostContent,
+    setNewPostContent,
+    postImages,
+    setPostImages,
+    previewUrls,
+    setPreviewUrls,
+    loading,
+    setLoading,
+    uploading,
+    setUploading,
+    commentingPostId,
+    setCommentingPostId,
+    commentText,
+    setCommentText,
+    likedPosts,
+    setLikedPosts,
+    removePostImage: storeRemovePostImage,
+    clearPostForm: storeClearPostForm,
+    toggleLikedPost,
+    updatePostLikes,
+    addComment: storeAddComment,
+    replaceComment,
+  } = useCommunityStore();
 
   // Fetch posts from database
   useEffect(() => {
@@ -64,6 +70,21 @@ export default function CommunityPage() {
       if (!response.ok) throw new Error('Failed to fetch posts');
       const data = await response.json();
       setPosts(data || []);
+
+      // Track which posts current user has liked
+      if (user) {
+        const userLikedPostIds = new Set<string>();
+        data.forEach((post: any) => {
+          if (post.likedBy && Array.isArray(post.likedBy)) {
+            post.likedBy.forEach((like: any) => {
+              if (like.user?.clerkId === user.id) {
+                userLikedPostIds.add(post.id.toString());
+              }
+            });
+          }
+        });
+        setLikedPosts(userLikedPostIds);
+      }
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
@@ -73,14 +94,14 @@ export default function CommunityPage() {
 
   // Theme management
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedTheme) {
       setTheme(savedTheme);
     } else if (prefersDark) {
       setTheme('dark');
     }
-  }, []);
+  }, [setTheme]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -90,10 +111,6 @@ export default function CommunityPage() {
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme: Theme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
 
   // Image handling
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,19 +124,14 @@ export default function CommunityPage() {
     }
 
     const validFiles = files.filter(file => file instanceof Blob);
-    setPostImages(prev => [...prev, ...validFiles]);
+    setPostImages([...postImages, ...validFiles]);
     const newUrls = validFiles.map(file => URL.createObjectURL(file as Blob));
-    setPreviewUrls(prev => [...prev, ...newUrls]);
+    setPreviewUrls([...previewUrls, ...newUrls]);
     if (event.target) event.target.value = '';
   };
 
   const handleRemoveImage = (index: number) => {
-    setPostImages(prev => prev.filter((_, i) => i !== index));
-    setPreviewUrls(prev => {
-      const urlToRemove = prev[index];
-      URL.revokeObjectURL(urlToRemove);
-      return prev.filter((_, i) => i !== index);
-    });
+    storeRemovePostImage(index);
   };
 
   // Post creation
@@ -184,14 +196,13 @@ export default function CommunityPage() {
 
       if (!response.ok) throw new Error('Failed to create post');
 
-      // Reset form
-      setNewPostContent('');
-      setPostImages([]);
-      setPreviewUrls([]);
-      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      const newPost = await response.json();
 
-      // Refresh posts
-      await fetchPosts();
+      // Add new post to the top of the list (optimistic update)
+      setPosts([newPost, ...posts]);
+
+      // Reset form
+      storeClearPostForm();
     } catch (error) {
       console.error('Error creating post:', error);
       alert('Có lỗi xảy ra khi tạo bài viết');
@@ -222,14 +233,210 @@ export default function CommunityPage() {
 
   const parseImages = (images: any): string[] => {
     if (!images) return [];
+    
+    // If it's already an array, return it
+    if (Array.isArray(images)) {
+      return images;
+    }
+    
+    // If it's a string, try to parse it
     if (typeof images === 'string') {
-      try {
-        return JSON.parse(images);
-      } catch {
+      // Check if it's already a valid URL (not JSON)
+      if (images.startsWith('http') || images.startsWith('https')) {
         return [images];
       }
+      
+      // Try to parse as JSON
+      try {
+        const parsed = JSON.parse(images);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+        return [images]; // If parsed but not array, treat as single URL
+      } catch (error) {
+        // If parsing fails, treat as single URL
+        return images.trim() ? [images] : [];
+      }
     }
-    return Array.isArray(images) ? images : [];
+    
+    return [];
+  };
+
+  const handleLike = async (postId: string) => {
+    if (!user) return;
+
+    try {
+      const postIndex = posts.findIndex(p => p.id === postId);
+      if (postIndex === -1) return;
+
+      const currentPost = posts[postIndex];
+      const isCurrentlyLiked = likedPosts.has(postId);
+
+      // Update local state immediately using store
+      toggleLikedPost(postId, !isCurrentlyLiked);
+
+      // Update posts count immediately using store
+      updatePostLikes(postId, isCurrentlyLiked ? (currentPost.likes || 0) - 1 : (currentPost.likes || 0) + 1);
+
+      // Send request to server
+      const response = await fetch(`/api/posts/${postId}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ authorId: user.id }),
+      });
+
+      if (!response.ok) {
+        // Revert on error - restore previous state
+        toggleLikedPost(postId, isCurrentlyLiked);
+        updatePostLikes(postId, currentPost.likes || 0);
+        throw new Error('Failed to like post');
+      }
+
+      const data = await response.json();
+      
+      // Update with actual server response from server
+      updatePostLikes(postId, data.likes || 0);
+    } catch (error) {
+      console.error('Error liking post:', error);
+      // UI already reverted if there was an error
+    }
+  };
+
+  const handleAddComment = async (postId: string) => {
+    if (!user || !commentText.trim()) return;
+
+    try {
+      // Save comment text before clearing
+      const commentContent = commentText;
+
+      // Create optimistic comment object
+      const optimisticComment: DBComment = {
+        id: Date.now().toString(),
+        content: commentContent,
+        createdAt: new Date().toISOString(),
+        authorId: user.id.toString(),
+        author: {
+          id: user.id.toString(),
+          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.fullName || 'User',
+          email: user.emailAddresses?.[0]?.emailAddress || '',
+          avatar: user.imageUrl,
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      // Optimistic update: add comment to UI immediately using store action
+      storeAddComment(postId, optimisticComment);
+
+      // Clear input immediately
+      setCommentText('');
+
+      // Send request to server
+      const response = await fetch(`/api/posts/${postId}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: commentContent,
+          authorId: user.id,
+          email: user.emailAddresses?.[0]?.emailAddress,
+          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.fullName || 'User',
+          avatar: user.imageUrl,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create comment');
+
+      const actualComment = await response.json();
+
+      // Update with actual server response using store action
+      replaceComment(postId, optimisticComment.id, actualComment);
+
+      setCommentingPostId(null);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      alert('Có lỗi xảy ra khi thêm bình luận');
+      
+      // Revert optimistic update on error
+      await fetchPosts();
+    }
+  };
+
+  const parseLikes = (likes: any): number => {
+    if (!likes) return 0;
+    if (typeof likes === 'number') return likes;
+    if (typeof likes === 'string') {
+      const num = parseInt(likes);
+      return isNaN(num) ? 0 : num;
+    }
+    return 0;
+  };
+
+  const handleEditPost = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setEditingPostId(postId);
+      setEditPostContent(post.content);
+      setOpenActionMenu(null);
+    }
+  };
+
+  const handleSaveEditPost = async (postId: string) => {
+    if (!editPostContent.trim()) {
+      alert('Nội dung bài viết không được để trống');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editPostContent }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update post');
+
+      const updatedPost = await response.json();
+      // Update the post in state
+      setPosts(posts.map(p => p.id === postId ? updatedPost : p));
+      setEditingPostId(null);
+    } catch (error) {
+      console.error('Error updating post:', error);
+      alert('Có lỗi xảy ra khi chỉnh sửa bài viết');
+    }
+  };
+
+  const handleEditComment = (commentId: string, content: string, postId: string) => {
+    setEditingCommentId(commentId);
+    setEditCommentContent(content);
+    setOpenCommentMenu(null);
+  };
+
+  const handleSaveEditComment = async (postId: string, commentId: string) => {
+    if (!editCommentContent.trim()) {
+      alert('Nội dung bình luận không được để trống');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${postId}/comment/${commentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editCommentContent }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update comment');
+
+      const updatedComment = await response.json();
+      // Update comment in state
+      setPosts(posts.map(p => 
+        p.id === postId 
+          ? { ...p, comments: p.comments.map(c => c.id === commentId ? updatedComment : c) }
+          : p
+      ));
+      setEditingCommentId(null);
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      alert('Có lỗi xảy ra khi chỉnh sửa bình luận');
+    }
   };
 
   return (
@@ -238,7 +445,7 @@ export default function CommunityPage() {
         theme={theme}
         toggleTheme={toggleTheme}
         isCollapsed={isSidebarCollapsed}
-        setCollapsed={setIsSidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
         <main className="container mx-auto px-4 sm:px-6 py-10 max-w-2xl">
@@ -319,39 +526,120 @@ export default function CommunityPage() {
                 <div key={post.id} className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-700">
                   {/* Post Header */}
                   <div className="flex items-start gap-4 mb-4">
-                    <img
-                      src={post.author?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.author?.name || 'User')}
-                      alt={post.author?.name}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
+                    <button
+                      onClick={() => router.push(`/profile/${post.author?.id}`)}
+                      className="flex-shrink-0 hover:opacity-75 transition-opacity"
+                    >
+                      <img
+                        src={post.author?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.author?.name || 'User')}
+                        alt={post.author?.name}
+                        className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                      />
+                    </button>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 dark:text-white">{post.author?.name}</h3>
+                      <button
+                        onClick={() => router.push(`/profile/${post.author?.id}`)}
+                        className="font-semibold text-gray-900 dark:text-white hover:text-brand-green dark:hover:text-brand-green-light transition-colors"
+                      >
+                        {post.author?.name}
+                      </button>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(post.createdAt)}</p>
                     </div>
+                    {/* Edit/Delete actions - only for post author */}
+                    {user && post.author?.email === user?.emailAddresses?.[0]?.emailAddress && (
+                      <div className="relative">
+                        <button
+                          onClick={() => setOpenActionMenu(openActionMenu === post.id ? null : post.id)}
+                          className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                          title="Thêm actions"
+                        >
+                          <span className="text-xl">⋮</span>
+                        </button>
+                        {openActionMenu === post.id && (
+                          <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-brand-gray-darker rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-600">
+                            <button
+                              onClick={() => handleEditPost(post.id)}
+                              className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white"
+                            >
+                              Sửa bài viết
+                            </button>
+                            <button
+                              onClick={async () => {
+                                if (confirm('Bạn có chắc muốn xóa bài viết này?')) {
+                                  try {
+                                    const response = await fetch(`/api/posts/${post.id}`, {
+                                      method: 'DELETE',
+                                    });
+                                    if (!response.ok) throw new Error('Failed to delete post');
+                                    setPosts(posts.filter(p => p.id !== post.id));
+                                    setOpenActionMenu(null);
+                                  } catch (error) {
+                                    console.error('Error deleting post:', error);
+                                    alert('Có lỗi xảy ra khi xóa bài viết');
+                                  }
+                                }
+                              }}
+                              className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400"
+                            >
+                              Xóa bài viết
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Post Content */}
-                  <p className="text-gray-900 dark:text-gray-100 mb-4 break-words">{post.content}</p>
+                  {editingPostId === post.id ? (
+                    <div className="space-y-3 mb-4">
+                      <textarea
+                        value={editPostContent}
+                        onChange={(e) => setEditPostContent(e.target.value)}
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-gray-900 dark:text-white focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none"
+                        rows={4}
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <button
+                          onClick={() => setEditingPostId(null)}
+                          className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                        >
+                          Huỷ
+                        </button>
+                        <button
+                          onClick={() => handleSaveEditPost(post.id)}
+                          className="px-4 py-2 bg-brand-green text-white rounded hover:bg-brand-green-dark transition-colors"
+                        >
+                          Lưu
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-900 dark:text-gray-100 mb-4 break-words whitespace-pre-wrap">{post.content}</p>
+                  )}
 
                   {/* Post Images */}
-                  {parseImages(post.images).length > 0 && (
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4 rounded-lg overflow-hidden">
-                      {parseImages(post.images).map((img, idx) => (
-                        <img key={idx} src={img} alt={`Post image ${idx}`} className="w-full h-32 object-cover" />
-                      ))}
-                    </div>
-                  )}
+                  <ImageGallery 
+                    images={parseImages(post.images)} 
+                    onImageClick={(index) => setImageViewer({ images: parseImages(post.images), index })}
+                  />
 
                   {/* Post Footer */}
                   <div className="flex items-center gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button className="flex items-center gap-2 hover:text-brand-green transition-colors">
-                      <HeartIcon className="w-5 h-5" />
-                      <span className="text-sm">Thích</span>
+                    <button 
+                      onClick={() => handleLike(post.id)}
+                      className={`flex items-center gap-2 transition-colors ${
+                        likedPosts.has(post.id) || (parseLikes(post.likes) ?? 0) > 0
+                          ? 'text-red-500 hover:text-red-600' 
+                          : 'hover:text-brand-green'
+                      }`}
+                    >
+                      <HeartIcon className={`w-5 h-5 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
+                      <span className="text-sm">{parseLikes(post.likes) ?? 0}</span>
                     </button>
-                    <button className="flex items-center gap-2 hover:text-brand-green transition-colors">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       <ChatBubbleIcon className="w-5 h-5" />
                       <span className="text-sm">{post.comments?.length || 0}</span>
-                    </button>
+                    </div>
                   </div>
 
                   {/* Comments Section */}
@@ -359,19 +647,141 @@ export default function CommunityPage() {
                     <div className="mt-4 space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
                       {post.comments.slice(0, 3).map((comment) => (
                         <div key={comment.id} className="flex gap-3">
-                          <img
-                            src={comment.author?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(comment.author?.name || 'User')}
-                            alt={comment.author?.name}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                          <div className="flex-1 bg-gray-100 dark:bg-brand-gray-darker rounded-lg p-2">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white">{comment.author?.name}</p>
-                            <p className="text-sm text-gray-800 dark:text-gray-300">{comment.content}</p>
+                          <button
+                            onClick={() => router.push(`/profile/${comment.author?.id}`)}
+                            className="flex-shrink-0 hover:opacity-75 transition-opacity"
+                          >
+                            <img
+                              src={comment.author?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(comment.author?.name || 'User')}
+                              alt={comment.author?.name}
+                              className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                            />
+                          </button>
+                          <div className="flex-1">
+                            {editingCommentId === comment.id ? (
+                              <div className="space-y-2">
+                                <textarea
+                                  value={editCommentContent}
+                                  onChange={(e) => setEditCommentContent(e.target.value)}
+                                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-brand-gray-darker text-gray-900 dark:text-white focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 text-sm resize-none"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <button
+                                    onClick={() => setEditingCommentId(null)}
+                                    className="text-xs px-2 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                                  >
+                                    Huỷ
+                                  </button>
+                                  <button
+                                    onClick={() => handleSaveEditComment(post.id, comment.id)}
+                                    className="text-xs px-2 py-1 bg-brand-green text-white rounded hover:bg-brand-green-dark"
+                                  >
+                                    Lưu
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="bg-gray-100 dark:bg-brand-gray-darker rounded-lg p-2 relative">
+                                  <button
+                                    onClick={() => router.push(`/profile/${comment.author?.id}`)}
+                                    className="text-sm font-semibold text-gray-900 dark:text-white hover:text-brand-green dark:hover:text-brand-green-light transition-colors"
+                                  >
+                                    {comment.author?.name}
+                                  </button>
+                                  <p className="text-sm text-gray-800 dark:text-gray-300">{comment.content}</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{formatDate(comment.createdAt)}</p>
+                                  
+                                  {/* Edit/Delete for comment - only for comment author */}
+                                  {user && comment.author?.email === user?.emailAddresses?.[0]?.emailAddress && (
+                                    <div className="absolute top-1 right-1">
+                                      <button
+                                        onClick={() => setOpenCommentMenu(openCommentMenu === comment.id ? null : comment.id)}
+                                        className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                      >
+                                        <span className="text-sm">⋮</span>
+                                      </button>
+                                      {openCommentMenu === comment.id && (
+                                        <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-brand-gray-darker rounded shadow-lg z-50 border border-gray-200 dark:border-gray-600">
+                                          <button
+                                            onClick={() => handleEditComment(comment.id, comment.content, post.id)}
+                                            className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs text-gray-900 dark:text-white"
+                                          >
+                                            Sửa
+                                          </button>
+                                          <button
+                                            onClick={async () => {
+                                              if (confirm('Bạn có chắc muốn xóa bình luận này?')) {
+                                                try {
+                                                  const response = await fetch(`/api/posts/${post.id}/comment/${comment.id}`, {
+                                                    method: 'DELETE',
+                                                  });
+                                                  if (!response.ok) throw new Error('Failed to delete comment');
+                                                  setPosts(posts.map(p => 
+                                                    p.id === post.id 
+                                                      ? { ...p, comments: p.comments.filter(c => c.id !== comment.id) }
+                                                      : p
+                                                  ));
+                                                  setOpenCommentMenu(null);
+                                                } catch (error) {
+                                                  console.error('Error deleting comment:', error);
+                                                  alert('Có lỗi xảy ra khi xóa bình luận');
+                                                }
+                                              }
+                                            }}
+                                            className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs text-red-600 dark:text-red-400"
+                                          >
+                                            Xóa
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
+
+                  {/* Comment Input - Always Visible */}
+                  <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div className="flex gap-3">
+                      <img
+                        src={user?.imageUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.fullName || 'User')}
+                        alt="Your avatar"
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <div className="flex-1 flex gap-2">
+                        <input
+                          type="text"
+                          value={commentingPostId === post.id ? commentText : ''}
+                          onChange={(e) => {
+                            setCommentingPostId(post.id);
+                            setCommentText(e.target.value);
+                          }}
+                          onFocus={() => setCommentingPostId(post.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && commentText.trim()) {
+                              handleAddComment(post.id);
+                            }
+                          }}
+                          placeholder="Viết bình luận..."
+                          className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 text-sm"
+                        />
+                        <button
+                          onClick={() => handleAddComment(post.id)}
+                          disabled={commentingPostId !== post.id || !commentText.trim()}
+                          className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-semibold"
+                        >
+                          Gửi
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))
             )}
@@ -379,6 +789,15 @@ export default function CommunityPage() {
         </main>
         <Footer />
       </div>
+
+      {/* Image Viewer Modal */}
+      {imageViewer && (
+        <ImageViewer
+          images={imageViewer.images}
+          initialIndex={imageViewer.index}
+          onClose={() => setImageViewer(null)}
+        />
+      )}
     </div>
   );
 }

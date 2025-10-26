@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Theme } from '@/types';
 import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityIcon, NewspaperIcon, InformationCircleIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, SunIcon, MoonIcon } from './Icons';
-import { USERS } from '@/constants';
 import UserButton from './UserButton';
 
 interface HeaderProps {
@@ -70,7 +69,6 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
   const router = useRouter();
   const pathname = usePathname() || '/';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const currentUser = USERS.find(u => u.id === 3);
 
   const navigateTo = (path: string) => {
     window.scrollTo(0, 0);
@@ -137,15 +135,6 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
             >
                 <NavItems currentPath={pathname} navigateTo={navigateTo} onLinkClick={() => setIsMobileMenuOpen(false)} isCollapsed={false} />
                 <div className="pt-4 border-t dark:border-gray-700 space-y-2">
-                  {currentUser && (
-                    <button 
-                      onClick={() => { navigateTo(`/profile/${currentUser.id}`); setIsMobileMenuOpen(false); }}
-                      className="w-full flex items-center px-6 py-4 rounded-lg text-md font-medium text-gray-700 dark:text-gray-300 hover:bg-brand-green-light dark:hover:bg-gray-700"
-                    >
-                      <img src={currentUser.avatar} alt={currentUser.name} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                      <span className="ml-4 font-semibold">{currentUser.name}</span>
-                    </button>
-                  )}
                   <button 
                     onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }}
                     className="w-full flex items-center px-6 py-4 rounded-lg text-md font-medium text-gray-700 dark:text-gray-300 hover:bg-brand-green-light dark:hover:bg-gray-700"

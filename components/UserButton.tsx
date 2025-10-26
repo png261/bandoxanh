@@ -1,10 +1,42 @@
 'use client';
 
-import { UserButton as ClerkUserButton, SignedIn, SignedOut } from '@clerk/nextjs';
+import { UserButton as ClerkUserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LeafIcon } from './Icons';
+import { useEffect, useState } from 'react';
 
 export default function UserButtonComponent() {
+  const { user: clerkUser } = useUser();
+  const router = useRouter();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    if (clerkUser?.id) {
+      // Fetch user from database to get their ID
+      const fetchUser = async () => {
+        try {
+          const response = await fetch(`/api/users/${clerkUser.id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentUserId(data.id);
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error);
+        }
+      };
+      fetchUser();
+    }
+  }, [clerkUser?.id]);
+
+  const handleProfileClick = () => {
+    if (currentUserId) {
+      router.push(`/profile/${currentUserId}`);
+      setIsDropdownOpen(false);
+    }
+  };
+
   return (
     <div className="flex items-center gap-3">
       <SignedOut>
@@ -23,15 +55,41 @@ export default function UserButtonComponent() {
       </SignedOut>
 
       <SignedIn>
-        <ClerkUserButton
-          appearance={{
-            elements: {
-              avatarBox: 'w-10 h-10 rounded-full',
-              userButtonTrigger: 'hover:opacity-75 transition-opacity',
-            },
-          }}
-          afterSignOutUrl="/"
-        />
+        <div className="relative">
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="hover:opacity-75 transition-opacity"
+          >
+            <ClerkUserButton
+              appearance={{
+                elements: {
+                  avatarBox: 'w-10 h-10 rounded-full',
+                  userButtonTrigger: 'hover:opacity-75 transition-opacity',
+                },
+              }}
+              afterSignOutUrl="/"
+            />
+          </button>
+          {isDropdownOpen && currentUserId && (
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-brand-gray-dark rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 py-2">
+              <button
+                onClick={handleProfileClick}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white"
+              >
+                Xem hồ sơ
+              </button>
+              <hr className="my-2 dark:border-gray-700" />
+              <ClerkUserButton
+                appearance={{
+                  elements: {
+                    avatarBox: 'w-10 h-10 rounded-full',
+                  },
+                }}
+                afterSignOutUrl="/"
+              />
+            </div>
+          )}
+        </div>
       </SignedIn>
     </div>
   );

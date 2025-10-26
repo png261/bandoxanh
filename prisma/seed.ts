@@ -41,6 +41,8 @@ async function main() {
     // Create users
     const user1 = await prisma.user.create({
       data: {
+        clerkId: 'seed_user_1',
+        email: 'nguyenvana@example.com',
         name: 'Nguyễn Văn A',
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=1',
         joinDate: 'January 15, 2024',
@@ -49,6 +51,8 @@ async function main() {
     });
     const user2 = await prisma.user.create({
       data: {
+        clerkId: 'seed_user_2',
+        email: 'tranthib@example.com',
         name: 'Trần Thị B',
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2',
         joinDate: 'February 20, 2024',
@@ -57,6 +61,8 @@ async function main() {
     });
     const user3 = await prisma.user.create({
       data: {
+        clerkId: 'seed_user_3',
+        email: 'levanc@example.com',
         name: 'Lê Văn C',
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=3',
         joinDate: 'March 10, 2024',

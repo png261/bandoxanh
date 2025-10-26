@@ -11,6 +11,7 @@ export async function GET() {
             author: true,
           },
         },
+        likedBy: true,
         poll: {
           include: {
             options: true,
@@ -48,31 +49,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find or create user by Clerk ID
-    let user = await prisma.user.findUnique({
+    // Find or create user by Clerk ID using upsert
+    const user = await prisma.user.upsert({
       where: { clerkId: body.authorId },
+      update: {
+        name: body.name || undefined,
+        avatar: body.avatar || undefined,
+      },
+      create: {
+        clerkId: body.authorId,
+        email: body.email || `user-${body.authorId}@bandoxanh.local`,
+        name: body.name || 'Anonymous User',
+        avatar: body.avatar,
+      },
     });
-
-    if (!user) {
-      // Create new user with Clerk ID
-      user = await prisma.user.create({
-        data: {
-          clerkId: body.authorId,
-          email: body.email || `user-${body.authorId}@bandoxanh.local`,
-          name: body.name || 'Anonymous User',
-          avatar: body.avatar,
-        },
-      });
-    } else if (body.name || body.avatar) {
-      // Update user info if provided
-      user = await prisma.user.update({
-        where: { clerkId: body.authorId },
-        data: {
-          name: body.name || user.name,
-          avatar: body.avatar || user.avatar,
-        },
-      });
-    }
 
     // Create the post
     const post = await prisma.post.create({

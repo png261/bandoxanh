@@ -1,250 +1,63 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { USERS, POSTS, AWARDS } from '@/constants';
-import { ArrowLeftIcon, CalendarIcon, SproutIcon, MedalIcon, HeartHandshakeIcon, QrCodeIcon } from '@/components/Icons';
-import PostImageGrid from '@/components/PostImageGrid';
-import ImageModal from '@/components/ImageModal';
-import QrScanner from '@/components/QrScanner';
-import { useState, useEffect } from 'react';
-import { Theme, Post, User } from '@/types';
-import React from 'react';
+import ImageGallery from '@/components/ImageGallery';
+import ImageViewer from '@/components/ImageViewer';
+import { HeartIcon, ChatBubbleIcon, ArrowLeftIcon } from '@/components/Icons';
+import { Theme } from '@/types';
 
-interface PostCardProps { 
-    post: Post;
-    onNavigateToProfile: (userId: number) => void;
+interface UserProfile {
+  id: string;
+  clerkId: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  bio?: string;
+  joinDate: string;
 }
 
-const ProfilePostCard: React.FC<PostCardProps> = ({ post }) => {
-    const [modalState, setModalState] = useState<{ isOpen: boolean; index: number } | null>(null);
-
-    return (
-        <>
-            {modalState?.isOpen && post.images && (
-                <ImageModal
-                images={post.images}
-                initialIndex={modalState.index}
-                onClose={() => setModalState(null)}
-                />
-            )}
-            <div className="bg-white dark:bg-brand-gray-dark rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400">{post.timestamp}</p>
-                <p className="mt-3 text-brand-gray-dark dark:text-gray-200 whitespace-pre-wrap">{post.content}</p>
-                
-                {post.images && post.images.length > 0 && (
-                    <div className="mt-4 rounded-lg overflow-hidden">
-                        <PostImageGrid images={post.images} onImageClick={(index) => setModalState({ isOpen: true, index })} />
-                    </div>
-                )}
-                
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-sm text-brand-gray-DEFAULT dark:text-gray-400">
-                    <span>{post.likes} lượt thích</span>
-                    <span className="ml-4">{post.comments.length} bình luận</span>
-                </div>
-            </div>
-        </>
-    );
-};
-
-interface ProfilePageProps {
-  userId: number;
-  navigateTo: (path: string, options?: any) => void;
-}
-
-
-const AwardIcon: React.FC<{ iconName: string; className?: string }> = ({ iconName, className }) => {
-    switch (iconName) {
-        case 'SproutIcon':
-            return <SproutIcon className={className} />;
-        case 'MedalIcon':
-            return <MedalIcon className={className} />;
-        case 'HeartHandshakeIcon':
-            return <HeartHandshakeIcon className={className} />;
-        default:
-            return null;
-    }
-};
-
-
-const ProfilePageComponent: React.FC<ProfilePageProps> = ({ userId, navigateTo }) => {
-  const initialUser = USERS.find(u => u.id === userId);
-  const [user, setUser] = useState<User | undefined>(initialUser);
-  const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [scanNotification, setScanNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-
-  const userPosts = POSTS.filter(p => p.author.id === userId);
-
-  useEffect(() => {
-    setUser(USERS.find(u => u.id === userId));
-  }, [userId]);
-
-  const showNotification = (type: 'success' | 'error', message: string) => {
-    setScanNotification({ type, message });
-    setTimeout(() => setScanNotification(null), 4000);
+interface PostDetail {
+  id: string;
+  content: string;
+  images?: string | string[];
+  likes?: number;
+  createdAt: string;
+  author: {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
   };
-
-  const handleScanSuccess = (data: string) => {
-    setIsScannerOpen(false);
-
-    if (!data.startsWith('award_id:')) {
-      showNotification('error', 'Mã QR không hợp lệ.');
-      return;
-    }
-
-    const awardId = parseInt(data.split(':')[1], 10);
-    if (isNaN(awardId)) {
-      showNotification('error', 'Mã QR không hợp lệ.');
-      return;
-    }
-
-    const newAward = AWARDS.find(a => a.id === awardId);
-    if (!newAward) {
-      showNotification('error', 'Danh hiệu không tồn tại.');
-      return;
-    }
-
-    if (user) {
-      const userHasAward = user.awards.some(a => a.id === newAward.id);
-      if (userHasAward) {
-        showNotification('error', `Bạn đã sở hữu danh hiệu "${newAward.name}" rồi.`);
-      } else {
-        setUser(prevUser => {
-          if (!prevUser) return undefined;
-          return {
-            ...prevUser,
-            awards: [...prevUser.awards, newAward],
-          };
-        });
-        showNotification('success', `Chúc mừng! Bạn đã nhận được danh hiệu "${newAward.name}".`);
-      }
-    }
-  };
-
-  const handleNavigateToProfile = (id: number) => {
-    if (id !== userId) {
-      navigateTo(`/profile/${id}`);
-    }
-  }
-
-  if (!user) {
-    return (
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-red-500">Không tìm thấy người dùng</h2>
-        <button
-          onClick={() => navigateTo('/community')}
-          className="mt-6 inline-flex items-center gap-2 bg-brand-green text-white font-semibold py-2 px-4 rounded-lg hover:bg-brand-green-dark transition-colors"
-        >
-          <ArrowLeftIcon className="w-5 h-5" />
-          Quay lại Cộng đồng
-        </button>
-      </div>
-    );
-  }
-
-  const isCurrentUser = user.id === 3; // Assume current user is ID 3
-
-  return (
-    <div className="max-w-4xl mx-auto">
-        {isScannerOpen && (
-            <QrScanner 
-                onScanSuccess={handleScanSuccess} 
-                onClose={() => setIsScannerOpen(false)} 
-            />
-        )}
-        {scanNotification && (
-            <div className={`fixed top-24 right-4 z-[60] p-4 rounded-lg text-white border ${scanNotification.type === 'success' ? 'bg-brand-green border-brand-green-dark' : 'bg-red-500 border-red-700'}`}>
-                {scanNotification.message}
-            </div>
-        )}
-
-        <button
-            onClick={() => navigateTo('/community')}
-            className="inline-flex items-center gap-2 text-brand-green dark:text-brand-green-light font-semibold hover:text-brand-green-dark dark:hover:text-white transition-colors mb-6"
-        >
-            <ArrowLeftIcon className="w-5 h-5" />
-            Quay lại Cộng đồng
-        </button>
-
-        <div className="bg-white dark:bg-brand-gray-dark rounded-xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center">
-                <img src={user.avatar} alt={user.name} className="w-32 h-32 rounded-full object-cover border-4 border-brand-green" />
-                <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
-                    <h1 className="text-4xl font-bold text-brand-gray-dark dark:text-gray-100">{user.name}</h1>
-                    <p className="mt-2 text-brand-gray-DEFAULT dark:text-gray-400 max-w-md">{user.bio}</p>
-                    <div className="mt-3 flex items-center justify-center md:justify-start text-sm text-brand-gray-DEFAULT dark:text-gray-400">
-                        <CalendarIcon className="w-5 h-5 mr-2" />
-                        <span>Tham gia vào {user.joinDate}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-bold text-brand-gray-dark dark:text-gray-100">Danh hiệu & Thành tích</h3>
-                    {isCurrentUser && (
-                        <button
-                            onClick={() => setIsScannerOpen(true)}
-                            className="flex items-center gap-2 bg-brand-green text-white font-semibold py-2 px-4 rounded-lg hover:bg-brand-green-dark transition-colors"
-                        >
-                            <QrCodeIcon className="w-5 h-5" />
-                            Quét mã
-                        </button>
-                    )}
-                </div>
-                {user.awards && user.awards.length > 0 ? (
-                    <ul className="space-y-4">
-                        {user.awards.map(award => (
-                            <li key={award.id} className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-brand-gray-dark/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                                <div className="flex-shrink-0 bg-brand-green-light/50 dark:bg-brand-green/20 text-brand-green-dark dark:text-brand-green-light rounded-full p-3">
-                                    <AwardIcon iconName={award.icon} className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-brand-gray-dark dark:text-gray-100">{award.name}</h4>
-                                    <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400">{award.description}</p>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-center text-brand-gray-DEFAULT dark:text-gray-400 py-6">Người dùng này chưa có danh hiệu nào.</p>
-                )}
-            </div>
-        </div>
-
-        <div className="mt-12">
-            <h2 className="text-3xl font-bold text-brand-green-dark dark:text-brand-green-light mb-6">Bài viết của {user.name}</h2>
-            <div className="space-y-6">
-                {userPosts.length > 0 ? (
-                    userPosts.map(post => <ProfilePostCard key={post.id} post={post} onNavigateToProfile={handleNavigateToProfile} />)
-                ) : (
-                    <p className="text-center text-brand-gray-DEFAULT dark:text-gray-400 bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-8 rounded-xl">
-                        {user.name} chưa có bài viết nào.
-                    </p>
-                )}
-            </div>
-        </div>
-    </div>
-  );
-};
-
-export default async function Profile({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const id = resolvedParams.id;
-
-  return <ProfilePage id={id} />;
+  comments: Array<{
+    id: string;
+    content: string;
+    createdAt: string;
+  }>;
 }
 
-function ProfilePage({ id }: { id: string }) {
-  'use client';
+export default function ProfilePage() {
+  const { user: clerkUser } = useUser();
+  const params = useParams();
   const router = useRouter();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const userId = params.id as string;
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userPosts, setUserPosts] = useState<PostDetail[]>([]);
+  const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState<Theme>('light');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [imageViewer, setImageViewer] = useState<{ images: string[]; index: number } | null>(null);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    const prefersDark =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedTheme) {
       setTheme(savedTheme);
     } else if (prefersDark) {
@@ -262,30 +75,245 @@ function ProfilePage({ id }: { id: string }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prevTheme: Theme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const navigateTo = (path: string, options?: any) => {
-    window.scrollTo(0, 0);
-    router.push(path);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/users/${userId}`);
+        if (!response.ok) throw new Error('User not found');
+        const data = await response.json();
+        setProfile(data);
+
+        // Fetch user's posts
+        const postsResponse = await fetch(`/api/users/${userId}/posts`);
+        if (postsResponse.ok) {
+          const postsData = await postsResponse.json();
+          setUserPosts(postsData || []);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchProfile();
+    }
+  }, [userId]);
+
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('vi-VN');
+    } catch {
+      return 'N/A';
+    }
   };
 
-  const userId = parseInt(id, 10);
+  const parseImages = (images: any): string[] => {
+    if (!images) return [];
+    
+    // If it's already an array, return it
+    if (Array.isArray(images)) return images;
+    
+    // If it's a string, try to parse it
+    if (typeof images === 'string') {
+      // Check if it's already a valid URL (not JSON)
+      if (images.startsWith('http') || images.startsWith('https')) {
+        return [images];
+      }
+      
+      // Try to parse as JSON
+      try {
+        const parsed = JSON.parse(images);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+        return [images]; // If parsed but not array, treat as single URL
+      } catch {
+        // If parsing fails, treat as single URL
+        return images.trim() ? [images] : [];
+      }
+    }
+    
+    return [];
+  };
+
+  const isCurrentUser = clerkUser?.id === profile?.clerkId;
+
+  if (loading) {
+    return (
+      <div className="bg-brand-gray-light dark:bg-black min-h-screen">
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          isCollapsed={isSidebarCollapsed}
+          setCollapsed={setIsSidebarCollapsed}
+        />
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <p className="text-gray-600 dark:text-gray-400">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="bg-brand-gray-light dark:bg-black min-h-screen">
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          isCollapsed={isSidebarCollapsed}
+          setCollapsed={setIsSidebarCollapsed}
+        />
+        <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Không tìm thấy người dùng</h2>
+              <button
+                onClick={() => router.push('/community')}
+                className="inline-flex items-center gap-2 bg-brand-green text-white font-semibold py-2 px-4 rounded-lg hover:bg-brand-green-dark transition-colors"
+              >
+                <ArrowLeftIcon className="w-5 h-5" />
+                Quay lại Cộng đồng
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-brand-gray-light dark:bg-black min-h-screen font-sans text-brand-gray-dark dark:text-gray-200">
-      <Header 
+      <Header
         theme={theme}
         toggleTheme={toggleTheme}
         isCollapsed={isSidebarCollapsed}
         setCollapsed={setIsSidebarCollapsed}
       />
-      <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}> 
-        <main className="container mx-auto px-4 sm:px-6 py-10">
-          <ProfilePageComponent userId={userId} navigateTo={navigateTo} />
+
+      <div
+        className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}
+      >
+        <main className="container mx-auto px-4 sm:px-6 py-10 max-w-2xl">
+          {/* Back Button */}
+          <button
+            onClick={() => router.push('/community')}
+            className="inline-flex items-center gap-2 text-brand-green dark:text-brand-green-light font-semibold hover:text-brand-green-dark dark:hover:text-white transition-colors mb-6"
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+            Quay lại Cộng đồng
+          </button>
+
+          {/* Profile Header */}
+          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-700 mb-8">
+            <div className="flex items-center gap-6">
+              <img
+                src={profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}`}
+                alt={profile.name}
+                className="w-24 h-24 rounded-full object-cover border-4 border-brand-green"
+              />
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{profile.name}</h1>
+                <p className="text-gray-600 dark:text-gray-400 mb-2">{profile.email}</p>
+                {profile.bio && (
+                  <p className="text-gray-700 dark:text-gray-300 mb-3">{profile.bio}</p>
+                )}
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Tham gia ngày: {formatDate(profile.joinDate)}
+                </p>
+              </div>
+              {isCurrentUser && (
+                <button
+                  onClick={() => router.push('/profile/edit')}
+                  className="px-6 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-dark transition-colors"
+                >
+                  Chỉnh sửa
+                </button>
+              )}
+            </div>
+
+            {/* Profile Stats */}
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-brand-green">{userPosts.length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Bài viết</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-brand-green">
+                  {userPosts.reduce((sum, post) => sum + (post.likes || 0), 0)}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Lượt thích</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-brand-green">
+                  {userPosts.reduce((sum, post) => sum + (post.comments?.length || 0), 0)}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Bình luận</p>
+              </div>
+            </div>
+          </div>
+
+          {/* User Posts */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Bài viết của {profile.name}</h2>
+
+            {userPosts.length === 0 ? (
+              <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-8 text-center border border-gray-100 dark:border-gray-700">
+                <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết nào</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {userPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-700"
+                  >
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      {formatDate(post.createdAt)}
+                    </p>
+                    <p className="text-gray-900 dark:text-gray-100 mb-4 break-words whitespace-pre-wrap">
+                      {post.content}
+                    </p>
+
+                    {/* Images */}
+                    <ImageGallery 
+                      images={parseImages(post.images)} 
+                      onImageClick={(index) => setImageViewer({ images: parseImages(post.images), index })}
+                    />
+
+                    {/* Post Stats */}
+                    <div className="flex items-center gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center gap-2">
+                        <HeartIcon className="w-5 h-5" />
+                        <span className="text-sm">{post.likes || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ChatBubbleIcon className="w-5 h-5" />
+                        <span className="text-sm">{post.comments?.length || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </main>
         <Footer />
       </div>
+
+      {/* Image Viewer Modal */}
+      {imageViewer && (
+        <ImageViewer
+          images={imageViewer.images}
+          initialIndex={imageViewer.index}
+          onClose={() => setImageViewer(null)}
+        />
+      )}
     </div>
   );
 }
