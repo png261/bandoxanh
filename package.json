@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:seed": "node -r ts-node/register prisma/seed.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.34.0",
@@ -15,17 +16,20 @@
     "@google/genai": "^1.27.0",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
+    "dotenv": "^17.2.3",
     "next": "^15.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^3.3.0"
   },
   "devDependencies": {
+    "@prisma/client": "^6.18.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.0",
+    "prisma": "^6.18.0",
     "typescript": "~5.8.2"
   }
 }
