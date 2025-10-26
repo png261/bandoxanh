@@ -120,14 +120,6 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
         {/* Footer with UserButton and Theme Toggle */}
         <div className={`p-3 border-t dark:border-gray-700 space-y-2 ${isCollapsed ? '' : 'pb-4'}`}>
           <UserButton isCollapsed={isCollapsed} />
-          <button 
-            onClick={toggleTheme}
-            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : ''} p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
-            aria-label={theme === 'light' ? "Chuyển sang giao diện tối" : "Chuyển sang giao diện sáng"}
-          >
-            {theme === 'light' ? <MoonIcon className="w-6 h-6" /> : <SunIcon className="w-6 h-6" />}
-            {!isCollapsed && <span className="ml-3">{theme === 'light' ? 'Giao diện Tối' : 'Giao diện Sáng'}</span>}
-          </button>
         </div>
       </aside>
 
