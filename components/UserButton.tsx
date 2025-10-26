@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation';
 import { LeafIcon } from './Icons';
 import { useEffect, useState } from 'react';
 
-export default function UserButtonComponent() {
+interface UserButtonProps {
+  isCollapsed?: boolean;
+}
+
+export default function UserButtonComponent({ isCollapsed = false }: UserButtonProps) {
   const { user: clerkUser } = useUser();
   const router = useRouter();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -38,27 +42,40 @@ export default function UserButtonComponent() {
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
       <SignedOut>
-        <Link
-          href="/sign-in"
-          className="px-4 py-2 text-brand-green font-semibold hover:text-brand-green-dark transition-colors"
-        >
-          Đăng nhập
-        </Link>
-        <Link
-          href="/sign-up"
-          className="px-4 py-2 bg-brand-green text-white rounded-lg font-semibold hover:bg-brand-green-dark transition-colors"
-        >
-          Đăng ký
-        </Link>
+        {!isCollapsed && (
+          <>
+            <Link
+              href="/sign-in"
+              className="px-4 py-2 text-brand-green font-semibold hover:text-brand-green-dark transition-colors"
+            >
+              Đăng nhập
+            </Link>
+            <Link
+              href="/sign-up"
+              className="px-4 py-2 bg-brand-green text-white rounded-lg font-semibold hover:bg-brand-green-dark transition-colors"
+            >
+              Đăng ký
+            </Link>
+          </>
+        )}
+        {isCollapsed && (
+          <Link
+            href="/sign-in"
+            className="p-2 text-brand-green hover:text-brand-green-dark transition-colors"
+            title="Đăng nhập"
+          >
+            <LeafIcon className="w-6 h-6" />
+          </Link>
+        )}
       </SignedOut>
 
       <SignedIn>
-        <div className="relative">
+        <div className="relative w-full">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="hover:opacity-75 transition-opacity"
+            className={`hover:opacity-75 transition-opacity ${isCollapsed ? 'flex justify-center w-full' : ''}`}
           >
             <ClerkUserButton
               appearance={{
@@ -71,7 +88,7 @@ export default function UserButtonComponent() {
             />
           </button>
           {isDropdownOpen && currentUserId && (
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-brand-gray-dark rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 py-2">
+            <div className={`absolute ${isCollapsed ? 'left-full ml-2' : 'right-0'} mt-2 w-48 bg-white dark:bg-brand-gray-dark rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 py-2`}>
               <button
                 onClick={handleProfileClick}
                 className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white"
@@ -79,14 +96,16 @@ export default function UserButtonComponent() {
                 Xem hồ sơ
               </button>
               <hr className="my-2 dark:border-gray-700" />
-              <ClerkUserButton
-                appearance={{
-                  elements: {
-                    avatarBox: 'w-10 h-10 rounded-full',
-                  },
-                }}
-                afterSignOutUrl="/"
-              />
+              <div className="px-4">
+                <ClerkUserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-10 h-10 rounded-full',
+                    },
+                  }}
+                  afterSignOutUrl="/"
+                />
+              </div>
             </div>
           )}
         </div>

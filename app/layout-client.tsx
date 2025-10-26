@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Theme } from '@/types';
+import { useThemeStore } from '@/store/themeStore';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,30 +11,7 @@ interface LayoutProps {
 
 export function RootLayoutContent({ children }: LayoutProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState<Theme>('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+  const { theme, toggleTheme } = useThemeStore();
 
   return (
     <div className="bg-brand-gray-light dark:bg-black min-h-screen font-sans text-brand-gray-dark dark:text-gray-200">

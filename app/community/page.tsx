@@ -10,6 +10,7 @@ import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons'
 import { useEffect, useRef } from 'react';
 import React from 'react';
 import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
+import { useThemeStore } from '@/store/themeStore';
 
 export default function CommunityPage() {
   const router = useRouter();
@@ -29,9 +30,6 @@ export default function CommunityPage() {
   const {
     isSidebarCollapsed,
     setSidebarCollapsed,
-    theme,
-    setTheme,
-    toggleTheme,
     posts,
     setPosts,
     newPostContent,
@@ -57,6 +55,9 @@ export default function CommunityPage() {
     addComment: storeAddComment,
     replaceComment,
   } = useCommunityStore();
+
+  // Theme from theme store
+  const { theme, toggleTheme } = useThemeStore();
 
   // Fetch posts from database
   useEffect(() => {
@@ -91,26 +92,6 @@ export default function CommunityPage() {
       setLoading(false);
     }
   };
-
-  // Theme management
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
-  }, [setTheme]);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   // Image handling
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

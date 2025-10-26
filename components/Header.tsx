@@ -79,34 +79,55 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
     <>
       {/* --- Sidebar for Desktop --- */}
       <aside className={`bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-72'}`}>
-        <div 
-          className={`flex items-center border-b dark:border-gray-700 h-20 cursor-pointer overflow-hidden ${isCollapsed ? 'justify-center px-2' : 'px-6'}`} 
-          onClick={() => navigateTo('/')}
-        >
-          <LeafIcon className="h-8 w-8 text-brand-green flex-shrink-0" />
-          {!isCollapsed && <h1 className="ml-3 text-2xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">BandoXanh</h1>}
-        </div>
-        <nav className="flex-grow p-3 space-y-2">
-          <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} />
-        </nav>
-        <div className="p-3 border-t dark:border-gray-700 space-y-2">
-          <UserButton />
-          <div className="flex items-center gap-2 mt-2">
+        {/* Header with Logo and Toggle */}
+        <div className={`flex items-center justify-between border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2' : 'px-6'}`}>
+          <div 
+            className={`flex items-center cursor-pointer ${isCollapsed ? 'mx-auto' : ''}`}
+            onClick={() => navigateTo('/')}
+          >
+            <LeafIcon className="h-8 w-8 text-brand-green flex-shrink-0" />
+            {!isCollapsed && <h1 className="ml-3 text-2xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">BandoXanh</h1>}
+          </div>
+          {!isCollapsed && (
             <button 
-              onClick={toggleTheme}
-              className="flex-1 flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label={theme === 'light' ? "Chuyển sang giao diện tối" : "Chuyển sang giao diện sáng"}
+              onClick={() => setCollapsed(true)} 
+              className="flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Thu gọn sidebar"
             >
-              {theme === 'light' ? <MoonIcon className="w-6 h-6" /> : <SunIcon className="w-6 h-6" />}
+              <ChevronDoubleLeftIcon className="w-6 h-6" />
             </button>
+          )}
+        </div>
+
+        {/* Expand button for collapsed sidebar */}
+        {isCollapsed && (
+          <div className="px-2 pt-3">
             <button 
-              onClick={() => setCollapsed(!isCollapsed)} 
-              className="flex-1 flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
+              onClick={() => setCollapsed(false)} 
+              className="w-full flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Mở rộng sidebar"
             >
-              {isCollapsed ? <ChevronDoubleRightIcon className="w-6 h-6" /> : <ChevronDoubleLeftIcon className="w-6 h-6" />}
+              <ChevronDoubleRightIcon className="w-6 h-6" />
             </button>
           </div>
+        )}
+
+        {/* Navigation */}
+        <nav className="flex-grow p-3 space-y-2 overflow-y-auto">
+          <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} />
+        </nav>
+
+        {/* Footer with UserButton and Theme Toggle */}
+        <div className={`p-3 border-t dark:border-gray-700 space-y-2 ${isCollapsed ? '' : 'pb-4'}`}>
+          <UserButton isCollapsed={isCollapsed} />
+          <button 
+            onClick={toggleTheme}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : ''} p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+            aria-label={theme === 'light' ? "Chuyển sang giao diện tối" : "Chuyển sang giao diện sáng"}
+          >
+            {theme === 'light' ? <MoonIcon className="w-6 h-6" /> : <SunIcon className="w-6 h-6" />}
+            {!isCollapsed && <span className="ml-3">{theme === 'light' ? 'Giao diện Tối' : 'Giao diện Sáng'}</span>}
+          </button>
         </div>
       </aside>
 
