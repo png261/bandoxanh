@@ -52,6 +52,10 @@ interface CommunityState {
   previewUrls: string[];
   likedPosts: Set<string>;
   commentText: string;
+  
+  // Cache State
+  postsLastFetched: number | null;
+  postsCacheValid: boolean;
 
   // Actions
   setSidebarCollapsed: (collapsed: boolean) => void;
@@ -67,18 +71,26 @@ interface CommunityState {
   setLikedPosts: (posts: Set<string>) => void;
   setCommentText: (text: string) => void;
   
+  // Cache actions
+  setPostsWithCache: (posts: DBPost[]) => void;
+  invalidatePostsCache: () => void;
+  shouldRefetchPosts: () => boolean;
+  
   // Helper actions
   addPost: (post: DBPost) => void;
   updatePost: (postId: string, post: DBPost) => void;
+  deletePost: (postId: string) => void;
   removePostImage: (index: number) => void;
   clearPostForm: () => void;
   toggleLikedPost: (postId: string, liked: boolean) => void;
   updatePostLikes: (postId: string, count: number) => void;
   addComment: (postId: string, comment: DBComment) => void;
+  updateComment: (postId: string, commentId: string, comment: DBComment) => void;
+  deleteComment: (postId: string, commentId: string) => void;
   replaceComment: (postId: string, oldCommentId: string, newComment: DBComment) => void;
 }
 
-export const useCommunityStore = create<CommunityState>((set) => ({
+export const useCommunityStore = create<CommunityState>((set, get) => ({
   // Initial state
   isSidebarCollapsed: false,
   theme: 'light',
@@ -91,6 +103,8 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   previewUrls: [],
   likedPosts: new Set(),
   commentText: '',
+  postsLastFetched: null,
+  postsCacheValid: false,
 
   // Basic setters
   setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
@@ -105,6 +119,31 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   setLikedPosts: (posts) => set({ likedPosts: posts }),
   setCommentText: (text) => set({ commentText: text }),
 
+  // Cache actions
+  setPostsWithCache: (posts) =>
+    set({
+      posts,
+      postsLastFetched: Date.now(),
+      postsCacheValid: true,
+    }),
+
+  invalidatePostsCache: () =>
+    set({
+      postsCacheValid: false,
+    }),
+
+  shouldRefetchPosts: () => {
+    const state = get();
+    // Cache valid for 5 minutes
+    const CACHE_DURATION = 5 * 60 * 1000;
+    
+    if (!state.postsCacheValid) return true;
+    if (!state.postsLastFetched) return true;
+    if (Date.now() - state.postsLastFetched > CACHE_DURATION) return true;
+    
+    return false;
+  },
+
   // Toggle theme
   toggleTheme: () =>
     set((state) => ({
@@ -115,11 +154,17 @@ export const useCommunityStore = create<CommunityState>((set) => ({
   addPost: (post) =>
     set((state) => ({
       posts: [post, ...state.posts],
+      postsCacheValid: false, // Invalidate cache when adding new post
     })),
 
   updatePost: (postId, post) =>
     set((state) => ({
       posts: state.posts.map((p) => (p.id === postId ? post : p)),
+    })),
+
+  deletePost: (postId) =>
+    set((state) => ({
+      posts: state.posts.filter((p) => p.id !== postId),
     })),
 
   removePostImage: (index) =>
@@ -167,6 +212,32 @@ export const useCommunityStore = create<CommunityState>((set) => ({
           ? {
               ...post,
               comments: [...(post.comments || []), comment],
+            }
+          : post
+      ),
+    })),
+
+  updateComment: (postId, commentId, comment) =>
+    set((state) => ({
+      posts: state.posts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: (post.comments || []).map((c) =>
+                c.id === commentId ? comment : c
+              ),
+            }
+          : post
+      ),
+    })),
+
+  deleteComment: (postId, commentId) =>
+    set((state) => ({
+      posts: state.posts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: (post.comments || []).filter((c) => c.id !== commentId),
             }
           : post
       ),

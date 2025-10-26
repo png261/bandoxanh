@@ -7,6 +7,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { useState, useEffect } from 'react';
 import { Theme } from '@/types';
 import React from 'react';
+import RecyclingIcon from '@mui/icons-material/Recycling';
+import MapIcon from '@mui/icons-material/Map';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import GroupsIcon from '@mui/icons-material/Groups';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 // --- DỮ LIỆU MẪU ---
 const wasteDistributionData = [
@@ -32,12 +39,50 @@ const teamMembers = [
     { name: 'Minh Thư', role: 'Lead Developer', avatar: 'https://picsum.photos/seed/team2/200/200' },
     { name: 'Quốc Bảo', role: 'UX/UI Designer', avatar: 'https://picsum.photos/seed/team3/200/200' },
     { name: 'Lan Chi', role: 'Community Manager', avatar: 'https://picsum.photos/seed/team4/200/200' },
+    { name: 'Đức Minh', role: 'Marketing Lead', avatar: 'https://picsum.photos/seed/team5/200/200' },
 ];
 
 const testimonials = [
     { quote: 'Ứng dụng rất hữu ích! Tôi đã tìm được trạm thu gom pin cũ gần nhà mà trước đây không hề biết. Giao diện cũng rất thân thiện.', author: 'Anh Tuấn - Người dùng tại Hà Nội' },
     { quote: 'Tính năng nhận diện rác bằng AI thật tuyệt vời. Nó giúp gia đình tôi phân loại rác chính xác hơn rất nhiều. Cảm ơn BandoXanh!', author: 'Chị Mai - Người dùng tại Đà Nẵng' },
     { quote: 'Cộng đồng BandoXanh rất sôi nổi và tích cực. Tôi học được nhiều mẹo tái chế hay ho từ các thành viên khác.', author: 'Bạn Minh - Sinh viên' },
+];
+
+const features = [
+  { 
+    icon: MapIcon, 
+    title: 'Bản đồ thu gom', 
+    description: 'Tìm kiếm điểm thu gom rác thải gần nhất với vị trí của bạn'
+  },
+  { 
+    icon: PsychologyIcon, 
+    title: 'AI nhận diện', 
+    description: 'Phân loại rác chính xác bằng công nghệ trí tuệ nhân tạo'
+  },
+  { 
+    icon: GroupsIcon, 
+    title: 'Cộng đồng', 
+    description: 'Kết nối và chia sẻ kinh nghiệm với người dùng khác'
+  },
+  { 
+    icon: EmojiEventsIcon, 
+    title: 'Hệ thống thưởng', 
+    description: 'Nhận phần thưởng khi tham gia bảo vệ môi trường'
+  },
+];
+
+const stats = [
+  { label: 'Người dùng', value: '1,520+', icon: GroupsIcon },
+  { label: 'Điểm thu gom', value: '350+', icon: MapIcon },
+  { label: 'Rác đã phân loại', value: '1,400+', icon: RecyclingIcon },
+  { label: 'Tăng trưởng', value: '+215%', icon: TrendingUpIcon },
+];
+
+const timeline = [
+  { year: '2024 Q1', title: 'Khởi đầu', description: 'Ý tưởng BandoXanh ra đời từ nhóm sinh viên yêu môi trường' },
+  { year: '2024 Q2', title: 'Phát triển', description: 'Xây dựng MVP với các tính năng cơ bản: bản đồ và cộng đồng' },
+  { year: '2024 Q3', title: 'AI Integration', description: 'Tích hợp công nghệ AI để nhận diện và phân loại rác thải' },
+  { year: '2024 Q4', title: 'Ra mắt', description: 'Chính thức phát hành ứng dụng và đạt 1000+ người dùng' },
 ];
 
 interface AboutPageProps {
@@ -48,95 +93,368 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
   const textColor = theme === 'dark' ? '#E5E7EB' : '#374151';
 
   return (
-    <div className="space-y-24">
-      {/* --- SỨ MỆNH & TẦM NHÌN --- */}
-      <section className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-8 md:p-12 rounded-xl">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1">
-            <h2 className="text-4xl font-bold text-brand-gray-dark dark:text-gray-100 mb-6">Sứ mệnh & Tầm nhìn</h2>
-            <p className="mb-4 text-lg text-brand-gray-DEFAULT dark:text-gray-400">
-              "BandoXanh" ra đời với sứ mệnh kết nối và trao quyền cho cộng đồng, biến việc bảo vệ môi trường thành một thói quen hàng ngày. Chúng tôi tin rằng, mỗi cá nhân đều có thể trở thành một tác nhân thay đổi.
+    <div className="max-w-7xl mx-auto">
+      {/* --- HERO SECTION --- */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-green to-emerald-600 dark:from-emerald-800 dark:to-brand-green-dark text-white py-20 md:py-28 -mx-4 sm:-mx-6 rounded-3xl mb-16">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzBoLTEydjEyaDEyVjMwem0wIDBWMThIMjR2MTJoMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10"></div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-block mb-6 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
+              🌱 Vì một tương lai xanh
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              BandoXanh
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-emerald-50 leading-relaxed">
+              Nền tảng kết nối cộng đồng để bảo vệ môi trường,<br className="hidden md:block" />
+              biến hành động nhỏ thành tác động lớn
             </p>
-            <ul className="list-disc list-inside space-y-3 text-brand-gray-dark dark:text-gray-300 mt-6">
-              <li><strong>Kết nối:</strong> Xây dựng bản đồ số toàn diện về các điểm thu gom, giúp mọi người dễ dàng tiếp cận và tham gia tái chế.</li>
-              <li><strong>Giáo dục:</strong> Nâng cao nhận thức về phân loại rác tại nguồn thông qua công cụ AI trực quan và các bài viết hướng dẫn.</li>
-              <li><strong>Lan tỏa:</strong> Tạo ra một cộng đồng sống xanh, nơi mọi người có thể chia sẻ, học hỏi và truyền cảm hứng cho nhau.</li>
-            </ul>
-          </div>
-          <div className="order-1 md:order-2">
-            <img src="https://picsum.photos/seed/mission/800/600" alt="Hành động vì môi trường" className="rounded-lg transition-transform duration-300"/>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <a href="#features" className="px-8 py-4 bg-white text-brand-green font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                Khám phá tính năng
+              </a>
+              <a href="#community" className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300">
+                Tham gia ngay
+              </a>
+            </div>
           </div>
         </div>
-      </section>
-      
-      {/* --- TÁC ĐỘNG CỦA DỰ ÁN (BIỂU ĐỒ) --- */}
-      <section className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-8 md:p-12 rounded-xl">
-        <h2 className="text-4xl font-bold text-center text-brand-green-dark dark:text-brand-green-light mb-12">Dấu Ấn & Tác Động</h2>
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="w-full h-80">
-                <h3 className="text-xl font-semibold text-center text-brand-gray-dark dark:text-gray-200 mb-4">Phân bố loại rác đã nhận diện</h3>
-                <ResponsiveContainer>
-                    <PieChart>
-                        <Pie data={wasteDistributionData} cx="50%" cy="50%" labelLine={false} outerRadius={120} fill="#8884d8" dataKey="value" nameKey="name" label={{ fill: textColor, fontSize: 12 }}>
-                            {wasteDistributionData.map((entry, index) => <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
-                        </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1F2937' : '#FFFFFF', border: '1px solid #4B5563', borderRadius: '0.5rem' }} />
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
-            <div className="w-full h-80">
-                <h3 className="text-xl font-semibold text-center text-brand-gray-dark dark:text-gray-200 mb-4">Tăng trưởng cộng đồng</h3>
-                <ResponsiveContainer>
-                    <LineChart data={userGrowthData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#4B5563' : '#E5E7EB'} />
-                        <XAxis dataKey="month" tick={{ fill: textColor }} />
-                        <YAxis tick={{ fill: textColor }} />
-                        <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1F2937' : '#FFFFFF', border: '1px solid #4B5563', borderRadius: '0.5rem' }} />
-                        <Legend wrapperStyle={{ color: textColor }} />
-                        <Line type="monotone" dataKey="users" name="Thành viên" stroke="#10B981" strokeWidth={3} />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="currentColor" className="text-brand-gray-light dark:text-black"/>
+          </svg>
         </div>
       </section>
 
-      {/* --- ĐỘI NGŨ DỰ ÁN --- */}
-      <section>
-          <h2 className="text-4xl font-bold text-center text-brand-green-dark dark:text-brand-green-light mb-12">Những Người Đồng Hành</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {teamMembers.map(member => (
-                  <div key={member.name} className="bg-white dark:bg-brand-gray-dark p-6 rounded-xl border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:border-brand-green">
-                      <img src={member.avatar} alt={member.name} className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-gray-200 dark:border-gray-700" />
-                      <h3 className="mt-4 font-bold text-lg text-brand-gray-dark dark:text-gray-100">{member.name}</h3>
-                      <p className="text-sm text-brand-green">{member.role}</p>
+      {/* --- STATISTICS --- */}
+      <section className="mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {stats.map((stat, index) => (
+            <div key={index} className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-xl p-5 md:p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <stat.icon className="text-brand-green w-10 h-10 md:w-12 md:h-12 mx-auto mb-3" />
+              <div className="text-2xl md:text-3xl font-bold text-brand-gray-dark dark:text-white mb-1">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- FEATURES SECTION --- */}
+      <section id="features" className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
+            Tính năng nổi bật
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Công nghệ hiện đại kết hợp với trải nghiệm người dùng thân thiện
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature, index) => (
+            <div key={index} className="group bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-brand-green hover:shadow-lg transition-all duration-300">
+              <div className="w-14 h-14 bg-gradient-to-br from-brand-green to-emerald-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <feature.icon className="text-white w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold text-brand-gray-dark dark:text-white mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- MISSION & VISION --- */}
+      <section className="mb-20">
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+          <div className="grid md:grid-cols-2 gap-0">
+            <div className="p-8 md:p-10 flex flex-col justify-center">
+              <div className="inline-block w-fit mb-4 px-4 py-2 bg-brand-green/10 rounded-full">
+                <span className="text-brand-green font-semibold text-sm">Sứ mệnh & Tầm nhìn</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-brand-gray-dark dark:text-white mb-6">
+                Kết nối - Giáo dục - Lan tỏa
+              </h2>
+              <div className="space-y-5">
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-green rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    1
                   </div>
-              ))}
+                  <div>
+                    <h3 className="font-bold text-brand-gray-dark dark:text-white mb-1 text-base">Kết nối</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Xây dựng bản đồ số toàn diện về các điểm thu gom, giúp mọi người dễ dàng tiếp cận
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-green rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    2
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-brand-gray-dark dark:text-white mb-1 text-base">Giáo dục</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Nâng cao nhận thức về phân loại rác thông qua công cụ AI và nội dung chất lượng
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-brand-green rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    3
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-brand-gray-dark dark:text-white mb-1 text-base">Lan tỏa</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Tạo cộng đồng sống xanh, nơi mọi người chia sẻ và truyền cảm hứng
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="relative h-64 md:h-auto">
+              <img 
+                src="https://picsum.photos/seed/mission/800/600" 
+                alt="Hành động vì môi trường" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </div>
           </div>
+        </div>
       </section>
 
-      {/* --- PHẢN HỒI TỪ CỘNG ĐỒNG --- */}
-      <section>
-        <h2 className="text-4xl font-bold text-center text-brand-gray-dark dark:text-white mb-12">Cộng Đồng Nói Về Chúng Tôi</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((item, index) => (
-                <div key={index} className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-8 rounded-xl flex flex-col">
-                    <QuoteIcon className="text-brand-green w-10 h-10 mb-4" />
-                    <p className="flex-grow text-brand-gray-DEFAULT dark:text-gray-300 italic">"{item.quote}"</p>
-                    <p className="mt-6 font-semibold text-right text-brand-gray-dark dark:text-gray-100">- {item.author}</p>
+      {/* --- TIMELINE --- */}
+      <section className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
+            Hành trình phát triển
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Từ ý tưởng đến hiện thực
+          </p>
+        </div>
+        <div className="relative">
+          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-brand-green via-emerald-400 to-brand-green hidden md:block"></div>
+          <div className="space-y-8">
+            {timeline.map((item, index) => (
+              <div key={index} className={`flex flex-col md:flex-row gap-6 items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                <div className="flex-1 md:text-right" style={{ textAlign: index % 2 === 0 ? 'right' : 'left' }}>
+                  <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-lg transition-all duration-300">
+                    <div className="text-brand-green font-bold mb-1 text-sm">{item.year}</div>
+                    <h3 className="text-lg font-bold text-brand-gray-dark dark:text-white mb-1">{item.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                  </div>
                 </div>
+                <div className="flex-shrink-0 w-12 h-12 bg-brand-green rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg z-10">
+                  {index + 1}
+                </div>
+                <div className="flex-1"></div>
+              </div>
             ))}
+          </div>
         </div>
       </section>
       
-      {/* --- HÌNH ẢNH HOẠT ĐỘNG --- */}
-      <section>
-          <h2 className="text-4xl font-bold text-center text-brand-green-dark dark:text-brand-green-light mb-12">Khoảnh Khắc BandoXanh</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <img src="https://picsum.photos/seed/gallery1/500/500" alt="Hoạt động 1" className="rounded-lg w-full h-full object-cover aspect-square hover:opacity-80 transition-opacity" />
-              <img src="https://picsum.photos/seed/gallery2/500/500" alt="Hoạt động 2" className="rounded-lg w-full h-full object-cover aspect-square hover:opacity-80 transition-opacity" />
-              <img src="https://picsum.photos/seed/gallery3/500/500" alt="Hoạt động 3" className="rounded-lg w-full h-full object-cover aspect-square hover:opacity-80 transition-opacity" />
-              <img src="https://picsum.photos/seed/gallery4/500/500" alt="Hoạt động 4" className="rounded-lg w-full h-full object-cover aspect-square hover:opacity-80 transition-opacity" />
+      {/* --- IMPACT (CHARTS) --- */}
+      <section className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
+            Dấu ấn & Tác động
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Con số minh chứng cho nỗ lực chung
+          </p>
+        </div>
+        <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-2xl p-6 md:p-10">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="w-full h-72">
+              <h3 className="text-lg font-semibold text-center text-brand-gray-dark dark:text-gray-200 mb-3">
+                Phân bố loại rác đã nhận diện
+              </h3>
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie 
+                    data={wasteDistributionData} 
+                    cx="50%" 
+                    cy="50%" 
+                    labelLine={false} 
+                    outerRadius={120} 
+                    fill="#8884d8" 
+                    dataKey="value" 
+                    nameKey="name" 
+                    label={{ fill: textColor, fontSize: 12 }}
+                  >
+                    {wasteDistributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: theme === 'dark' ? '#1F2937' : '#FFFFFF', 
+                      border: '1px solid #4B5563', 
+                      borderRadius: '0.5rem' 
+                    }} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="w-full h-72">
+              <h3 className="text-lg font-semibold text-center text-brand-gray-dark dark:text-gray-200 mb-3">
+                Tăng trưởng cộng đồng
+              </h3>
+              <ResponsiveContainer>
+                <LineChart data={userGrowthData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#4B5563' : '#E5E7EB'} />
+                  <XAxis dataKey="month" tick={{ fill: textColor }} />
+                  <YAxis tick={{ fill: textColor }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: theme === 'dark' ? '#1F2937' : '#FFFFFF', 
+                      border: '1px solid #4B5563', 
+                      borderRadius: '0.5rem' 
+                    }} 
+                  />
+                  <Legend wrapperStyle={{ color: textColor }} />
+                  <Line type="monotone" dataKey="users" name="Thành viên" stroke="#10B981" strokeWidth={3} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* --- TEAM --- */}
+      <section className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
+            Những người đồng hành
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Đội ngũ tâm huyết và nhiệt huyết
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+          {teamMembers.map(member => (
+            <div 
+              key={member.name} 
+              className="group bg-white dark:bg-brand-gray-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="relative overflow-hidden">
+                <img 
+                  src={member.avatar} 
+                  alt={member.name} 
+                  className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-green/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <div className="p-4 text-center">
+                <h3 className="font-bold text-base text-brand-gray-dark dark:text-white mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-sm text-brand-green font-medium">
+                  {member.role}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- TESTIMONIALS --- */}
+      <section id="community" className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
+            Cộng đồng nói về chúng tôi
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Những phản hồi chân thành từ người dùng
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((item, index) => (
+            <div 
+              key={index} 
+              className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-xl p-6 flex flex-col hover:shadow-lg hover:border-brand-green transition-all duration-300"
+            >
+              <QuoteIcon className="text-brand-green w-10 h-10 mb-4" />
+              <p className="flex-grow text-sm text-gray-700 dark:text-gray-300 italic leading-relaxed mb-4">
+                "{item.quote}"
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-brand-green to-emerald-400 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  {item.author.charAt(0)}
+                </div>
+                <p className="font-semibold text-brand-gray-dark dark:text-white text-sm">
+                  {item.author}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      
+      {/* --- GALLERY --- */}
+      <section className="mb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
+            Khoảnh khắc BandoXanh
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Những hoạt động ý nghĩa của cộng đồng
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+            <div key={num} className="group relative overflow-hidden rounded-xl aspect-square">
+              <img 
+                src={`https://picsum.photos/seed/gallery${num}/500/500`} 
+                alt={`Hoạt động ${num}`} 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-green/90 via-brand-green/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                <p className="text-white font-semibold text-sm p-3 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  Hoạt động cộng đồng
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- CALL TO ACTION --- */}
+      <section className="mb-16">
+        <div className="relative overflow-hidden bg-gradient-to-r from-brand-green to-emerald-600 dark:from-emerald-800 dark:to-brand-green-dark rounded-2xl p-10 md:p-12 text-center text-white">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzBoLTEydjEyaDEyVjMwem0wIDBWMThIMjR2MTJoMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10"></div>
+          <div className="relative z-10">
+            <FavoriteIcon className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-4" />
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">
+              Cùng nhau tạo nên sự khác biệt
+            </h2>
+            <p className="text-base md:text-lg mb-6 text-emerald-50 max-w-2xl mx-auto">
+              Mỗi hành động nhỏ đều có ý nghĩa. Hãy tham gia cộng đồng BandoXanh để cùng bảo vệ môi trường ngày hôm nay!
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <a 
+                href="/community" 
+                className="px-8 py-4 bg-white text-brand-green font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                Tham gia cộng đồng
+              </a>
+              <a 
+                href="/map" 
+                className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
+              >
+                Khám phá bản đồ
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
 
     </div>

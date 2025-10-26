@@ -11,11 +11,15 @@ import { useEffect, useRef } from 'react';
 import React from 'react';
 import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
 import { useThemeStore } from '@/store/themeStore';
+import { usePosts } from '@/hooks/usePosts';
 
 export default function CommunityPage() {
   const router = useRouter();
   const { user } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Use custom hook for posts with caching
+  const { posts, loading, refreshPosts } = usePosts();
 
   // Local state for edit/delete modals
   const [editingPostId, setEditingPostId] = React.useState<string | null>(null);
@@ -26,20 +30,17 @@ export default function CommunityPage() {
   const [editCommentContent, setEditCommentContent] = React.useState('');
   const [imageViewer, setImageViewer] = React.useState<{ images: string[]; index: number } | null>(null);
 
-  // Zustand store
+  // Zustand store (without posts and loading which come from usePosts hook)
   const {
     isSidebarCollapsed,
     setSidebarCollapsed,
-    posts,
-    setPosts,
+    setPostsWithCache,
     newPostContent,
     setNewPostContent,
     postImages,
     setPostImages,
     previewUrls,
     setPreviewUrls,
-    loading,
-    setLoading,
     uploading,
     setUploading,
     commentingPostId,
@@ -47,7 +48,6 @@ export default function CommunityPage() {
     commentText,
     setCommentText,
     likedPosts,
-    setLikedPosts,
     removePostImage: storeRemovePostImage,
     clearPostForm: storeClearPostForm,
     toggleLikedPost,
@@ -58,40 +58,6 @@ export default function CommunityPage() {
 
   // Theme from theme store
   const { theme, toggleTheme } = useThemeStore();
-
-  // Fetch posts from database
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/posts');
-      if (!response.ok) throw new Error('Failed to fetch posts');
-      const data = await response.json();
-      setPosts(data || []);
-
-      // Track which posts current user has liked
-      if (user) {
-        const userLikedPostIds = new Set<string>();
-        data.forEach((post: any) => {
-          if (post.likedBy && Array.isArray(post.likedBy)) {
-            post.likedBy.forEach((like: any) => {
-              if (like.user?.clerkId === user.id) {
-                userLikedPostIds.add(post.id.toString());
-              }
-            });
-          }
-        });
-        setLikedPosts(userLikedPostIds);
-      }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Image handling
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,8 +145,8 @@ export default function CommunityPage() {
 
       const newPost = await response.json();
 
-      // Add new post to the top of the list (optimistic update)
-      setPosts([newPost, ...posts]);
+      // Add new post to the top of the list and invalidate cache
+      setPostsWithCache([newPost, ...posts]);
 
       // Reset form
       storeClearPostForm();
@@ -337,7 +303,7 @@ export default function CommunityPage() {
       alert('Có lỗi xảy ra khi thêm bình luận');
       
       // Revert optimistic update on error
-      await fetchPosts();
+      await refreshPosts();
     }
   };
 
@@ -376,8 +342,8 @@ export default function CommunityPage() {
       if (!response.ok) throw new Error('Failed to update post');
 
       const updatedPost = await response.json();
-      // Update the post in state
-      setPosts(posts.map(p => p.id === postId ? updatedPost : p));
+      // Update the post in state and invalidate cache
+      setPostsWithCache(posts.map(p => p.id === postId ? updatedPost : p));
       setEditingPostId(null);
     } catch (error) {
       console.error('Error updating post:', error);
@@ -408,7 +374,7 @@ export default function CommunityPage() {
 
       const updatedComment = await response.json();
       // Update comment in state
-      setPosts(posts.map(p => 
+      setPostsWithCache(posts.map(p => 
         p.id === postId 
           ? { ...p, comments: p.comments.map(c => c.id === commentId ? updatedComment : c) }
           : p
@@ -552,7 +518,7 @@ export default function CommunityPage() {
                                       method: 'DELETE',
                                     });
                                     if (!response.ok) throw new Error('Failed to delete post');
-                                    setPosts(posts.filter(p => p.id !== post.id));
+                                    setPostsWithCache(posts.filter(p => p.id !== post.id));
                                     setOpenActionMenu(null);
                                   } catch (error) {
                                     console.error('Error deleting post:', error);
@@ -699,7 +665,7 @@ export default function CommunityPage() {
                                                     method: 'DELETE',
                                                   });
                                                   if (!response.ok) throw new Error('Failed to delete comment');
-                                                  setPosts(posts.map(p => 
+                                                  setPostsWithCache(posts.map(p => 
                                                     p.id === post.id 
                                                       ? { ...p, comments: p.comments.filter(c => c.id !== comment.id) }
                                                       : p
