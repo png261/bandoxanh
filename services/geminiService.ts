@@ -56,7 +56,7 @@ export const identifyWaste = async (imageFile: File): Promise<string> => {
     });
 
     // FIX: Removed manual string cleaning. With `responseSchema`, the output is a clean JSON string.
-    return response.text;
+    return response.text || JSON.stringify({ error: "Không nhận được phản hồi từ API" });
   } catch (error) {
     console.error("Error identifying waste:", error);
     if (error instanceof Error) {

@@ -59,7 +59,15 @@ const NewsDetailPageComponent: React.FC<NewsDetailPageProps> = ({ articleId, nav
   );
 };
 
-export default function NewsDetail({ params }: { params: { id: string } }) {
+export default async function NewsDetail({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+
+  return <NewsDetailPage id={id} />;
+}
+
+function NewsDetailPage({ id }: { id: string }) {
+  'use client';
   const router = useRouter();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
@@ -92,7 +100,7 @@ export default function NewsDetail({ params }: { params: { id: string } }) {
     router.push(path);
   };
 
-  const articleId = parseInt(params.id, 10);
+  const articleId = parseInt(id, 10);
 
   return (
     <div className="bg-brand-gray-light dark:bg-black min-h-screen font-sans text-brand-gray-dark dark:text-gray-200">

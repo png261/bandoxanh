@@ -229,7 +229,15 @@ const ProfilePageComponent: React.FC<ProfilePageProps> = ({ userId, navigateTo }
   );
 };
 
-export default function Profile({ params }: { params: { id: string } }) {
+export default async function Profile({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+
+  return <ProfilePage id={id} />;
+}
+
+function ProfilePage({ id }: { id: string }) {
+  'use client';
   const router = useRouter();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [theme, setTheme] = useState<Theme>('light');
@@ -262,7 +270,7 @@ export default function Profile({ params }: { params: { id: string } }) {
     router.push(path);
   };
 
-  const userId = parseInt(params.id, 10);
+  const userId = parseInt(id, 10);
 
   return (
     <div className="bg-brand-gray-light dark:bg-black min-h-screen font-sans text-brand-gray-dark dark:text-gray-200">
