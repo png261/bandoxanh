@@ -99,26 +99,23 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
           )}
         </div>
 
-        {/* Expand button for collapsed sidebar */}
-        {isCollapsed && (
-          <div className="px-2 pt-3">
-            <button 
-              onClick={() => setCollapsed(false)} 
-              className="w-full flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Mở rộng sidebar"
-            >
-              <ChevronDoubleRightIcon className="w-6 h-6" />
-            </button>
-          </div>
-        )}
-
         {/* Navigation */}
         <nav className="flex-grow p-3 space-y-2 overflow-y-auto">
           <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} />
         </nav>
 
-        {/* Footer with UserButton and Theme Toggle */}
+        {/* Footer with UserButton and Expand/Collapse Toggle */}
         <div className={`p-3 border-t dark:border-gray-700 space-y-2 ${isCollapsed ? '' : 'pb-4'}`}>
+          {/* Expand button for collapsed sidebar - moved to bottom */}
+          {isCollapsed && (
+            <button 
+              onClick={() => setCollapsed(false)} 
+              className="w-full flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors mb-2"
+              aria-label="Mở rộng sidebar"
+            >
+              <ChevronDoubleRightIcon className="w-6 h-6" />
+            </button>
+          )}
           <UserButton isCollapsed={isCollapsed} />
         </div>
       </aside>
