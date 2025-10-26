@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Theme } from '@/types';
-import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityIcon, NewspaperIcon, InformationCircleIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, SunIcon, MoonIcon } from './Icons';
+import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityIcon, NewspaperIcon, InformationCircleIcon, ChevronLeftIcon, ChevronRightIcon, SunIcon, MoonIcon } from './Icons';
 import UserButton from './UserButton';
 
 interface HeaderProps {
@@ -79,24 +79,15 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
     <>
       {/* --- Sidebar for Desktop --- */}
       <aside className={`bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-72'}`}>
-        {/* Header with Logo and Toggle */}
-        <div className={`flex items-center justify-between border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2' : 'px-6'}`}>
+        {/* Header with Logo */}
+        <div className={`flex items-center border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2 justify-center' : 'px-6'}`}>
           <div 
-            className={`flex items-center cursor-pointer ${isCollapsed ? 'mx-auto' : ''}`}
+            className="flex items-center cursor-pointer"
             onClick={() => navigateTo('/map')}
           >
             <LeafIcon className="h-8 w-8 text-brand-green flex-shrink-0" />
             {!isCollapsed && <h1 className="ml-3 text-2xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">BandoXanh</h1>}
           </div>
-          {!isCollapsed && (
-            <button 
-              onClick={() => setCollapsed(true)} 
-              className="flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Thu gọn sidebar"
-            >
-              <ChevronDoubleLeftIcon className="w-6 h-6" />
-            </button>
-          )}
         </div>
 
         {/* Navigation */}
@@ -104,18 +95,20 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
           <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} />
         </nav>
 
-        {/* Footer with UserButton and Expand/Collapse Toggle */}
+        {/* Footer with Toggle and UserButton */}
         <div className={`p-3 border-t dark:border-gray-700 space-y-2 ${isCollapsed ? '' : 'pb-4'}`}>
-          {/* Expand button for collapsed sidebar - moved to bottom */}
-          {isCollapsed && (
-            <button 
-              onClick={() => setCollapsed(false)} 
-              className="w-full flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors mb-2"
-              aria-label="Mở rộng sidebar"
-            >
-              <ChevronDoubleRightIcon className="w-6 h-6" />
-            </button>
-          )}
+          {/* Toggle button - always visible at bottom */}
+          <button 
+            onClick={() => setCollapsed(!isCollapsed)} 
+            className="w-full flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
+          >
+            {isCollapsed ? (
+              <ChevronRightIcon className="w-6 h-6" />
+            ) : (
+              <ChevronLeftIcon className="w-6 h-6" />
+            )}
+          </button>
           <UserButton isCollapsed={isCollapsed} />
         </div>
       </aside>
@@ -146,14 +139,6 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
                   <div className="pb-2">
                     <UserButton isCollapsed={false} showActionsInline={true} />
                   </div>
-                  {/* Theme Toggle */}
-                  <button 
-                    onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }}
-                    className="w-full flex items-center px-6 py-4 rounded-lg text-md font-medium text-gray-700 dark:text-gray-300 hover:bg-brand-green-light dark:hover:bg-gray-700"
-                  >
-                    {theme === 'light' ? <MoonIcon className="w-6 h-6" /> : <SunIcon className="w-6 h-6" />}
-                    <span className="ml-4">{theme === 'light' ? 'Giao diện Tối' : 'Giao diện Sáng'}</span>
-                  </button>
                 </div>
             </nav>
           </div>
