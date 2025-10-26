@@ -395,10 +395,10 @@ export default function CommunityPage() {
         setCollapsed={setSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
-        <main className="container mx-auto px-4 sm:px-6 py-6 md:py-8 max-w-2xl">
+        <main className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8 max-w-2xl">
           {/* Create Post Section */}
-          <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-5 mb-6 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Tạo bài viết</h2>
+          <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 sm:p-5 mb-4 sm:mb-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">Tạo bài viết</h2>
 
             {/* Post Input */}
             <div className="space-y-3">
@@ -406,21 +406,21 @@ export default function CommunityPage() {
                 value={newPostContent}
                 onChange={(e) => setNewPostContent(e.target.value)}
                 placeholder="Chia sẻ suy nghĩ của bạn về bảo vệ môi trường..."
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-darker text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none transition-all"
+                className="w-full p-2.5 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-darker text-sm sm:text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none transition-all break-words"
                 rows={3}
               />
 
               {/* Image Previews */}
               {previewUrls.length > 0 && (
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {previewUrls.map((url, index) => (
                     <div key={index} className="relative group">
-                      <img src={url} alt={`Preview ${index}`} className="w-full h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600" />
+                      <img src={url} alt={`Preview ${index}`} className="w-full h-16 sm:h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600" />
                       <button
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-all"
                       >
-                        <XIcon className="w-3.5 h-3.5" />
+                        <XIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       </button>
                     </div>
                   ))}
@@ -428,13 +428,13 @@ export default function CommunityPage() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-3">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-0 border-t border-gray-200 dark:border-gray-700 pt-3">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 text-brand-green font-medium px-3 py-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all"
+                  className="flex items-center justify-center gap-2 text-brand-green font-medium px-3 py-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all text-sm"
                 >
-                  <ImageIcon className="w-5 h-5" />
-                  <span className="text-sm">Thêm ảnh</span>
+                  <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm">Thêm ảnh</span>
                 </button>
 
                 <input
@@ -449,7 +449,7 @@ export default function CommunityPage() {
                 <button
                   onClick={handleCreatePost}
                   disabled={uploading || (newPostContent.trim() === '' && previewUrls.length === 0)}
-                  className="bg-brand-green text-white font-medium py-2 px-5 rounded-lg hover:bg-emerald-600 transition-all disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed shadow-sm hover:shadow-md text-sm"
+                  className="w-full sm:w-auto bg-brand-green text-white font-medium py-2 px-4 sm:px-5 rounded-lg hover:bg-emerald-600 transition-all disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed shadow-sm hover:shadow-md text-xs sm:text-sm"
                 >
                   {uploading ? 'Đang đăng...' : 'Đăng bài'}
                 </button>
@@ -458,7 +458,7 @@ export default function CommunityPage() {
           </div>
 
           {/* Posts Feed */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {loading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-brand-green mx-auto mb-3"></div>
@@ -474,9 +474,9 @@ export default function CommunityPage() {
               </div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-5 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <div key={post.id} className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 sm:p-5 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                   {/* Post Header */}
-                  <div className="flex items-start gap-3 mb-3">
+                  <div className="flex items-start gap-2 sm:gap-3 mb-3">
                     <button
                       onClick={() => router.push(`/profile/${post.author?.id}`)}
                       className="flex-shrink-0 hover:opacity-80 transition-opacity"
@@ -484,13 +484,13 @@ export default function CommunityPage() {
                       <img
                         src={post.author?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.author?.name || 'User')}
                         alt={post.author?.name}
-                        className="w-10 h-10 rounded-full object-cover border-2 border-gray-100 dark:border-gray-700"
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-gray-100 dark:border-gray-700"
                       />
                     </button>
                     <div className="flex-1 min-w-0">
                       <button
                         onClick={() => router.push(`/profile/${post.author?.id}`)}
-                        className="font-semibold text-gray-900 dark:text-white hover:text-brand-green transition-colors text-sm"
+                        className="font-semibold text-gray-900 dark:text-white hover:text-brand-green transition-colors text-xs sm:text-sm truncate block"
                       >
                         {post.author?.name}
                       </button>
@@ -546,26 +546,26 @@ export default function CommunityPage() {
                       <textarea
                         value={editPostContent}
                         onChange={(e) => setEditPostContent(e.target.value)}
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-gray-900 dark:text-white focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none"
+                        className="w-full p-2.5 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-sm sm:text-base text-gray-900 dark:text-white focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none break-words"
                         rows={4}
                       />
                       <div className="flex gap-2 justify-end">
                         <button
                           onClick={() => setEditingPostId(null)}
-                          className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                          className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                         >
                           Huỷ
                         </button>
                         <button
                           onClick={() => handleSaveEditPost(post.id)}
-                          className="px-4 py-2 bg-brand-green text-white rounded hover:bg-brand-green-dark transition-colors"
+                          className="px-3 sm:px-4 py-2 text-xs sm:text-sm bg-brand-green text-white rounded hover:bg-brand-green-dark transition-colors"
                         >
                           Lưu
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-900 dark:text-gray-100 mb-4 break-words whitespace-pre-wrap">{post.content}</p>
+                    <p className="text-sm sm:text-base text-gray-900 dark:text-gray-100 mb-4 break-words whitespace-pre-wrap">{post.content}</p>
                   )}
 
                   {/* Post Images */}
@@ -575,21 +575,21 @@ export default function CommunityPage() {
                   />
 
                   {/* Post Footer */}
-                  <div className="flex items-center gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-4 sm:gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <button 
                       onClick={() => handleLike(post.id)}
-                      className={`flex items-center gap-2 transition-colors ${
+                      className={`flex items-center gap-1.5 sm:gap-2 transition-colors ${
                         likedPosts.has(post.id) || (parseLikes(post.likes) ?? 0) > 0
                           ? 'text-red-500 hover:text-red-600' 
                           : 'hover:text-brand-green'
                       }`}
                     >
-                      <HeartIcon className={`w-5 h-5 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
-                      <span className="text-sm">{parseLikes(post.likes) ?? 0}</span>
+                      <HeartIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
+                      <span className="text-xs sm:text-sm">{parseLikes(post.likes) ?? 0}</span>
                     </button>
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                      <ChatBubbleIcon className="w-5 h-5" />
-                      <span className="text-sm">{post.comments?.length || 0}</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400">
+                      <ChatBubbleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
                     </div>
                   </div>
 
@@ -700,13 +700,13 @@ export default function CommunityPage() {
 
                   {/* Comment Input - Always Visible */}
                   <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 sm:gap-3">
                       <img
                         src={user?.imageUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.fullName || 'User')}
                         alt="Your avatar"
-                        className="w-8 h-8 rounded-full object-cover"
+                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
                       />
-                      <div className="flex-1 flex gap-2">
+                      <div className="flex-1 flex flex-col sm:flex-row gap-2">
                         <input
                           type="text"
                           value={commentingPostId === post.id ? commentText : ''}
@@ -721,12 +721,12 @@ export default function CommunityPage() {
                             }
                           }}
                           placeholder="Viết bình luận..."
-                          className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 text-sm"
+                          className="flex-1 px-2.5 sm:px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
                         />
                         <button
                           onClick={() => handleAddComment(post.id)}
                           disabled={commentingPostId !== post.id || !commentText.trim()}
-                          className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-semibold"
+                          className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-xs sm:text-sm font-semibold"
                         >
                           Gửi
                         </button>

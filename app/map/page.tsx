@@ -244,6 +244,7 @@ function MapPage() {
   const [focusedItem, setFocusedItem] = useState<ItemWithDistance | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'stations' | 'events'>('all');
   const [distanceFilter, setDistanceFilter] = useState<number>(MAX_DISTANCE);
+  const [showSearchResults, setShowSearchResults] = useState(false); // New state for mobile
   
   // Use Zustand store for stations and events
   const { stations, events, loading, fetchStations, fetchEvents } = useMapStore();
@@ -305,21 +306,72 @@ function MapPage() {
 
   const handleItemClick = (item: ItemWithDistance) => {
     setFocusedItem(item);
-    if (window.innerWidth < 768) {
-      setIsPanelOpen(false);
-    }
   };
 
   return (
-    <div className="flex h-[calc(100vh-5rem)] md:h-screen w-full">
-        <div className={`absolute md:relative top-0 left-0 h-full flex-shrink-0 bg-white dark:bg-brand-gray-dark shadow-lg z-20 transition-all duration-300 ${isPanelOpen ? 'w-full md:w-[400px]' : 'w-0'}`}>
+    <div className="flex flex-col md:flex-row h-[calc(100vh-5rem)] md:h-screen w-full">
+        {/* Mobile: Search bar overlay at top (below header) */}
+        <div className="md:hidden fixed top-20 left-0 right-0 z-30 bg-white dark:bg-brand-gray-dark shadow-lg border-b border-gray-200 dark:border-gray-700">
+            <div className="p-3">
+                <input
+                    type="text"
+                    placeholder="Tìm theo tên, địa chỉ..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onFocus={() => setShowSearchResults(true)}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-dark focus:outline-none focus:ring-2 focus:ring-brand-green"
+                />
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                    <button onClick={() => setViewMode('all')} className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-colors ${viewMode === 'all' ? 'bg-brand-green text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}>Tất cả</button>
+                    <button onClick={() => setViewMode('stations')} className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-colors ${viewMode === 'stations' ? 'bg-brand-green text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}>Trạm</button>
+                    <button onClick={() => setViewMode('events')} className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-colors ${viewMode === 'events' ? 'bg-purple-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}>Sự kiện</button>
+                </div>
+                
+                {/* Mobile search results - only show when focused and has search term */}
+                {showSearchResults && searchTerm.trim() !== '' && (
+                    <div className="mt-2 max-h-[200px] overflow-y-auto bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="p-2">
+                            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">{filteredAndSortedItems.length} kết quả</p>
+                            {loading ? (
+                                <div className="flex items-center justify-center py-4">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-green"></div>
+                                </div>
+                            ) : filteredAndSortedItems.length > 0 ? (
+                                <div className="space-y-2">
+                                    {filteredAndSortedItems.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            onClick={() => {
+                                              handleItemClick(item);
+                                              setShowSearchResults(false);
+                                            }}
+                                            className="p-2 bg-white dark:bg-brand-gray-dark rounded border border-gray-200 dark:border-gray-600 hover:border-brand-green cursor-pointer"
+                                        >
+                                            <h4 className={`text-sm font-semibold ${isStation(item) ? 'text-brand-green-dark dark:text-brand-green-light' : 'text-purple-700 dark:text-purple-400'}`}>
+                                                {item.name}
+                                            </h4>
+                                            <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{item.address}</p>
+                                            {item.distance !== null && (
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">~{item.distance.toFixed(1)} km</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-4">Không tìm thấy kết quả</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+
+        {/* Desktop: Side panel */}
+        <div className={`hidden md:block md:relative top-0 left-0 h-full flex-shrink-0 bg-white dark:bg-brand-gray-dark shadow-lg z-20 transition-all duration-300 ${isPanelOpen ? 'md:w-[400px]' : 'w-0'}`}>
             <div className="h-full flex flex-col overflow-hidden">
                 <div className="p-3 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Tìm kiếm</h2>
-                        <button onClick={() => setIsPanelOpen(!isPanelOpen)} className="md:hidden p-1 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                            <ChevronDoubleLeftIcon className="w-5 h-5" />
-                        </button>
                     </div>
                     <div className="mt-3">
                         <input
@@ -394,7 +446,6 @@ function MapPage() {
                 </div>
             </div>
         </div>
-      
         <div className="relative z-20 hidden md:block">
             <button
                 onClick={() => setIsPanelOpen(!isPanelOpen)}
@@ -405,7 +456,11 @@ function MapPage() {
             </button>
         </div>
 
-        <div className="flex-grow h-full z-10">
+        {/* Map container - full screen on mobile, flexible on desktop */}
+        <div 
+            className="flex-grow h-full z-10 pt-[132px] md:pt-0"
+            onClick={() => setShowSearchResults(false)}
+        >
             <MapComponent
                 items={filteredAndSortedItems}
                 hoveredItemId={hoveredItemId}

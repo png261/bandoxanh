@@ -2,11 +2,20 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { LeafIcon, RecycleIcon, CommunityIcon, ArrowRightIcon } from '@/components/Icons';
 
 export default function LandingPage() {
   const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Redirect signed-in users to map page
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.push('/map');
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +25,15 @@ export default function LandingPage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Show loading or nothing while checking auth status
+  if (!isLoaded || isSignedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-brand-gray-light dark:bg-black">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-green-light via-white to-blue-50">

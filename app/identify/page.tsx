@@ -78,17 +78,17 @@ function IdentifyPageContent() {
   const suitableStation = analysis ? findSuitableStation(analysis.wasteType) : null;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-6 md:p-8 rounded-lg shadow-sm">
-        <div className="grid md:grid-cols-2 gap-6">
+    <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
+      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-4 sm:p-6 md:p-8 rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div className="flex flex-col">
-            <div className="w-full h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
+            <div className="w-full h-60 sm:h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
               {previewUrl ? (
                 <img src={previewUrl} alt="Preview" className="max-h-full max-w-full object-contain rounded-md" />
               ) : (
-                <div className="text-center text-gray-500 dark:text-gray-400 p-4">
-                  <UploadIcon className="mx-auto h-10 w-10 text-gray-400" />
-                  <p className="mt-2 font-semibold text-sm">Xem trước hình ảnh</p>
+                <div className="text-center text-gray-500 dark:text-gray-400 p-3 sm:p-4">
+                  <UploadIcon className="mx-auto h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+                  <p className="mt-2 font-semibold text-xs sm:text-sm">Xem trước hình ảnh</p>
                   <p className="text-xs">Tải ảnh lên hoặc chụp ảnh mới để bắt đầu</p>
                 </div>
               )}
@@ -96,7 +96,7 @@ function IdentifyPageContent() {
             <button
               onClick={handleIdentifyClick}
               disabled={!image || isLoading}
-              className="mt-3 w-full bg-brand-green text-white font-semibold py-2.5 px-5 rounded-lg hover:bg-brand-green-dark hover:shadow-md transition-all disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+              className="mt-3 w-full bg-brand-green text-white font-semibold py-2.5 px-4 sm:px-5 rounded-lg hover:bg-brand-green-dark hover:shadow-md transition-all disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs sm:text-sm"
             >
               {isLoading ? (
                 <>
@@ -104,29 +104,32 @@ function IdentifyPageContent() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Đang phân tích...
+                  <span className="text-xs sm:text-sm">Đang phân tích...</span>
                 </>
               ) : (
                 <>
-                  <RecycleIcon className="h-5 w-5" /> Phân loại ngay
+                  <RecycleIcon className="h-4 w-4 sm:h-5 sm:w-5" /> 
+                  <span className="text-xs sm:text-sm">Phân loại ngay</span>
                 </>
               )}
             </button>
           </div>
 
           <div className="flex flex-col">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-5 px-3 rounded-lg hover:border-brand-green dark:hover:border-brand-green hover:shadow-sm transition-all h-full text-sm"
+                className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-4 sm:py-5 px-2 sm:px-3 rounded-lg hover:border-brand-green dark:hover:border-brand-green hover:shadow-sm transition-all h-full text-xs sm:text-sm"
               >
-                <UploadIcon className="h-7 w-7 text-brand-green" /> Tải ảnh
+                <UploadIcon className="h-6 w-6 sm:h-7 sm:w-7 text-brand-green" /> 
+                <span>Tải ảnh</span>
               </button>
                <button
                  onClick={() => fileInputRef.current?.click()}
-                 className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-5 px-3 rounded-lg hover:border-brand-green dark:hover:border-brand-green hover:shadow-sm transition-all h-full text-sm"
+                 className="flex flex-col items-center justify-center gap-2 bg-gray-100 dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 font-semibold py-4 sm:py-5 px-2 sm:px-3 rounded-lg hover:border-brand-green dark:hover:border-brand-green hover:shadow-sm transition-all h-full text-xs sm:text-sm"
                >
-                <CameraIcon className="h-7 w-7 text-brand-green" /> Chụp ảnh
+                <CameraIcon className="h-6 w-6 sm:h-7 sm:w-7 text-brand-green" /> 
+                <span>Chụp ảnh</span>
                </button>
             </div>
 
@@ -140,20 +143,20 @@ function IdentifyPageContent() {
             />
             
             <div className="mt-3 flex-grow flex flex-col">
-              {error && <p className="text-center text-red-600 bg-red-100 dark:bg-red-900/30 p-3 rounded-md border border-red-200 dark:border-red-800 text-sm">{error}</p>}
+              {error && <p className="text-center text-red-600 bg-red-100 dark:bg-red-900/30 p-2 sm:p-3 rounded-md border border-red-200 dark:border-red-800 text-xs sm:text-sm break-words">{error}</p>}
               
               {analysis ? (
-                <div className="p-4 bg-brand-green-light/30 dark:bg-brand-green/10 border border-brand-green/30 rounded-lg flex-grow">
-                  <h3 className="font-bold text-base text-brand-green-dark dark:text-brand-green-light">Kết quả phân tích:</h3>
-                  <p className="mt-2 text-sm"><strong>Loại rác:</strong> <span className="font-semibold text-brand-green">{analysis.wasteType}</span></p>
-                  <p className="mt-2 text-sm"><strong>Gợi ý xử lý:</strong> {analysis.recyclingSuggestion}</p>
+                <div className="p-3 sm:p-4 bg-brand-green-light/30 dark:bg-brand-green/10 border border-brand-green/30 rounded-lg flex-grow">
+                  <h3 className="font-bold text-sm sm:text-base text-brand-green-dark dark:text-brand-green-light">Kết quả phân tích:</h3>
+                  <p className="mt-2 text-xs sm:text-sm break-words"><strong>Loại rác:</strong> <span className="font-semibold text-brand-green">{analysis.wasteType}</span></p>
+                  <p className="mt-2 text-xs sm:text-sm break-words"><strong>Gợi ý xử lý:</strong> {analysis.recyclingSuggestion}</p>
                   {suitableStation && (
                     <div className="mt-3 pt-3 border-t border-brand-green/30">
-                      <h4 className="font-bold text-sm text-brand-green-dark dark:text-brand-green-light">Trạm thu gom phù hợp:</h4>
-                      <div className="mt-2 p-2.5 bg-white dark:bg-gray-700/50 rounded-md border dark:border-gray-600">
-                        <p className="font-semibold text-sm">{suitableStation.name}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 flex items-start mt-1">
-                          <MapPinIcon className="w-3.5 h-3.5 mr-1 mt-0.5 flex-shrink-0" />
+                      <h4 className="font-bold text-xs sm:text-sm text-brand-green-dark dark:text-brand-green-light">Trạm thu gom phù hợp:</h4>
+                      <div className="mt-2 p-2 sm:p-2.5 bg-white dark:bg-gray-700/50 rounded-md border dark:border-gray-600">
+                        <p className="font-semibold text-xs sm:text-sm break-words">{suitableStation.name}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 flex items-start mt-1 break-words">
+                          <MapPinIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 mt-0.5 flex-shrink-0" />
                           {suitableStation.address}
                         </p>
                       </div>
@@ -161,7 +164,7 @@ function IdentifyPageContent() {
                   )}
                 </div>
               ) : !isLoading && !error && (
-                <div className="flex-grow flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-gray-500 text-sm">
+                <div className="flex-grow flex items-center justify-center p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-gray-500 text-xs sm:text-sm">
                   <p>Kết quả phân tích sẽ hiển thị tại đây.</p>
                 </div>
               )}
@@ -170,16 +173,16 @@ function IdentifyPageContent() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-6 md:p-8 rounded-lg shadow-sm">
-        <h2 className="text-2xl font-bold text-brand-green-dark dark:text-brand-green-light mb-5 text-center">
+      <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 p-4 sm:p-6 md:p-8 rounded-lg shadow-sm">
+        <h2 className="text-xl sm:text-2xl font-bold text-brand-green-dark dark:text-brand-green-light mb-4 sm:mb-5 text-center break-words">
             Hướng dẫn phân loại rác
         </h2>
 
-        <div className="mb-6 border-b dark:border-gray-700 pb-6">
-            <h3 className="text-lg font-semibold text-brand-gray-dark dark:text-gray-200 mb-2.5">
+        <div className="mb-5 sm:mb-6 border-b dark:border-gray-700 pb-5 sm:pb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-brand-gray-dark dark:text-gray-200 mb-2 sm:mb-2.5 break-words">
                 Cách sử dụng công cụ:
             </h3>
-            <ol className="list-decimal list-inside space-y-1.5 text-sm text-brand-gray-DEFAULT dark:text-gray-400">
+            <ol className="list-decimal list-inside space-y-1.5 text-xs sm:text-sm text-brand-gray-DEFAULT dark:text-gray-400 break-words">
                 <li>Nhấn nút <strong>"Tải ảnh"</strong> hoặc <strong>"Chụp ảnh"</strong> để chọn hình ảnh rác thải bạn muốn phân loại.</li>
                 <li>Hình ảnh sẽ được hiển thị ở khung xem trước.</li>
                 <li>Nhấn nút <strong>"Phân loại ngay"</strong> để hệ thống AI của chúng tôi bắt đầu phân tích.</li>
@@ -188,16 +191,16 @@ function IdentifyPageContent() {
         </div>
 
         <div>
-            <h3 className="text-lg font-semibold text-brand-gray-dark dark:text-gray-200 mb-3">
+            <h3 className="text-base sm:text-lg font-semibold text-brand-gray-dark dark:text-gray-200 mb-3 break-words">
                 Ví dụ về các loại rác phổ biến:
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {wasteExamples.map((category) => (
-                  <div key={category.type} className="bg-gray-50 dark:bg-brand-gray-dark p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <h4 className="font-bold text-sm text-brand-green-dark dark:text-brand-green-light">
+                  <div key={category.type} className="bg-gray-50 dark:bg-brand-gray-dark p-2.5 sm:p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <h4 className="font-bold text-xs sm:text-sm text-brand-green-dark dark:text-brand-green-light break-words">
                       {category.emoji} {category.type}
                     </h4>
-                    <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1">{category.items}</p>
+                    <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1 break-words">{category.items}</p>
                   </div>
                 ))}
             </div>

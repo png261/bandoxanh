@@ -19,12 +19,12 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
   <div 
     onClick={onClick}
     className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex ${isFeatured ? 'flex-col md:flex-row' : 'flex-col'} hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 cursor-pointer h-full group`}>
-    <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-48 object-cover group-hover:brightness-105 transition-all`} />
-    <div className="p-5 flex flex-col justify-between flex-1">
+    <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all`} />
+    <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
       <div>
         <span className="px-2 py-0.5 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded">{article.category}</span>
-        <h3 className={`font-bold mt-2.5 text-brand-gray-dark dark:text-gray-100 ${isFeatured ? 'text-xl md:text-2xl' : 'text-lg'} line-clamp-2`}>{article.title}</h3>
-        <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-2 line-clamp-3">{article.excerpt}</p>
+        <h3 className={`font-bold mt-2 sm:mt-2.5 text-brand-gray-dark dark:text-gray-100 ${isFeatured ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg'} line-clamp-2 break-words`}>{article.title}</h3>
+        <p className="text-xs sm:text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-2 line-clamp-3 break-words">{article.excerpt}</p>
       </div>
       <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-3">{article.date}</p>
     </div>
@@ -33,18 +33,18 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
 
 const EventCard: React.FC<{ event: RecyclingEvent }> = ({ event }) => (
     <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex flex-col hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-md transition-all duration-200 cursor-pointer h-full group">
-      <img src={event.image} alt={event.name} className="w-full h-48 object-cover group-hover:brightness-105 transition-all" />
-      <div className="p-5 flex flex-col justify-between flex-1">
+      <img src={event.image} alt={event.name} className="w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all" />
+      <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
         <div>
             <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 text-xs font-semibold rounded">Sự kiện</span>
-            <h3 className="font-bold text-lg mt-2.5 text-purple-700 dark:text-purple-400 line-clamp-2">{event.name}</h3>
+            <h3 className="font-bold text-base sm:text-lg mt-2 sm:mt-2.5 text-purple-700 dark:text-purple-400 line-clamp-2 break-words">{event.name}</h3>
             <div className="mt-2 flex items-center text-xs text-gray-500 dark:text-gray-400">
               <CalendarIcon className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
               <span className="truncate">{event.date} - {event.time}</span>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">{event.description}</p>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 break-words">{event.description}</p>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">Tổ chức: {event.organizer}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 truncate">Tổ chức: {event.organizer}</p>
       </div>
     </div>
 );
@@ -79,10 +79,10 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       {featuredArticle && (
         <section>
-          <h2 className="text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-5">Tin nổi bật</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Tin nổi bật</h2>
           <NewsCard 
             article={featuredArticle} 
             isFeatured={true} 
@@ -93,8 +93,8 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
 
       {events.length > 0 && (
         <section>
-          <h2 className="text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-5">Sự kiện sắp diễn ra</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Sự kiện sắp diễn ra</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {events.map(event => (
                   <EventCard key={event.id} event={event as RecyclingEvent} />
               ))}
@@ -103,8 +103,8 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
       )}
 
       <section>
-        <h2 className="text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-5">Tin tức khác</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Tin tức khác</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {otherArticles.map(article => (
             <NewsCard 
               key={article.id} 
@@ -164,7 +164,7 @@ export default function News() {
         setCollapsed={setIsSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}> 
-        <main className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
+        <main className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
           <NewsPageComponent navigateTo={navigateTo} />
         </main>
         <Footer />

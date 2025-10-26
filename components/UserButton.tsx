@@ -9,9 +9,10 @@ import Image from 'next/image';
 
 interface UserButtonProps {
   isCollapsed?: boolean;
+  showActionsInline?: boolean; // New prop for mobile menu
 }
 
-export default function UserButtonComponent({ isCollapsed = false }: UserButtonProps) {
+export default function UserButtonComponent({ isCollapsed = false, showActionsInline = false }: UserButtonProps) {
   const { user: clerkUser } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
@@ -98,6 +99,60 @@ export default function UserButtonComponent({ isCollapsed = false }: UserButtonP
       </SignedOut>
 
       <SignedIn>
+        {showActionsInline ? (
+          // Mobile inline view - show user info and actions directly
+          <div className="w-full space-y-2">
+            {/* User Info */}
+            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              {clerkUser?.imageUrl ? (
+                <Image
+                  src={clerkUser.imageUrl}
+                  alt={clerkUser.fullName || 'User'}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-brand-green flex items-center justify-center">
+                  <UserCircleIcon className="w-6 h-6 text-white" />
+                </div>
+              )}
+              {clerkUser && (
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                    {clerkUser.fullName || clerkUser.username || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {clerkUser.primaryEmailAddress?.emailAddress}
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="space-y-1">
+              {currentUserId && (
+                <button
+                  onClick={handleProfileClick}
+                  className="w-full text-left px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white flex items-center gap-3"
+                >
+                  <UserCircleIcon className="w-5 h-5" />
+                  Xem hồ sơ
+                </button>
+              )}
+              <button
+                onClick={handleSignOut}
+                className="w-full text-left px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-3"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+        ) : (
+          // Desktop dropdown view
         <div className="relative w-full" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -182,6 +237,7 @@ export default function UserButtonComponent({ isCollapsed = false }: UserButtonP
             </div>
           )}
         </div>
+        )}
       </SignedIn>
     </div>
   );
