@@ -3,11 +3,11 @@
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { NEWS_ARTICLES, EVENTS } from '@/constants';
 import { CalendarIcon } from '@/components/Icons';
 import { useState, useEffect } from 'react';
 import { Theme, NewsArticle, RecyclingEvent } from '@/types';
 import React from 'react';
+import { useNewsStore } from '@/store/newsStore';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -54,8 +54,29 @@ interface NewsPageProps {
 }
 
 const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
-  const featuredArticle = NEWS_ARTICLES.find(a => a.isFeatured);
-  const otherArticles = NEWS_ARTICLES.filter(a => !a.isFeatured).sort((a, b) => new Date(b.date.split('/').reverse().join('-')).getTime() - new Date(a.date.split('/').reverse().join('-')).getTime());
+  // Use Zustand store for news and events
+  const { newsArticles, events, loading, fetchNews, fetchEvents } = useNewsStore();
+
+  useEffect(() => {
+    fetchNews();
+    fetchEvents();
+  }, [fetchNews, fetchEvents]);
+
+  const featuredArticle = newsArticles.find(a => a.isFeatured);
+  const otherArticles = newsArticles
+    .filter(a => !a.isFeatured)
+    .sort((a, b) => 
+      new Date(b.date.split('/').reverse().join('-')).getTime() - 
+      new Date(a.date.split('/').reverse().join('-')).getTime()
+    );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12">
@@ -70,12 +91,12 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
         </section>
       )}
 
-      {EVENTS.length > 0 && (
+      {events.length > 0 && (
         <section>
           <h2 className="text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-5">Sự kiện sắp diễn ra</h2>
           <div className="grid md:grid-cols-2 gap-6">
-              {EVENTS.map(event => (
-                  <EventCard key={event.id} event={event} />
+              {events.map(event => (
+                  <EventCard key={event.id} event={event as RecyclingEvent} />
               ))}
           </div>
         </section>
@@ -84,7 +105,7 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
       <section>
         <h2 className="text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-5">Tin tức khác</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {otherArticles.map((article) => (
+          {otherArticles.map(article => (
             <NewsCard 
               key={article.id} 
               article={article} 

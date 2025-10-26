@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { STATIONS, EVENTS } from '@/constants';
 import { Station, WasteType, RecyclingEvent } from '@/types';
 import { MapPinIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CalendarIcon, DirectionsIcon } from '@/components/Icons';
 import Header from '@/components/Header';
 import { Theme } from '@/types';
+import { useMapStore } from '@/store/mapStore';
 
 declare var L: any;
 
@@ -244,6 +244,15 @@ function MapPage() {
   const [focusedItem, setFocusedItem] = useState<ItemWithDistance | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'stations' | 'events'>('all');
   const [distanceFilter, setDistanceFilter] = useState<number>(MAX_DISTANCE);
+  
+  // Use Zustand store for stations and events
+  const { stations, events, loading, fetchStations, fetchEvents } = useMapStore();
+
+  // Fetch stations and events from API with cache
+  useEffect(() => {
+    fetchStations();
+    fetchEvents();
+  }, [fetchStations, fetchEvents]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -266,16 +275,16 @@ function MapPage() {
   };
 
   const itemsWithDistance = useMemo(() => {
-    const allItems = viewMode === 'stations' ? STATIONS : viewMode === 'events' ? EVENTS : [...STATIONS, ...EVENTS];
+    const allItems = viewMode === 'stations' ? stations : viewMode === 'events' ? events : [...stations, ...events];
     return allItems.map(item => ({
       ...item,
       distance: userLocation ? getDistance(userLocation.lat, userLocation.lng, item.lat, item.lng) : null,
     }));
-  }, [viewMode, userLocation]);
+  }, [viewMode, userLocation, stations, events]);
 
   const filteredAndSortedItems = useMemo(() => {
     return itemsWithDistance
-      .filter(item => {
+      .filter((item: ItemWithDistance) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                               item.address.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesDistance = item.distance === null || item.distance <= distanceFilter;
@@ -288,7 +297,7 @@ function MapPage() {
         
         return matchesSearch && matchesDistance;
       })
-      .sort((a, b) => {
+      .sort((a: ItemWithDistance, b: ItemWithDistance) => {
         if (a.distance === null || b.distance === null) return 0;
         return a.distance - b.distance;
       });
@@ -366,8 +375,12 @@ function MapPage() {
 
                 <div className="flex-grow overflow-y-auto p-3 space-y-2.5">
                     <p className="text-xs font-semibold text-gray-500 mb-1.5">{filteredAndSortedItems.length} kết quả</p>
-                    {filteredAndSortedItems.length > 0 ? (
-                        filteredAndSortedItems.map(item => (
+                    {loading ? (
+                        <div className="flex items-center justify-center py-12">
+                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-green"></div>
+                        </div>
+                    ) : filteredAndSortedItems.length > 0 ? (
+                        filteredAndSortedItems.map((item: ItemWithDistance) => (
                             <div key={item.id} onMouseEnter={() => setHoveredItemId(item.id)} onMouseLeave={() => setHoveredItemId(null)} onClick={() => handleItemClick(item)}>
                                 {isStation(item) ? <StationCard station={item} /> : <EventCard event={item} />}
                             </div>

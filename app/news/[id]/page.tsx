@@ -4,9 +4,8 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowLeftIcon } from '@/components/Icons';
-import { NEWS_ARTICLES } from '@/constants';
 import { useState, useEffect } from 'react';
-import { Theme } from '@/types';
+import { Theme, NewsArticle } from '@/types';
 
 interface NewsDetailPageProps {
   articleId: number;
@@ -14,7 +13,36 @@ interface NewsDetailPageProps {
 }
 
 const NewsDetailPageComponent: React.FC<NewsDetailPageProps> = ({ articleId, navigateTo }) => {
-  const article = NEWS_ARTICLES.find(a => a.id === articleId);
+  const [article, setArticle] = useState<NewsArticle | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/news');
+        if (res.ok) {
+          const articles = await res.json();
+          const found = articles.find((a: NewsArticle) => a.id === articleId);
+          setArticle(found || null);
+        }
+      } catch (error) {
+        console.error('Error fetching article:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchArticle();
+  }, [articleId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
