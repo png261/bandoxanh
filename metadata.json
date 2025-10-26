@@ -1,0 +1,8 @@
+{
+  "name": "BandoXanh",
+  "description": "BandoXanh là một ứng dụng web giúp người dùng tìm kiếm, đánh dấu và chia sẻ các trạm thu gom rác, sử dụng AI để nhận diện và phân loại rác, và xây dựng một cộng đồng bảo vệ môi trường.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
