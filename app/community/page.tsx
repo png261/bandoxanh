@@ -8,7 +8,6 @@ import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons'
 import { useState, useEffect, useRef } from 'react';
 import { Theme } from '@/types';
 import React from 'react';
-import { uploadImages } from '@/lib/supabase';
 
 interface DBPost {
   id: string;
@@ -139,9 +138,33 @@ export default function CommunityPage() {
       setUploading(true);
       let imageUrls: string[] = [];
 
-      // Upload images to Supabase if any
+      // Upload images to Supabase via API if any
       if (postImages.length > 0) {
-        imageUrls = await uploadImages(postImages);
+        try {
+          for (const file of postImages) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const uploadResponse = await fetch('/api/upload', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+              const errorData = await uploadResponse.json();
+              throw new Error(errorData.error || 'Upload failed');
+            }
+
+            const uploadData = await uploadResponse.json();
+            if (uploadData.url) {
+              imageUrls.push(uploadData.url);
+            }
+          }
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+          // Continue with post creation even if images fail to upload
+          alert('Cảnh báo: Không thể tải ảnh lên. Bài viết sẽ được đăng mà không có ảnh.');
+        }
       }
 
       // Create post in database
