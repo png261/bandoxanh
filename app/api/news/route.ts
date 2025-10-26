@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { checkAdmin } from '@/lib/admin';
 
 export async function GET() {
   try {
@@ -17,10 +18,22 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // Check admin permission
+  const adminCheck = await checkAdmin(request as any);
+  if (adminCheck) return adminCheck;
+
   try {
     const body = await request.json();
     const article = await prisma.newsArticle.create({
-      data: body,
+      data: {
+        title: body.title,
+        category: body.category,
+        excerpt: body.excerpt,
+        imageUrl: body.imageUrl,
+        date: body.date,
+        isFeatured: body.isFeatured || false,
+        content: body.content,
+      },
     });
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
@@ -31,3 +44,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

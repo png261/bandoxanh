@@ -21,6 +21,16 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<number | null>(null);
   const [editing, setEditing] = useState<NewsArticle | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [newArticle, setNewArticle] = useState<Omit<NewsArticle, 'id'>>({
+    title: '',
+    category: 'Tin tức',
+    excerpt: '',
+    imageUrl: '',
+    date: new Date().toISOString().split('T')[0],
+    isFeatured: false,
+    content: '',
+  });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -46,7 +56,7 @@ export default function NewsPage() {
 
     setDeleting(id);
     try {
-      const res = await fetch(`/api/admin/news/${id}`, {
+      const res = await fetch(`/api/news/${id}`, {
         method: 'DELETE',
       });
 
@@ -72,7 +82,7 @@ export default function NewsPage() {
 
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/news/${editing.id}`, {
+      const res = await fetch(`/api/news/${editing.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -101,6 +111,40 @@ export default function NewsPage() {
     }
   }
 
+  async function handleCreate() {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newArticle),
+      });
+
+      if (res.ok) {
+        const created = await res.json();
+        setArticles([created, ...articles]);
+        setCreating(false);
+        setNewArticle({
+          title: '',
+          category: 'Tin tức',
+          excerpt: '',
+          imageUrl: '',
+          date: new Date().toISOString().split('T')[0],
+          isFeatured: false,
+          content: '',
+        });
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to create article');
+      }
+    } catch (error) {
+      console.error('Error creating article:', error);
+      alert('Error creating article');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -120,12 +164,20 @@ export default function NewsPage() {
             Manage all news and blog posts
           </p>
         </div>
-        <Link
-          href="/admin"
-          className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-        >
-          ← Back to Dashboard
-        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setCreating(true)}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+          >
+            + Create Article
+          </button>
+          <Link
+            href="/admin"
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+          >
+            ← Back to Dashboard
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -307,6 +359,122 @@ export default function NewsPage() {
                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Modal */}
+      {creating && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Create News Article
+              </h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={newArticle.title}
+                    onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Category
+                    </label>
+                    <select
+                      value={newArticle.category}
+                      onChange={(e) => setNewArticle({ ...newArticle, category: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="Tin tức">Tin tức</option>
+                      <option value="Hướng dẫn">Hướng dẫn</option>
+                      <option value="Sự kiện">Sự kiện</option>
+                      <option value="Môi trường">Môi trường</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      value={newArticle.date}
+                      onChange={(e) => setNewArticle({ ...newArticle, date: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Excerpt
+                  </label>
+                  <textarea
+                    value={newArticle.excerpt}
+                    onChange={(e) => setNewArticle({ ...newArticle, excerpt: e.target.value })}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Content
+                  </label>
+                  <textarea
+                    value={newArticle.content}
+                    onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
+                    rows={6}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
+                  />
+                </div>
+
+                <ImageUpload
+                  currentUrl={newArticle.imageUrl}
+                  onUploadSuccess={(url) => setNewArticle({ ...newArticle, imageUrl: url })}
+                  label="Article Image"
+                />
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="featured-new"
+                    checked={newArticle.isFeatured}
+                    onChange={(e) => setNewArticle({ ...newArticle, isFeatured: e.target.checked })}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="featured-new" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                    Featured Article
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  onClick={() => setCreating(false)}
+                  disabled={saving}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreate}
+                  disabled={saving}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium disabled:opacity-50"
+                >
+                  {saving ? 'Creating...' : 'Create Article'}
                 </button>
               </div>
             </div>

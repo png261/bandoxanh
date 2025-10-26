@@ -91,19 +91,9 @@ export const useNewsStore = create<NewsState>((set, get) => ({
       const res = await fetch('/api/news');
       if (res.ok) {
         const data = await res.json();
-        // Transform API data to match frontend format
-        const transformedArticles = data.map((article: any) => ({
-          id: article.id,
-          title: article.title,
-          category: article.category,
-          excerpt: article.excerpt,
-          imageUrl: article.image, // API uses 'image', frontend uses 'imageUrl'
-          date: article.date,
-          isFeatured: article.isFeatured,
-          content: article.content,
-        }));
-        setNewsArticles(transformedArticles);
-        console.log('Fetched fresh news data');
+        // API already returns data in correct format
+        setNewsArticles(data);
+        console.log('Fetched fresh news data from database');
       }
     } catch (error) {
       console.error('Error fetching news:', error);
