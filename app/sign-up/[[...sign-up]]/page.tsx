@@ -73,7 +73,7 @@ export default function SignUpPage() {
                 logoPlacement: 'none',
               },
             }}
-            redirectUrl="/home"
+            redirectUrl="/map"
           />
         </div>
 
