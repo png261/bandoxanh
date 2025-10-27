@@ -591,7 +591,7 @@ export default function CommunityPage() {
                   {/* Post Header */}
                   <div className="flex items-start gap-2 sm:gap-3 mb-3">
                     <button
-                      onClick={() => router.push(`/profile/${post.author?.id}`)}
+                      onClick={() => requireAuth(() => router.push(`/profile/${post.author?.id}`), 'xem thông tin người dùng')}
                       className="flex-shrink-0 hover:opacity-80 transition-opacity"
                     >
                       <img
@@ -602,7 +602,7 @@ export default function CommunityPage() {
                     </button>
                     <div className="flex-1 min-w-0">
                       <button
-                        onClick={() => router.push(`/profile/${post.author?.id}`)}
+                        onClick={() => requireAuth(() => router.push(`/profile/${post.author?.id}`), 'xem thông tin người dùng')}
                         className="font-semibold text-gray-900 dark:text-white hover:text-brand-green transition-colors text-xs sm:text-sm truncate block"
                       >
                         {post.author?.name}
@@ -734,7 +734,7 @@ export default function CommunityPage() {
                       {post.comments.slice(0, 3).map((comment) => (
                         <div key={comment.id} className="flex gap-3">
                           <button
-                            onClick={() => router.push(`/profile/${comment.author?.id}`)}
+                            onClick={() => requireAuth(() => router.push(`/profile/${comment.author?.id}`), 'xem thông tin người dùng')}
                             className="flex-shrink-0 hover:opacity-75 transition-opacity"
                           >
                             <img
@@ -771,7 +771,7 @@ export default function CommunityPage() {
                               <>
                                 <div className="bg-gray-100 dark:bg-brand-gray-darker rounded-lg p-2 relative">
                                   <button
-                                    onClick={() => router.push(`/profile/${comment.author?.id}`)}
+                                    onClick={() => requireAuth(() => router.push(`/profile/${comment.author?.id}`), 'xem thông tin người dùng')}
                                     className="text-sm font-semibold text-gray-900 dark:text-white hover:text-brand-green dark:hover:text-brand-green-light transition-colors"
                                   >
                                     {comment.author?.name}

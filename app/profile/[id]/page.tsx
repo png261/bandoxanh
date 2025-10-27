@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
@@ -11,6 +11,7 @@ import BadgeDisplay from '@/components/BadgeDisplay';
 import BadgeScanner from '@/components/BadgeScanner';
 import FollowButton from '@/components/FollowButton';
 import FollowersModal from '@/components/FollowersModal';
+import SignInPrompt from '@/components/SignInPrompt';
 import { HeartIcon, ChatBubbleIcon, ArrowLeftIcon } from '@/components/Icons';
 import { useProfile } from '@/hooks/useProfile';
 import { useBadges } from '@/hooks/useBadges';
@@ -21,10 +22,26 @@ import { useSidebar } from '@/hooks/useSidebar';
 import { formatDate, parseImages, getAvatarUrl } from '@/lib/utils/helpers';
 
 export default function ProfilePage() {
-  const { user: clerkUser } = useUser();
+  const { user: clerkUser, isLoaded } = useUser();
   const params = useParams();
   const router = useRouter();
   const userId = params?.id as string;
+
+  // Local state
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [showBadgeScanner, setShowBadgeScanner] = useState(false);
+  const [imageViewer, setImageViewer] = useState<{ images: string[]; index: number } | null>(null);
+  const [followersModal, setFollowersModal] = useState<{ isOpen: boolean; type: 'followers' | 'following' }>({
+    isOpen: false,
+    type: 'followers',
+  });
+
+  // Check if user is signed in
+  useEffect(() => {
+    if (isLoaded && !clerkUser) {
+      setShowSignInPrompt(true);
+    }
+  }, [isLoaded, clerkUser]);
 
   // Custom hooks
   const { profile, loading: profileLoading } = useProfile(userId);
@@ -34,14 +51,6 @@ export default function ProfilePage() {
   const { theme, toggleTheme } = useTheme();
   const { isCollapsed: isSidebarCollapsed, setCollapsed: setIsSidebarCollapsed } = useSidebar();
 
-  // Local state
-  const [showBadgeScanner, setShowBadgeScanner] = useState(false);
-  const [imageViewer, setImageViewer] = useState<{ images: string[]; index: number } | null>(null);
-  const [followersModal, setFollowersModal] = useState<{ isOpen: boolean; type: 'followers' | 'following' }>({
-    isOpen: false,
-    type: 'followers',
-  });
-
   const isCurrentUser = clerkUser?.id === profile?.clerkId;
   const loading = profileLoading;
 
@@ -50,6 +59,56 @@ export default function ProfilePage() {
     setShowBadgeScanner(false);
     alert(`🎉 Bạn đã nhận được huy hiệu "${badge.name}"!`);
   };
+
+  // Show sign-in required message if not authenticated
+  if (isLoaded && !clerkUser) {
+    return (
+      <div className="bg-brand-gray-light dark:bg-black min-h-screen">
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          isCollapsed={isSidebarCollapsed}
+          setCollapsed={setIsSidebarCollapsed}
+        />
+        <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+          <div className="flex justify-center items-center min-h-[60vh] px-4">
+            <div className="text-center max-w-md">
+              <div className="w-20 h-20 bg-brand-green-light rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-10 h-10 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                Yêu cầu đăng nhập
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Bạn cần đăng nhập để xem thông tin chi tiết của người dùng và tương tác với cộng đồng.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={() => router.push('/sign-in')}
+                  className="px-6 py-3 bg-brand-green text-white font-semibold rounded-lg hover:bg-brand-green-dark transition-colors"
+                >
+                  Đăng nhập
+                </button>
+                <button
+                  onClick={() => router.push('/sign-up')}
+                  className="px-6 py-3 bg-white text-brand-green border-2 border-brand-green font-semibold rounded-lg hover:bg-brand-green-light transition-colors dark:bg-gray-800 dark:text-white"
+                >
+                  Tạo tài khoản
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <SignInPrompt
+          isOpen={showSignInPrompt}
+          onClose={() => setShowSignInPrompt(false)}
+          feature="xem thông tin người dùng"
+        />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -256,6 +315,13 @@ export default function ProfilePage() {
           onClose={() => setImageViewer(null)}
         />
       )}
+
+      {/* Sign In Prompt */}
+      <SignInPrompt
+        isOpen={showSignInPrompt}
+        onClose={() => setShowSignInPrompt(false)}
+        feature="xem thông tin người dùng"
+      />
     </div>
   );
 }
