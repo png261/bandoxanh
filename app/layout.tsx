@@ -4,10 +4,62 @@ import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'BandoXanh',
-  description: 'BandoXanh - Recycling Community Platform',
+  title: {
+    default: 'BandoXanh - Nền tảng Tái chế & Bảo vệ Môi trường',
+    template: '%s | BandoXanh'
+  },
+  description: 'BandoXanh - Nền tảng cộng đồng tái chế và bảo vệ môi trường tại Việt Nam. Tìm điểm thu gom rác thải, nhận diện phân loại rác, chia sẻ kinh nghiệm bảo vệ môi trường.',
+  keywords: ['tái chế', 'môi trường', 'bảo vệ môi trường', 'phân loại rác', 'thu gom rác', 'cộng đồng xanh', 'Việt Nam', 'recycling', 'environment'],
+  authors: [{ name: 'BandoXanh Team' }],
+  creator: 'BandoXanh',
+  publisher: 'BandoXanh',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    locale: 'vi_VN',
+    url: 'https://bandoxanh.com',
+    siteName: 'BandoXanh',
+    title: 'BandoXanh - Nền tảng Tái chế & Bảo vệ Môi trường',
+    description: 'Nền tảng cộng đồng tái chế và bảo vệ môi trường tại Việt Nam. Tìm điểm thu gom, nhận diện phân loại rác, chia sẻ kinh nghiệm xanh.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'BandoXanh - Nền tảng Tái chế',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BandoXanh - Nền tảng Tái chế & Bảo vệ Môi trường',
+    description: 'Nền tảng cộng đồng tái chế và bảo vệ môi trường tại Việt Nam',
+    images: ['/og-image.png'],
+    creator: '@bandoxanh',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // google: 'your-google-verification-code',
+    // yandex: 'your-yandex-verification-code',
   },
 };
 
@@ -16,12 +68,39 @@ export default function RootLayout({
 }: {
   children: ReactNode;
 }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'BandoXanh',
+    url: 'https://bandoxanh.com',
+    description: 'Nền tảng cộng đồng tái chế và bảo vệ môi trường tại Việt Nam',
+    inLanguage: 'vi',
+    publisher: {
+      '@type': 'Organization',
+      name: 'BandoXanh',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://bandoxanh.com/logo.png',
+      },
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://bandoxanh.com/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <ClerkProvider>
       <html lang="vi" suppressHydrationWarning>
         <head>
           <meta charSet="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="theme-color" content="#22c55e" />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
           <script src="https://cdn.tailwindcss.com"></script>
           <script
             dangerouslySetInnerHTML={{
