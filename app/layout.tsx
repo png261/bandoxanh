@@ -36,15 +36,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'vi_VN',
-    url: 'https://bandoxanh.com',
+    url: process.env.NEXT_PUBLIC_APP_URL || 'https://bandoxanh.com',
     siteName: 'BandoXanh',
     title: 'BandoXanh - Nền tảng Tái chế & Bảo vệ Môi trường',
     description: 'Nền tảng cộng đồng tái chế và bảo vệ môi trường tại Việt Nam. Tìm điểm thu gom, nhận diện phân loại rác, chia sẻ kinh nghiệm xanh.',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        url: '/og-image.jpg',
+        width: 851,
+        height: 315,
         alt: 'BandoXanh - Nền tảng Tái chế',
       },
     ],
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BandoXanh - Nền tảng Tái chế & Bảo vệ Môi trường',
     description: 'Nền tảng cộng đồng tái chế và bảo vệ môi trường tại Việt Nam',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
     creator: '@bandoxanh',
   },
   robots: {

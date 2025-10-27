@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate OG Image for BandoXanh</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f3f4f6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .og-image {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    
+    /* Background Pattern */
+    .pattern {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0.1;
+      background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255,255,255,0.1) 50px, rgba(255,255,255,0.1) 51px),
+        repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.1) 50px, rgba(255,255,255,0.1) 51px);
+    }
+    
+    /* Decorative Elements */
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .circle-1 {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      right: -100px;
+    }
+    
+    .circle-2 {
+      width: 300px;
+      height: 300px;
+      bottom: -80px;
+      left: -80px;
+    }
+    
+    .circle-3 {
+      width: 150px;
+      height: 150px;
+      top: 50%;
+      left: 10%;
+      opacity: 0.05;
+    }
+    
+    /* Content */
+    .content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      color: white;
+    }
+    
+    .logo {
+      font-size: 72px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .tagline {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    
+    .description {
+      font-size: 28px;
+      opacity: 0.95;
+      max-width: 800px;
+      line-height: 1.4;
+    }
+    
+    .icons {
+      display: flex;
+      gap: 30px;
+      margin-top: 40px;
+    }
+    
+    .icon-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      background: rgba(255,255,255,0.15);
+      padding: 12px 24px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .icon {
+      font-size: 32px;
+    }
+    
+    /* Instructions */
+    .instructions {
+      margin-top: 30px;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .instructions h2 {
+      color: #10b981;
+      margin-top: 0;
+    }
+    
+    .instructions ol {
+      line-height: 1.8;
+    }
+    
+    .instructions code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', monospace;
+      font-size: 14px;
+    }
+    
+    button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    
+    button:hover {
+      background: #059669;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="color: #10b981;">Tạo OG Image cho BandoXanh</h1>
+    
+    <div id="og-image" class="og-image">
+      <div class="pattern"></div>
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+      
+      <div class="content">
+        <div class="logo">🌱 BandoXanh</div>
+        <div class="tagline">Nền tảng Tái chế &<br>Bảo vệ Môi trường</div>
+        <div class="description">
+          Cộng đồng xanh tại Việt Nam - Tìm điểm thu gom, nhận diện rác thải, chia sẻ kinh nghiệm
+        </div>
+        
+        <div class="icons">
+          <div class="icon-item">
+            <span class="icon">♻️</span>
+            <span>Tái chế</span>
+          </div>
+          <div class="icon-item">
+            <span class="icon">📍</span>
+            <span>Thu gom</span>
+          </div>
+          <div class="icon-item">
+            <span class="icon">🤝</span>
+            <span>Cộng đồng</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="instructions">
+      <h2>📋 Hướng dẫn tạo OG Image</h2>
+      <ol>
+        <li>Mở file này trong trình duyệt Chrome/Firefox</li>
+        <li>Click chuột phải vào hình ảnh phía trên</li>
+        <li>Chọn "Inspect Element" (Kiểm tra phần tử)</li>
+        <li>Trong DevTools, click chuột phải vào <code>&lt;div class="og-image"&gt;</code></li>
+        <li>Chọn "Capture node screenshot" (Chrome) hoặc "Screenshot Node" (Firefox)</li>
+        <li>Lưu file với tên <code>og-image.png</code></li>
+        <li>Di chuyển file vào thư mục <code>public/</code> của project</li>
+      </ol>
+      
+      <h3>🎨 Hoặc sử dụng tool online:</h3>
+      <ul>
+        <li><a href="https://www.canva.com" target="_blank">Canva</a> - Miễn phí, dễ dùng</li>
+        <li><a href="https://www.figma.com" target="_blank">Figma</a> - Professional design</li>
+        <li><a href="https://og-image.vercel.app" target="_blank">Vercel OG Image Generator</a></li>
+      </ul>
+      
+      <p><strong>Kích thước chuẩn:</strong> 1200 x 630 pixels</p>
+      <p><strong>Format:</strong> PNG hoặc JPG</p>
+      
+      <button onclick="downloadAsImage()">📥 Tải xuống (HTML2Canvas method)</button>
+    </div>
+  </div>
+  
+  <script>
+    // Simple download method - you can use html2canvas library for better quality
+    function downloadAsImage() {
+      alert('Để tải ảnh chất lượng cao:\n\n1. Chuột phải vào ảnh\n2. Inspect Element\n3. Right-click on div.og-image\n4. Screenshot Node\n\nHoặc sử dụng Canva/Figma với kích thước 1200x630px');
+    }
+  </script>
+</body>
+</html>
