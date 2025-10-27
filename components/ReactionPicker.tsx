@@ -13,41 +13,33 @@ const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleReact = async (type: ReactionType) => {
-    await react(type);
     setShowPicker(false);
-    onReact?.();
+    await react(type);
+    // Don't call onReact - let the component update itself
   };
 
   const totalReactions = reactionData.reactions.reduce((sum, r) => sum + r.count, 0);
-  const topReaction = reactionData.reactions.sort((a, b) => b.count - a.count)[0];
+  const topReaction = reactionData.reactions.length > 0 
+    ? [...reactionData.reactions].sort((a, b) => b.count - a.count)[0]
+    : null;
 
   return (
     <div className="relative">
       {/* Reaction Button */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setShowPicker(!showPicker)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          disabled={loading}
-        >
-          {reactionData.userReaction ? (
-            <span className="text-lg">{REACTION_EMOJIS[reactionData.userReaction]}</span>
-          ) : (
-            <span className="text-gray-500 dark:text-gray-400">👍</span>
-          )}
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {reactionData.userReaction ? REACTION_LABELS[reactionData.userReaction] : 'Thích'}
-          </span>
-        </button>
-
-        {/* Reaction Count */}
-        {totalReactions > 0 && (
-          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-            {topReaction && <span>{REACTION_EMOJIS[topReaction.type]}</span>}
-            <span>{totalReactions}</span>
-          </div>
+      <button
+        onClick={() => setShowPicker(!showPicker)}
+        className="flex items-center gap-1.5 sm:gap-2 hover:text-brand-green transition-colors"
+        disabled={loading}
+      >
+        {reactionData.userReaction ? (
+          <span className="text-base sm:text-lg">{REACTION_EMOJIS[reactionData.userReaction]}</span>
+        ) : (
+          <span className="text-base sm:text-lg">👍</span>
         )}
-      </div>
+        <span className="text-xs sm:text-sm">
+          {totalReactions > 0 ? totalReactions : '0'}
+        </span>
+      </button>
 
       {/* Reaction Picker Dropdown */}
       {showPicker && (
@@ -61,33 +53,18 @@ const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
               <button
                 key={type}
                 onClick={() => handleReact(type)}
-                className="group relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all hover:scale-125"
+                className="group relative p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all hover:scale-125"
                 title={REACTION_LABELS[type]}
               >
-                <span className="text-2xl">{REACTION_EMOJIS[type]}</span>
+                <span className="text-xl sm:text-2xl">{REACTION_EMOJIS[type]}</span>
                 {/* Tooltip */}
-                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-30">
                   {REACTION_LABELS[type]}
                 </span>
               </button>
             ))}
           </div>
         </>
-      )}
-
-      {/* Detailed Reactions Display */}
-      {reactionData.reactions.length > 0 && (
-        <div className="mt-1 flex flex-wrap gap-2">
-          {reactionData.reactions.map((reaction) => (
-            <div
-              key={reaction.type}
-              className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400"
-            >
-              <span>{REACTION_EMOJIS[reaction.type]}</span>
-              <span>{reaction.count}</span>
-            </div>
-          ))}
-        </div>
       )}
     </div>
   );

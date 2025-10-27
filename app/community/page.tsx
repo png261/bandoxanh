@@ -6,7 +6,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
-import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
+import ReactionPicker from '@/components/ReactionPicker';
+import { ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
 import { useEffect, useRef } from 'react';
 import React from 'react';
 import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
@@ -50,11 +51,8 @@ export default function CommunityPage() {
     setCommentingPostId,
     commentText,
     setCommentText,
-    likedPosts,
     removePostImage: storeRemovePostImage,
     clearPostForm: storeClearPostForm,
-    toggleLikedPost,
-    updatePostLikes,
     addComment: storeAddComment,
     replaceComment,
   } = useCommunityStore();
@@ -209,46 +207,6 @@ export default function CommunityPage() {
     return [];
   };
 
-  const handleLike = async (postId: string) => {
-    if (!user) return;
-
-    try {
-      const postIndex = posts.findIndex(p => p.id === postId);
-      if (postIndex === -1) return;
-
-      const currentPost = posts[postIndex];
-      const isCurrentlyLiked = likedPosts.has(postId);
-
-      // Update local state immediately using store
-      toggleLikedPost(postId, !isCurrentlyLiked);
-
-      // Update posts count immediately using store
-      updatePostLikes(postId, isCurrentlyLiked ? (currentPost.likes || 0) - 1 : (currentPost.likes || 0) + 1);
-
-      // Send request to server
-      const response = await fetch(`/api/posts/${postId}/like`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ authorId: user.id }),
-      });
-
-      if (!response.ok) {
-        // Revert on error - restore previous state
-        toggleLikedPost(postId, isCurrentlyLiked);
-        updatePostLikes(postId, currentPost.likes || 0);
-        throw new Error('Failed to like post');
-      }
-
-      const data = await response.json();
-      
-      // Update with actual server response from server
-      updatePostLikes(postId, data.likes || 0);
-    } catch (error) {
-      console.error('Error liking post:', error);
-      // UI already reverted if there was an error
-    }
-  };
-
   const handleAddComment = async (postId: string) => {
     if (!user || !commentText.trim()) return;
 
@@ -305,16 +263,6 @@ export default function CommunityPage() {
       // Revert optimistic update on error
       await refreshPosts();
     }
-  };
-
-  const parseLikes = (likes: any): number => {
-    if (!likes) return 0;
-    if (typeof likes === 'number') return likes;
-    if (typeof likes === 'string') {
-      const num = parseInt(likes);
-      return isNaN(num) ? 0 : num;
-    }
-    return 0;
   };
 
   const handleEditPost = (postId: string) => {
@@ -580,17 +528,10 @@ export default function CommunityPage() {
 
                   {/* Post Footer */}
                   <div className="flex items-center gap-4 sm:gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button 
-                      onClick={() => handleLike(post.id)}
-                      className={`flex items-center gap-1.5 sm:gap-2 transition-colors ${
-                        likedPosts.has(post.id) || (parseLikes(post.likes) ?? 0) > 0
-                          ? 'text-red-500 hover:text-red-600' 
-                          : 'hover:text-brand-green'
-                      }`}
-                    >
-                      <HeartIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
-                      <span className="text-xs sm:text-sm">{parseLikes(post.likes) ?? 0}</span>
-                    </button>
+                    {/* Reaction Picker */}
+                    <ReactionPicker postId={parseInt(post.id)} />
+                    
+                    {/* Comments Count */}
                     <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400">
                       <ChatBubbleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
@@ -754,6 +695,6 @@ export default function CommunityPage() {
         onClose={() => setImageViewer(null)}
       />
     )}
-  </div>
+    </div>
   );
 }

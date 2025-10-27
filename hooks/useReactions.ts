@@ -48,6 +48,41 @@ export const useReactions = (postId: number) => {
 
   const react = async (type: ReactionType) => {
     setLoading(true);
+    
+    // Optimistic update
+    const currentUserReaction = reactionData.userReaction;
+    const updatedReactions = [...reactionData.reactions];
+    
+    // If clicking the same reaction, remove it
+    if (currentUserReaction === type) {
+      setReactionData({
+        reactions: updatedReactions.map(r => 
+          r.type === type ? { ...r, count: Math.max(0, r.count - 1) } : r
+        ).filter(r => r.count > 0),
+        userReaction: null,
+      });
+    } else {
+      // Remove old reaction count
+      let reactions = updatedReactions.map(r => 
+        r.type === currentUserReaction ? { ...r, count: Math.max(0, r.count - 1) } : r
+      ).filter(r => r.count > 0);
+      
+      // Add new reaction count
+      const existingReaction = reactions.find(r => r.type === type);
+      if (existingReaction) {
+        reactions = reactions.map(r => 
+          r.type === type ? { ...r, count: r.count + 1 } : r
+        );
+      } else {
+        reactions.push({ type, count: 1 });
+      }
+      
+      setReactionData({
+        reactions,
+        userReaction: type,
+      });
+    }
+    
     try {
       const response = await fetch(`/api/posts/${postId}/react`, {
         method: 'POST',
@@ -56,10 +91,22 @@ export const useReactions = (postId: number) => {
       });
 
       if (response.ok) {
-        await fetchReactions(); // Refetch to get updated counts
+        // Fetch actual data from server to confirm
+        await fetchReactions();
+      } else {
+        // Revert on error
+        setReactionData({
+          reactions: reactionData.reactions,
+          userReaction: reactionData.userReaction,
+        });
       }
     } catch (error) {
       console.error('Error reacting to post:', error);
+      // Revert on error
+      setReactionData({
+        reactions: reactionData.reactions,
+        userReaction: reactionData.userReaction,
+      });
     } finally {
       setLoading(false);
     }
