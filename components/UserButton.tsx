@@ -88,13 +88,39 @@ export default function UserButtonComponent({ isCollapsed = false, showActionsIn
           </>
         )}
         {isCollapsed && (
-          <Link
-            href="/sign-in"
-            className="p-2 text-brand-green hover:text-brand-green-dark transition-colors"
-            title="Đăng nhập"
-          >
-            <LeafIcon className="w-6 h-6" />
-          </Link>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="p-1 rounded-full hover:ring-2 hover:ring-brand-green/30 transition-all"
+              title="Đăng nhập"
+            >
+              <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            </button>
+
+            {/* Dropdown Menu for Collapsed Sidebar - Opens Upward */}
+            {isDropdownOpen && (
+              <div className="absolute left-full ml-2 bottom-0 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                <Link
+                  href="/sign-in"
+                  className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  Đăng nhập
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  Đăng ký
+                </Link>
+              </div>
+            )}
+          </div>
         )}
       </SignedOut>
 
