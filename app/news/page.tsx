@@ -22,7 +22,7 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClick, onShare }) => (
   <div 
-    className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 h-full group relative flex flex-col ${isFeatured ? 'md:flex-row' : ''}`}>
+    className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 h-full group relative flex flex-col ${isFeatured ? 'md:flex-row md:max-h-80' : ''}`}>
     
     {/* Share Button */}
     <button
@@ -36,11 +36,11 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
     {/* Clickable Content */}
     <div onClick={onClick} className="cursor-pointer flex-1 flex flex-col h-full">
       {/* Image */}
-      <div className={`relative overflow-hidden ${isFeatured ? 'md:w-1/2 md:min-h-full' : 'w-full'}`}>
+      <div className={`relative overflow-hidden ${isFeatured ? 'md:w-1/2 md:h-full' : 'w-full'}`}>
         <img 
           src={article.imageUrl} 
           alt={article.title} 
-          className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFeatured ? 'h-56 sm:h-64 md:h-full' : 'h-48 sm:h-52'}`}
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFeatured ? 'h-48 sm:h-56' : 'h-48 sm:h-52'}`}
           loading="lazy" 
         />
       </div>
@@ -54,12 +54,12 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
           </span>
           
           {/* Title */}
-          <h3 className={`font-bold mt-2.5 text-brand-gray-dark dark:text-gray-100 line-clamp-2 break-words group-hover:text-brand-green dark:group-hover:text-brand-green transition-colors ${isFeatured ? 'text-xl sm:text-2xl md:text-3xl' : 'text-base sm:text-lg'}`}>
+          <h3 className={`font-bold mt-2.5 text-brand-gray-dark dark:text-gray-100 line-clamp-2 break-words group-hover:text-brand-green dark:group-hover:text-brand-green transition-colors ${isFeatured ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg'}`}>
             {article.title}
           </h3>
           
           {/* Excerpt */}
-          <p className={`text-brand-gray-DEFAULT dark:text-gray-400 mt-2 break-words ${isFeatured ? 'text-sm sm:text-base line-clamp-4' : 'text-xs sm:text-sm line-clamp-3'}`}>
+          <p className={`text-brand-gray-DEFAULT dark:text-gray-400 mt-2 break-words ${isFeatured ? 'text-sm line-clamp-3' : 'text-xs sm:text-sm line-clamp-3'}`}>
             {article.excerpt}
           </p>
         </div>
