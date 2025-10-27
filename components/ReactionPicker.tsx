@@ -19,16 +19,17 @@ const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
   };
 
   const totalReactions = reactionData.reactions.reduce((sum, r) => sum + r.count, 0);
-  const topReaction = reactionData.reactions.length > 0 
-    ? [...reactionData.reactions].sort((a, b) => b.count - a.count)[0]
-    : null;
 
   return (
-    <div className="relative">
+    <div className="relative flex items-center gap-2">
       {/* Reaction Button */}
       <button
         onClick={() => setShowPicker(!showPicker)}
-        className="flex items-center gap-1.5 sm:gap-2 hover:text-brand-green transition-colors"
+        className={`flex items-center gap-1.5 sm:gap-2 transition-colors ${
+          reactionData.userReaction 
+            ? 'text-brand-green' 
+            : 'text-gray-600 dark:text-gray-400 hover:text-brand-green'
+        }`}
         disabled={loading}
       >
         {reactionData.userReaction ? (
@@ -36,10 +37,33 @@ const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
         ) : (
           <span className="text-base sm:text-lg">👍</span>
         )}
-        <span className="text-xs sm:text-sm">
-          {totalReactions > 0 ? totalReactions : '0'}
+        <span className="text-xs sm:text-sm font-medium">
+          {reactionData.userReaction ? REACTION_LABELS[reactionData.userReaction] : 'Thích'}
         </span>
       </button>
+
+      {/* Reaction Counts - GitHub Style */}
+      {reactionData.reactions.length > 0 && (
+        <div className="flex items-center gap-1 flex-wrap">
+          {reactionData.reactions
+            .sort((a, b) => b.count - a.count)
+            .map((reaction) => (
+              <button
+                key={reaction.type}
+                onClick={() => handleReact(reaction.type)}
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
+                  reactionData.userReaction === reaction.type
+                    ? 'bg-brand-green/10 border-brand-green text-brand-green dark:bg-brand-green/20'
+                    : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-brand-green'
+                }`}
+                title={REACTION_LABELS[reaction.type]}
+              >
+                <span>{REACTION_EMOJIS[reaction.type]}</span>
+                <span className="font-medium">{reaction.count}</span>
+              </button>
+            ))}
+        </div>
+      )}
 
       {/* Reaction Picker Dropdown */}
       {showPicker && (
