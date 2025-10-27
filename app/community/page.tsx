@@ -678,14 +678,16 @@ export default function CommunityPage() {
                   />
 
                   {/* Post Footer */}
-                  <div className="flex items-center gap-4 sm:gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    {/* Reaction Picker */}
-                    <ReactionPicker postId={parseInt(post.id)} />
-                    
-                    {/* Comments Count */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400">
-                      <ChatBubbleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
+                  <div className="flex items-center justify-between gap-3 sm:gap-4 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-4 sm:gap-6">
+                      {/* Reaction Picker */}
+                      <ReactionPicker postId={parseInt(post.id)} />
+                      
+                      {/* Comments Count */}
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400">
+                        <ChatBubbleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
+                      </div>
                     </div>
 
                     {/* Share Button */}
@@ -699,10 +701,10 @@ export default function CommunityPage() {
                           type: 'post'
                         });
                       }}
-                      className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400 hover:text-brand-green dark:hover:text-brand-green transition-colors ml-auto"
+                      className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400 hover:text-brand-green dark:hover:text-brand-green transition-colors"
                     >
                       <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="text-xs sm:text-sm">Chia sẻ</span>
+                      <span className="text-xs sm:text-sm hidden sm:inline">Chia sẻ</span>
                     </button>
                   </div>
 
