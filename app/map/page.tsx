@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Station, WasteType, RecyclingEvent } from '@/types';
 import { MapPinIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CalendarIcon, DirectionsIcon } from '@/components/Icons';
@@ -514,7 +514,9 @@ export default function Map() {
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}> 
         <main>
-          <MapPage />
+          <Suspense fallback={<div className="flex items-center justify-center h-screen"><p className="text-gray-500">Đang tải bản đồ...</p></div>}>
+            <MapPage />
+          </Suspense>
         </main>
       </div>
     </div>
