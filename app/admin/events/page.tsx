@@ -7,6 +7,7 @@ import SearchBar from '@/components/admin/SearchBar';
 import StatsCards from '@/components/admin/StatsCards';
 import Modal from '@/components/admin/Modal';
 import ImageUpload from '@/components/ImageUpload';
+import MapPicker from '@/components/MapPicker';
 
 interface Event {
   id: number;
@@ -216,15 +217,13 @@ export default function EventsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Địa điểm *</label>
               <input type="text" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="VD: Công viên Tao Đàn, Quận 1, TP.HCM" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Vĩ độ</label>
-                <input type="number" step="0.000001" value={formData.latitude} onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Kinh độ</label>
-                <input type="number" step="0.000001" value={formData.longitude} onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
-              </div>
+            <div>
+              <MapPicker
+                latitude={formData.latitude}
+                longitude={formData.longitude}
+                onLocationSelect={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
+                label="Vị trí sự kiện trên bản đồ *"
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
