@@ -16,10 +16,11 @@ export default async function AdminLayout({
 
   const user = await prisma.user.findUnique({
     where: { clerkId: userId },
-    select: { email: true },
+    select: { email: true, isAdmin: true },
   });
 
-  if (!user || !ADMIN_EMAILS.includes(user.email)) {
+  // Check both isAdmin field and legacy email list
+  if (!user || (!user.isAdmin && !ADMIN_EMAILS.includes(user.email))) {
     redirect('/');
   }
 

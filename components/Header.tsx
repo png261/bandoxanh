@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Theme } from '@/types';
-import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityIcon, NewspaperIcon, InformationCircleIcon, ChevronLeftIcon, ChevronRightIcon, SunIcon, MoonIcon } from './Icons';
+import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityIcon, NewspaperIcon, InformationCircleIcon, ChevronLeftIcon, ChevronRightIcon, SunIcon, MoonIcon, AdminIcon } from './Icons';
 import UserButton from './UserButton';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 interface HeaderProps {
   isCollapsed: boolean;
@@ -18,9 +19,10 @@ interface NavItemsProps {
   navigateTo: (path: string) => void;
   onLinkClick?: () => void;
   isCollapsed?: boolean;
+  isAdmin?: boolean;
 }
 
-const NavItems: React.FC<NavItemsProps> = ({ currentPath, navigateTo, onLinkClick, isCollapsed = false }) => {
+const NavItems: React.FC<NavItemsProps> = ({ currentPath, navigateTo, onLinkClick, isCollapsed = false, isAdmin = false }) => {
   const navItemsList = [
     { path: '/map', label: 'Bản đồ', icon: MapPinIcon },
     { path: '/identify', label: 'Nhận diện', icon: CameraIcon },
@@ -28,6 +30,11 @@ const NavItems: React.FC<NavItemsProps> = ({ currentPath, navigateTo, onLinkClic
     { path: '/news', label: 'Tin tức', icon: NewspaperIcon },
     { path: '/about', label: 'Về dự án', icon: InformationCircleIcon },
   ];
+
+  // Add Admin menu item if user is admin
+  if (isAdmin) {
+    navItemsList.push({ path: '/admin', label: 'Admin', icon: AdminIcon });
+  }
 
   return (
     <>
@@ -69,6 +76,9 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
   const router = useRouter();
   const pathname = usePathname() || '/';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isAdmin, loading } = useIsAdmin();
+
+  console.log('Admin status:', { isAdmin, loading });
 
   const navigateTo = (path: string) => {
     window.scrollTo(0, 0);
@@ -92,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
 
         {/* Navigation */}
         <nav className={`flex-grow p-3 space-y-2 ${isCollapsed ? 'overflow-visible' : 'overflow-y-auto'}`}>
-          <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} />
+          <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} isAdmin={isAdmin} />
         </nav>
 
         {/* Footer with Toggle and UserButton */}
@@ -133,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
             <nav 
                 className="relative bg-white dark:bg-brand-gray-dark p-4 space-y-2 border-b border-gray-200 dark:border-gray-700 max-h-[calc(100vh-5rem)] overflow-y-auto"
             >
-                <NavItems currentPath={pathname} navigateTo={navigateTo} onLinkClick={() => setIsMobileMenuOpen(false)} isCollapsed={false} />
+                <NavItems currentPath={pathname} navigateTo={navigateTo} onLinkClick={() => setIsMobileMenuOpen(false)} isCollapsed={false} isAdmin={isAdmin} />
                 <div className="pt-4 border-t dark:border-gray-700 space-y-2">
                   {/* User Profile in Mobile Menu - Inline Actions */}
                   <div className="pb-2">

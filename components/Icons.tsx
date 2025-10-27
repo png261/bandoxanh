@@ -24,6 +24,7 @@ export { default as ChevronRightIcon } from '@mui/icons-material/ChevronRightOut
 export { default as HomeIcon } from '@mui/icons-material/HomeOutlined';
 export { default as NewspaperIcon } from '@mui/icons-material/NewspaperOutlined';
 export { default as InformationCircleIcon } from '@mui/icons-material/InfoOutlined';
+export { default as AdminIcon } from '@mui/icons-material/AdminPanelSettingsOutlined';
 export { default as ChevronDoubleLeftIcon } from '@mui/icons-material/SkipPreviousOutlined';
 export { default as ChevronDoubleRightIcon } from '@mui/icons-material/SkipNextOutlined';
 export { default as ChartBarIcon } from '@mui/icons-material/BarChartOutlined';

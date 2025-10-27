@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
-// Admin emails - can be moved to env later
+// Legacy admin emails - keeping for backward compatibility
+// New admins should be set via isAdmin field in database
 export const ADMIN_EMAILS = ['nguyenphuong2612004@gmail.com'];
 
 export async function checkAdmin(req: NextRequest) {
@@ -14,10 +15,11 @@ export async function checkAdmin(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { clerkId: userId },
-    select: { email: true },
+    select: { email: true, isAdmin: true },
   });
 
-  if (!user || !ADMIN_EMAILS.includes(user.email)) {
+  // Check both isAdmin field and legacy email list
+  if (!user || (!user.isAdmin && !ADMIN_EMAILS.includes(user.email))) {
     return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
   }
 
@@ -28,10 +30,11 @@ export async function isAdmin(userId: string): Promise<boolean> {
   try {
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { email: true },
+      select: { email: true, isAdmin: true },
     });
     
-    return user !== null && ADMIN_EMAILS.includes(user.email);
+    // Check both isAdmin field and legacy email list
+    return user !== null && (user.isAdmin || ADMIN_EMAILS.includes(user.email));
   } catch (error) {
     return false;
   }
