@@ -20,37 +20,37 @@ const ShareModal: React.FC<ShareModalProps> = ({ url, title, text, onClose, type
     {
       name: 'Facebook',
       icon: <FacebookIcon className="w-7 h-7" />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title + ' - ' + text.substring(0, 150))}`,
       color: 'text-blue-600 dark:text-blue-500',
     },
     {
       name: 'Zalo',
       icon: <ZaloIcon className="w-7 h-7" />,
-      url: `https://page.zalo.me/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+      url: `https://page.zalo.me/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&desc=${encodeURIComponent(text.substring(0, 200))}`,
       color: 'text-blue-500 dark:text-blue-400',
     },
     {
       name: 'WhatsApp',
       icon: <WhatsAppIcon className="w-7 h-7" />,
-      url: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}`,
+      url: `https://api.whatsapp.com/send?text=${encodeURIComponent(title + '\n\n' + text.substring(0, 200) + '...\n\n' + url)}`,
       color: 'text-green-600 dark:text-green-500',
     },
     {
       name: 'Telegram',
       icon: <TelegramIcon className="w-7 h-7" />,
-      url: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      url: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title + '\n' + text.substring(0, 200))}`,
       color: 'text-sky-500 dark:text-sky-400',
     },
     {
       name: 'Twitter',
       icon: <TwitterIcon className="w-7 h-7" />,
-      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}&hashtags=BảoVệMôiTrường,TáiChế`,
       color: 'text-gray-900 dark:text-gray-300',
     },
     {
       name: 'LinkedIn',
       icon: <LinkedInIcon className="w-7 h-7" />,
-      url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(text)}`,
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       color: 'text-blue-700 dark:text-blue-600',
     },
   ];
@@ -60,6 +60,22 @@ const ShareModal: React.FC<ShareModalProps> = ({ url, title, text, onClose, type
         setCopyStatus('Đã sao chép!');
         setTimeout(() => setCopyStatus('Sao chép'), 2000);
     });
+  };
+
+  const handleShare = (target: any, e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Open share window with appropriate dimensions
+    const width = target.name === 'Facebook' ? 600 : 550;
+    const height = target.name === 'Facebook' ? 400 : 450;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    
+    window.open(
+      target.url, 
+      'share-window', 
+      `width=${width},height=${height},top=${top},left=${left},toolbar=0,location=0,menubar=0,scrollbars=1,resizable=1`
+    );
   };
 
   return (
@@ -80,10 +96,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ url, title, text, onClose, type
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="flex flex-col items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-brand-green hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group"
-                onClick={(e) => {
-                    e.preventDefault();
-                    window.open(target.url, 'share-window', 'height=450,width=550,toolbar=0,location=0,menubar=0,scrollbars=0,resizable=0');
-                }}
+                onClick={(e) => handleShare(target, e)}
             >
               <span className={target.color}>{target.icon}</span>
               <span className="mt-2 text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-brand-green transition-colors">{target.name}</span>
