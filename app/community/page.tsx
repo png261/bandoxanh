@@ -396,54 +396,12 @@ export default function CommunityPage() {
         setCollapsed={setSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
-        {/* Facebook-style 3-column layout */}
-        <div className="max-w-[1800px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
+        {/* 2-column layout: Main Content + Events Sidebar */}
+        <div className="max-w-[1400px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            
-            {/* Left Sidebar - Quick Links (Hidden on mobile) */}
-            <aside className="hidden lg:block lg:col-span-3 xl:col-span-2">
-              <div className="sticky top-20 space-y-4">
-                {/* User Profile Card */}
-                {user && (
-                  <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={user.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}`}
-                        alt={user.fullName || 'User'}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
-                          {user.fullName}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Quick Stats */}
-                <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-3">
-                    Thống kê
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Bài viết</span>
-                      <span className="font-semibold text-brand-green">{posts.length}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Lượt thích</span>
-                      <span className="font-semibold text-brand-green">
-                        {posts.reduce((sum, post) => sum + (post.likes || 0), 0)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </aside>
 
             {/* Main Content - Posts Feed */}
-            <main className="lg:col-span-6 xl:col-span-7 space-y-4">
+            <main className="lg:col-span-8 space-y-4">
               {/* Create Post Section */}
               <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">Tạo bài viết</h2>
@@ -787,8 +745,8 @@ export default function CommunityPage() {
           </div>
           </main>
 
-          {/* Right Sidebar - Events & Suggestions */}
-          <aside className="hidden lg:block lg:col-span-3 xl:col-span-3">
+          {/* Right Sidebar - Events */}
+          <aside className="hidden lg:block lg:col-span-4">
             <div className="sticky top-20 space-y-4">
               {/* Upcoming Events Section */}
               <UpcomingEvents onEventClick={(event) => {
