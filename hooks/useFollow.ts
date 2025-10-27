@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useFollowStore } from '@/store/followStore';
 
 export interface FollowStats {
   followersCount: number;
@@ -7,23 +8,26 @@ export interface FollowStats {
 }
 
 export const useFollow = (userId: number) => {
-  const [stats, setStats] = useState<FollowStats>({
+  const { userFollowStats, setUserFollowStats, toggleFollow: toggleFollowInStore, getUserFollowStats } = useFollowStore();
+
+  // Get stats from store or use defaults
+  const stats = getUserFollowStats(userId) || {
     followersCount: 0,
     followingCount: 0,
     isFollowing: false,
-  });
-  const [loading, setLoading] = useState(false);
+  };
 
   const fetchFollowStats = async () => {
     try {
       const response = await fetch(`/api/users/${userId}`);
       if (response.ok) {
         const data = await response.json();
-        setStats({
+        const newStats = {
           followersCount: data.followersCount || 0,
           followingCount: data.followingCount || 0,
           isFollowing: data.isFollowing || false,
-        });
+        };
+        setUserFollowStats(userId, newStats);
       }
     } catch (error) {
       console.error('Error fetching follow stats:', error);
@@ -32,32 +36,37 @@ export const useFollow = (userId: number) => {
 
   useEffect(() => {
     if (userId) {
-      fetchFollowStats();
+      // Only fetch if we don't have cached data
+      const cachedStats = getUserFollowStats(userId);
+      if (!cachedStats) {
+        fetchFollowStats();
+      }
     }
   }, [userId]);
 
   const toggleFollow = async () => {
-    setLoading(true);
+    const currentIsFollowing = stats.isFollowing;
+    
+    // Optimistic update in store
+    toggleFollowInStore(userId, currentIsFollowing);
+
     try {
-      const method = stats.isFollowing ? 'DELETE' : 'POST';
+      const method = currentIsFollowing ? 'DELETE' : 'POST';
       const response = await fetch(`/api/users/${userId}/follow`, {
         method,
       });
 
-      if (response.ok) {
-        // Optimistic update
-        setStats(prev => ({
-          ...prev,
-          followersCount: prev.isFollowing ? prev.followersCount - 1 : prev.followersCount + 1,
-          isFollowing: !prev.isFollowing,
-        }));
+      if (!response.ok) {
+        // Revert on error
+        toggleFollowInStore(userId, !currentIsFollowing);
+        console.error('Failed to toggle follow');
       }
     } catch (error) {
+      // Revert on error
+      toggleFollowInStore(userId, !currentIsFollowing);
       console.error('Error toggling follow:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  return { stats, loading, toggleFollow, refetch: fetchFollowStats };
+  return { stats, loading: false, toggleFollow, refetch: fetchFollowStats };
 };
