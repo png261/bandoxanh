@@ -9,10 +9,12 @@ import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
 import BadgeDisplay from '@/components/BadgeDisplay';
 import BadgeScanner from '@/components/BadgeScanner';
+import FollowButton from '@/components/FollowButton';
 import { HeartIcon, ChatBubbleIcon, ArrowLeftIcon } from '@/components/Icons';
 import { useProfile } from '@/hooks/useProfile';
 import { useBadges } from '@/hooks/useBadges';
 import { useUserPosts } from '@/hooks/useUserPosts';
+import { useFollow } from '@/hooks/useFollow';
 import { useTheme } from '@/hooks/useTheme';
 import { useSidebar } from '@/hooks/useSidebar';
 import { formatDate, parseImages, getAvatarUrl } from '@/lib/utils/helpers';
@@ -27,6 +29,7 @@ export default function ProfilePage() {
   const { profile, loading: profileLoading } = useProfile(userId);
   const { badges, addBadge } = useBadges(userId);
   const { posts: userPosts } = useUserPosts(userId);
+  const { stats: followStats } = useFollow(Number(userId));
   const { theme, toggleTheme } = useTheme();
   const { isCollapsed: isSidebarCollapsed, setCollapsed: setIsSidebarCollapsed } = useSidebar();
 
@@ -133,18 +136,22 @@ export default function ProfilePage() {
                   Tham gia ngày: {formatDate(profile.joinDate)}
                 </p>
               </div>
-              {isCurrentUser && (
+              {isCurrentUser ? (
                 <button
                   onClick={() => router.push('/profile/edit')}
                   className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-dark transition-colors text-sm sm:text-base whitespace-nowrap"
                 >
                   Chỉnh sửa
                 </button>
+              ) : (
+                <div className="w-full sm:w-auto">
+                  <FollowButton userId={Number(userId)} />
+                </div>
               )}
             </div>
 
             {/* Profile Stats */}
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 grid grid-cols-5 gap-2 sm:gap-4">
               <div className="text-center">
                 <p className="text-xl sm:text-2xl font-bold text-brand-green">{userPosts.length}</p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Bài viết</p>
@@ -160,6 +167,14 @@ export default function ProfilePage() {
                   {userPosts.reduce((sum, post) => sum + (post.comments?.length || 0), 0)}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Bình luận</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xl sm:text-2xl font-bold text-brand-green">{followStats.followersCount || 0}</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Người theo dõi</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xl sm:text-2xl font-bold text-brand-green">{followStats.followingCount || 0}</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Đang theo dõi</p>
               </div>
             </div>
           </div>
