@@ -1,17 +1,18 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
 // Generate metadata for Open Graph
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  
   try {
     const post = await prisma.post.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: {
         author: {
           select: {
@@ -59,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         type: 'article',
         locale: 'vi_VN',
         siteName: 'BandoXanh',
-        url: `${appUrl}/share/post/${params.id}`,
+        url: `${appUrl}/share/post/${id}`,
       },
       twitter: {
         card: 'summary_large_image',
@@ -77,13 +78,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // Show a simple page with redirect message and meta refresh
-export default async function SharePostPage({ params }: PageProps) {
+export default async function SharePostPage({ params }: Props) {
+  const { id } = await params;
   let post = null;
   let images: string[] = [];
   
   try {
     post = await prisma.post.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: {
         author: {
           select: {
@@ -106,7 +108,7 @@ export default async function SharePostPage({ params }: PageProps) {
     console.error('Error fetching post:', error);
   }
 
-  const redirectUrl = `/community?post=${params.id}`;
+  const redirectUrl = `/community?post=${id}`;
 
   return (
     <>

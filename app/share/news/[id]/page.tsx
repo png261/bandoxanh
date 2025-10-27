@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
-// Mock data - should match the data in newsStore
+// Mock data - replace with actual API call
 const newsArticles = [
   {
     id: 1,
@@ -51,8 +50,9 @@ const newsArticles = [
 ];
 
 // Generate metadata for Open Graph
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const article = newsArticles.find(a => a.id === parseInt(params.id));
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const article = newsArticles.find(a => a.id === parseInt(id));
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   if (!article) {
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
       locale: 'vi_VN',
       siteName: 'BandoXanh',
-      url: `${appUrl}/share/news/${params.id}`,
+      url: `${appUrl}/share/news/${id}`,
     },
     twitter: {
       card: 'summary_large_image',
@@ -90,9 +90,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // Show a simple page with redirect message and meta refresh
-export default async function ShareNewsPage({ params }: PageProps) {
-  const article = newsArticles.find(a => a.id === parseInt(params.id));
-  const redirectUrl = `/news#article-${params.id}`;
+export default async function ShareNewsPage({ params }: Props) {
+  const { id } = await params;
+  const article = newsArticles.find(a => a.id === parseInt(id));
+  const redirectUrl = `/news#article-${id}`;
 
   return (
     <>
