@@ -4,32 +4,43 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import UpcomingEvents from '@/components/UpcomingEvents';
+import ShareModal from '@/components/ShareModal';
 import { useState, useEffect } from 'react';
 import { Theme, NewsArticle, RecyclingEvent } from '@/types';
 import React from 'react';
 import { useNewsStore } from '@/store/newsStore';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTheme } from '@/hooks/useTheme';
+import { ShareIcon } from '@/components/Icons';
 
 interface NewsCardProps {
   article: NewsArticle;
   isFeatured?: boolean;
   onClick: () => void;
+  onShare: (e: React.MouseEvent) => void;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClick }) => (
+const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClick, onShare }) => (
   <div 
-    onClick={onClick}
-    className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex ${isFeatured ? 'flex-col md:flex-row' : 'flex-col'} hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 cursor-pointer h-full group`}>
-    <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all`} loading="lazy" />
-    <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
-      <div>
-        <span className="px-2 py-0.5 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded">{article.category}</span>
-        <h3 className={`font-bold mt-2 sm:mt-2.5 text-brand-gray-dark dark:text-gray-100 ${isFeatured ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg'} line-clamp-2 break-words`}>{article.title}</h3>
-        <p className="text-xs sm:text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-2 line-clamp-3 break-words">{article.excerpt}</p>
+    className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex ${isFeatured ? 'flex-col md:flex-row' : 'flex-col'} hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 h-full group relative`}>
+    <div onClick={onClick} className="cursor-pointer flex-1 flex flex-col md:flex-row">
+      <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all`} loading="lazy" />
+      <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
+        <div>
+          <span className="px-2 py-0.5 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded">{article.category}</span>
+          <h3 className={`font-bold mt-2 sm:mt-2.5 text-brand-gray-dark dark:text-gray-100 ${isFeatured ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg'} line-clamp-2 break-words`}>{article.title}</h3>
+          <p className="text-xs sm:text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-2 line-clamp-3 break-words">{article.excerpt}</p>
+        </div>
+        <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-3">{article.date}</p>
       </div>
-      <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-3">{article.date}</p>
     </div>
+    <button
+      onClick={onShare}
+      className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-2 rounded-full hover:bg-brand-green hover:text-white dark:hover:bg-brand-green transition-all shadow-sm z-10"
+      title="Chia sẻ tin tức"
+    >
+      <ShareIcon className="w-5 h-5" />
+    </button>
   </div>
 );
 
@@ -39,6 +50,8 @@ interface NewsPageProps {
 
 const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
   const router = useRouter();
+  const [shareModalData, setShareModalData] = React.useState<{ url: string; title: string; text: string; type: 'post' | 'news' | 'event' } | null>(null);
+  
   // Use Zustand store for news and events
   const { newsArticles, events, loading, fetchNews, fetchEvents } = useNewsStore();
 
@@ -54,6 +67,17 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
       new Date(b.date.split('/').reverse().join('-')).getTime() - 
       new Date(a.date.split('/').reverse().join('-')).getTime()
     );
+
+  const handleShare = (article: NewsArticle, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newsUrl = `${window.location.origin}/news/${article.id}`;
+    setShareModalData({
+      url: newsUrl,
+      title: article.title,
+      text: article.excerpt,
+      type: 'news'
+    });
+  };
 
   if (loading) {
     return (
@@ -72,6 +96,7 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
             article={featuredArticle} 
             isFeatured={true} 
             onClick={() => navigateTo(`/news/${featuredArticle.id}`)} 
+            onShare={(e) => handleShare(featuredArticle, e)}
           />
         </section>
       )}
@@ -91,10 +116,22 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
               key={article.id} 
               article={article} 
               onClick={() => navigateTo(`/news/${article.id}`)} 
+              onShare={(e) => handleShare(article, e)}
             />
           ))}
         </div>
       </section>
+
+      {/* Share Modal */}
+      {shareModalData && (
+        <ShareModal
+          url={shareModalData.url}
+          title={shareModalData.title}
+          text={shareModalData.text}
+          type={shareModalData.type}
+          onClose={() => setShareModalData(null)}
+        />
+      )}
     </div>
   );
 };

@@ -8,7 +8,8 @@ import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
 import ReactionPicker from '@/components/ReactionPicker';
 import FollowButton from '@/components/FollowButton';
-import { ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
+import { ChatBubbleIcon, ImageIcon, XIcon, ShareIcon } from '@/components/Icons';
+import ShareModal from '@/components/ShareModal';
 import { useEffect, useRef } from 'react';
 import React from 'react';
 import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
@@ -29,6 +30,7 @@ export default function CommunityPage() {
   const [editingCommentId, setEditingCommentId] = React.useState<string | null>(null);
   const [editCommentContent, setEditCommentContent] = React.useState('');
   const [imageViewer, setImageViewer] = React.useState<{ images: string[]; index: number } | null>(null);
+  const [shareModalData, setShareModalData] = React.useState<{ url: string; title: string; text: string; type: 'post' | 'news' | 'event' } | null>(null);
 
   // Feed tab store (Zustand with caching)
   const {
@@ -685,6 +687,23 @@ export default function CommunityPage() {
                       <ChatBubbleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
                     </div>
+
+                    {/* Share Button */}
+                    <button
+                      onClick={() => {
+                        const postUrl = `${window.location.origin}/community?post=${post.id}`;
+                        setShareModalData({
+                          url: postUrl,
+                          title: post.content.substring(0, 100) + (post.content.length > 100 ? '...' : ''),
+                          text: post.content,
+                          type: 'post'
+                        });
+                      }}
+                      className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400 hover:text-brand-green dark:hover:text-brand-green transition-colors ml-auto"
+                    >
+                      <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="text-xs sm:text-sm">Chia sẻ</span>
+                    </button>
                   </div>
 
                   {/* Comments Section */}
@@ -842,6 +861,17 @@ export default function CommunityPage() {
         images={imageViewer.images}
         initialIndex={imageViewer.index}
         onClose={() => setImageViewer(null)}
+      />
+    )}
+
+    {/* Share Modal */}
+    {shareModalData && (
+      <ShareModal
+        url={shareModalData.url}
+        title={shareModalData.title}
+        text={shareModalData.text}
+        type={shareModalData.type}
+        onClose={() => setShareModalData(null)}
       />
     )}
     </div>

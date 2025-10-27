@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CalendarIcon, MapPinIcon, ClockIcon, UsersIcon } from './Icons';
+import { CalendarIcon, MapPinIcon, ClockIcon, UsersIcon, ShareIcon } from './Icons';
+import ShareModal from './ShareModal';
 
 interface RecyclingEvent {
   id: number;
@@ -26,6 +27,7 @@ interface UpcomingEventsProps {
 export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
   const [events, setEvents] = useState<RecyclingEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [shareModalData, setShareModalData] = useState<{ url: string; title: string; text: string; type: 'post' | 'news' | 'event' } | null>(null);
 
   useEffect(() => {
     fetchEvents();
@@ -180,6 +182,22 @@ export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
                 >
                   {event.userStatus === 'interested' ? '★' : '☆'}
                 </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const eventUrl = `${window.location.origin}/map?lat=${event.latitude}&lng=${event.longitude}&zoom=15`;
+                    setShareModalData({
+                      url: eventUrl,
+                      title: event.name,
+                      text: `${event.description}\n📅 ${event.date} - ${event.time}\n📍 ${event.address}`,
+                      type: 'event'
+                    });
+                  }}
+                  className="p-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-brand-green hover:text-white transition-colors"
+                  title="Chia sẻ sự kiện"
+                >
+                  <ShareIcon className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
@@ -192,6 +210,17 @@ export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
         >
           Xem thêm
         </button>
+      )}
+
+      {/* Share Modal */}
+      {shareModalData && (
+        <ShareModal
+          url={shareModalData.url}
+          title={shareModalData.title}
+          text={shareModalData.text}
+          type={shareModalData.type}
+          onClose={() => setShareModalData(null)}
+        />
       )}
     </div>
   );
