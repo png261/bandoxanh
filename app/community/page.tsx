@@ -14,15 +14,12 @@ import React from 'react';
 import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
 import { useTheme } from '@/hooks/useTheme';
 import { useSidebar } from '@/hooks/useSidebar';
-import { usePosts } from '@/hooks/usePosts';
+import { useFeedTabStore } from '@/store/feedTabStore';
 
 export default function CommunityPage() {
   const router = useRouter();
   const { user } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Use custom hook for posts with caching
-  const { posts, loading, refreshPosts } = usePosts();
 
   // Local state for edit/delete modals
   const [editingPostId, setEditingPostId] = React.useState<string | null>(null);
@@ -32,6 +29,33 @@ export default function CommunityPage() {
   const [editingCommentId, setEditingCommentId] = React.useState<string | null>(null);
   const [editCommentContent, setEditCommentContent] = React.useState('');
   const [imageViewer, setImageViewer] = React.useState<{ images: string[]; index: number } | null>(null);
+
+  // Feed tab store (Zustand with caching)
+  const {
+    activeTab,
+    setActiveTab,
+    explorePosts,
+    followingPosts,
+    exploreLoading,
+    followingLoading,
+  } = useFeedTabStore();
+
+  // Get current posts and loading state based on active tab
+  const posts = activeTab === 'explore' ? explorePosts : followingPosts;
+  const loading = activeTab === 'explore' ? exploreLoading : followingLoading;
+
+  // Debug logs
+  React.useEffect(() => {
+    console.log('Community Page State:', {
+      activeTab,
+      explorePostsCount: explorePosts.length,
+      followingPostsCount: followingPosts.length,
+      currentPostsCount: posts.length,
+      loading,
+      exploreLoading,
+      followingLoading
+    });
+  }, [activeTab, explorePosts, followingPosts, posts, loading, exploreLoading, followingLoading]);
 
   // Global state
   const { isCollapsed: isSidebarCollapsed, setCollapsed: setSidebarCollapsed } = useSidebar();
@@ -57,6 +81,86 @@ export default function CommunityPage() {
     addComment: storeAddComment,
     replaceComment,
   } = useCommunityStore();
+
+  // Fetch explore posts
+  const fetchExplorePosts = React.useCallback(async (force = false) => {
+    const state = useFeedTabStore.getState();
+    
+    // Use cache if valid and not forcing refresh
+    if (!force && state.isExploreCacheValid()) {
+      console.log('Using cached explore posts');
+      return;
+    }
+
+    console.log('Fetching explore posts...');
+    state.setExploreLoading(true);
+    try {
+      const response = await fetch('/api/posts');
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      const data = await response.json();
+      // API returns array directly, not { posts: [...] }
+      const posts = Array.isArray(data) ? data : (data.posts || []);
+      console.log('Explore posts fetched:', posts.length);
+      state.setExplorePosts(posts);
+    } catch (error) {
+      console.error('Error fetching explore posts:', error);
+    } finally {
+      state.setExploreLoading(false);
+    }
+  }, []);
+
+  // Fetch following posts
+  const fetchFollowingPosts = React.useCallback(async (force = false) => {
+    const state = useFeedTabStore.getState();
+    
+    // Use cache if valid and not forcing refresh
+    if (!force && state.isFollowingCacheValid()) {
+      console.log('Using cached following posts');
+      return;
+    }
+
+    console.log('Fetching following posts...');
+    state.setFollowingLoading(true);
+    try {
+      const response = await fetch('/api/posts/following');
+      if (response.status === 401) {
+        // User not logged in, clear posts
+        state.setFollowingPosts([]);
+        return;
+      }
+      if (!response.ok) throw new Error('Failed to fetch following posts');
+      const data = await response.json();
+      console.log('Following posts fetched:', data.posts?.length || 0);
+      state.setFollowingPosts(data.posts || []);
+    } catch (error) {
+      console.error('Error fetching following posts:', error);
+    } finally {
+      state.setFollowingLoading(false);
+    }
+  }, []);
+
+  // Refresh current tab's posts (force refresh)
+  const refreshPosts = React.useCallback(async () => {
+    if (activeTab === 'explore') {
+      await fetchExplorePosts(true);
+    } else {
+      await fetchFollowingPosts(true);
+    }
+  }, [activeTab, fetchExplorePosts, fetchFollowingPosts]);
+
+  // Fetch posts when switching tabs
+  React.useEffect(() => {
+    if (activeTab === 'explore') {
+      fetchExplorePosts();
+    } else {
+      fetchFollowingPosts();
+    }
+  }, [activeTab, fetchExplorePosts, fetchFollowingPosts]);
+
+  // Initial load
+  React.useEffect(() => {
+    fetchExplorePosts();
+  }, [fetchExplorePosts]);
 
   // Image handling
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -349,6 +453,32 @@ export default function CommunityPage() {
 
             {/* Main Content - Posts Feed */}
             <main className="space-y-4">
+              {/* Tabs */}
+              <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-1">
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setActiveTab('explore')}
+                    className={`flex-1 py-2.5 px-4 font-medium text-sm sm:text-base rounded-lg transition-all ${
+                      activeTab === 'explore'
+                        ? 'bg-brand-green text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    Khám phá
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('following')}
+                    className={`flex-1 py-2.5 px-4 font-medium text-sm sm:text-base rounded-lg transition-all ${
+                      activeTab === 'following'
+                        ? 'bg-brand-green text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    Theo dõi
+                  </button>
+                </div>
+              </div>
+
               {/* Create Post Section */}
               <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">Tạo bài viết</h2>
@@ -422,8 +552,17 @@ export default function CommunityPage() {
                 <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
                   <ChatBubbleIcon className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết nào</p>
-                <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Hãy tạo bài viết đầu tiên!</p>
+                {activeTab === 'following' ? (
+                  <>
+                    <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết từ người bạn theo dõi</p>
+                    <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Hãy theo dõi thêm người dùng để xem bài viết của họ!</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết nào</p>
+                    <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Hãy tạo bài viết đầu tiên!</p>
+                  </>
+                )}
               </div>
             ) : (
               posts.map((post) => (
