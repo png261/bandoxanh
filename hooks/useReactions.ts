@@ -15,7 +15,6 @@ export interface ReactionData {
 
 export const useReactions = (postId: number) => {
   const { postReactions, setPostReactions, updateReaction, getPostReactions } = useReactionsStore();
-  const [loading, setLoading] = useState(false);
 
   // Get from store or initialize empty
   const storedData = getPostReactions(postId);
@@ -60,9 +59,7 @@ export const useReactions = (postId: number) => {
   }, [postId]);
 
   const react = async (type: ReactionType) => {
-    setLoading(true);
-    
-    // Optimistic update in store
+    // Optimistic update in store FIRST - instant UI update
     const currentUserReaction = reactionData.userReaction;
     updateReaction(postId, type, currentUserReaction);
     
@@ -73,23 +70,20 @@ export const useReactions = (postId: number) => {
         body: JSON.stringify({ type }),
       });
 
-      if (response.ok) {
-        // Fetch actual data from server to confirm
-        await fetchReactions();
-      } else {
-        // Revert on error - fetch from server
+      if (!response.ok) {
+        // Only revert and fetch from server on error
+        console.error('Failed to update reaction on server');
         await fetchReactions();
       }
+      // Success - no need to fetch again, optimistic update is correct
     } catch (error) {
       console.error('Error reacting to post:', error);
       // Revert on error - fetch from server
       await fetchReactions();
-    } finally {
-      setLoading(false);
     }
   };
 
-  return { reactionData, loading, react, refetch: fetchReactions };
+  return { reactionData, react, refetch: fetchReactions };
 };
 
 // Reaction emoji mapping

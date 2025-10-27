@@ -9,7 +9,7 @@ interface ReactionPickerProps {
 }
 
 const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
-  const { reactionData, loading, react } = useReactions(postId);
+  const { reactionData, react } = useReactions(postId);
 
   const handleReact = async (type: ReactionType) => {
     await react(type);
@@ -26,7 +26,6 @@ const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
           <button
             key={type}
             onClick={() => handleReact(type)}
-            disabled={loading}
             className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs sm:text-sm border transition-all hover:scale-110 ${
               isUserReaction
                 ? 'bg-brand-green/10 border-brand-green text-brand-green dark:bg-brand-green/20 font-semibold'
