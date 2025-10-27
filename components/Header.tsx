@@ -53,7 +53,7 @@ const NavItems: React.FC<NavItemsProps> = ({ currentPath, navigateTo, onLinkClic
               {!isCollapsed && <span className="ml-4 whitespace-nowrap">{item.label}</span>}
             </button>
             {isCollapsed && (
-              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-[9999]">
                 {item.label}
               </div>
             )}
@@ -78,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
   return (
     <>
       {/* --- Sidebar for Desktop --- */}
-      <aside className={`bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 ${isCollapsed ? 'w-24' : 'w-72'}`}>
+      <aside className={`bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 ${isCollapsed ? 'w-24 overflow-visible' : 'w-72'}`}>
         {/* Header with Logo */}
         <div className={`flex items-center border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2 justify-center' : 'px-6'}`}>
           <div 
@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
         </div>
 
         {/* Navigation */}
-        <nav className="flex-grow p-3 space-y-2 overflow-y-auto">
+        <nav className={`flex-grow p-3 space-y-2 ${isCollapsed ? 'overflow-visible' : 'overflow-y-auto'}`}>
           <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} />
         </nav>
 
