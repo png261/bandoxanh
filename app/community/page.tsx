@@ -10,7 +10,8 @@ import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons'
 import { useEffect, useRef } from 'react';
 import React from 'react';
 import { useCommunityStore, type DBPost, type DBComment } from '@/store/communityStore';
-import { useThemeStore } from '@/store/themeStore';
+import { useTheme } from '@/hooks/useTheme';
+import { useSidebar } from '@/hooks/useSidebar';
 import { usePosts } from '@/hooks/usePosts';
 
 export default function CommunityPage() {
@@ -30,10 +31,12 @@ export default function CommunityPage() {
   const [editCommentContent, setEditCommentContent] = React.useState('');
   const [imageViewer, setImageViewer] = React.useState<{ images: string[]; index: number } | null>(null);
 
-  // Zustand store (without posts and loading which come from usePosts hook)
+  // Global state
+  const { isCollapsed: isSidebarCollapsed, setCollapsed: setSidebarCollapsed } = useSidebar();
+  const { theme, toggleTheme } = useTheme();
+
+  // Zustand store (without posts, loading, and sidebar which come from hooks)
   const {
-    isSidebarCollapsed,
-    setSidebarCollapsed,
     setPostsWithCache,
     newPostContent,
     setNewPostContent,
@@ -55,9 +58,6 @@ export default function CommunityPage() {
     addComment: storeAddComment,
     replaceComment,
   } = useCommunityStore();
-
-  // Theme from theme store
-  const { theme, toggleTheme } = useThemeStore();
 
   // Image handling
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

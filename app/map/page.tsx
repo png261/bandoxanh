@@ -6,6 +6,8 @@ import { MapPinIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CalendarIcon
 import Header from '@/components/Header';
 import { Theme } from '@/types';
 import { useMapStore } from '@/store/mapStore';
+import { useSidebar } from '@/hooks/useSidebar';
+import { useTheme } from '@/hooks/useTheme';
 
 declare var L: any;
 
@@ -473,31 +475,8 @@ function MapPage() {
 }
 
 export default function Map() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState<Theme>('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme: Theme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+  const { isCollapsed: isSidebarCollapsed, setCollapsed: setIsSidebarCollapsed } = useSidebar();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="bg-brand-gray-light dark:bg-black min-h-screen font-sans text-brand-gray-dark dark:text-gray-200">

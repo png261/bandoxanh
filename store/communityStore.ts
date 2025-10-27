@@ -39,8 +39,6 @@ export interface DBComment {
 
 interface CommunityState {
   // UI State
-  isSidebarCollapsed: boolean;
-  theme: Theme;
   loading: boolean;
   uploading: boolean;
   commentingPostId: string | null;
@@ -58,9 +56,6 @@ interface CommunityState {
   postsCacheValid: boolean;
 
   // Actions
-  setSidebarCollapsed: (collapsed: boolean) => void;
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
   setLoading: (loading: boolean) => void;
   setUploading: (uploading: boolean) => void;
   setCommentingPostId: (postId: string | null) => void;
@@ -92,8 +87,6 @@ interface CommunityState {
 
 export const useCommunityStore = create<CommunityState>((set, get) => ({
   // Initial state
-  isSidebarCollapsed: false,
-  theme: 'light',
   loading: false,
   uploading: false,
   commentingPostId: null,
@@ -107,8 +100,6 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   postsCacheValid: false,
 
   // Basic setters
-  setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
-  setTheme: (theme) => set({ theme }),
   setLoading: (loading) => set({ loading }),
   setUploading: (uploading) => set({ uploading }),
   setCommentingPostId: (postId) => set({ commentingPostId: postId }),
@@ -143,12 +134,6 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     
     return false;
   },
-
-  // Toggle theme
-  toggleTheme: () =>
-    set((state) => ({
-      theme: state.theme === 'light' ? 'dark' : 'light',
-    })),
 
   // Helper actions
   addPost: (post) =>

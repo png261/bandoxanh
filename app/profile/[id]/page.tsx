@@ -14,6 +14,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useBadges } from '@/hooks/useBadges';
 import { useUserPosts } from '@/hooks/useUserPosts';
 import { useTheme } from '@/hooks/useTheme';
+import { useSidebar } from '@/hooks/useSidebar';
 import { formatDate, parseImages, getAvatarUrl } from '@/lib/utils/helpers';
 
 export default function ProfilePage() {
@@ -27,10 +28,10 @@ export default function ProfilePage() {
   const { badges, addBadge } = useBadges(userId);
   const { posts: userPosts } = useUserPosts(userId);
   const { theme, toggleTheme } = useTheme();
+  const { isCollapsed: isSidebarCollapsed, setCollapsed: setIsSidebarCollapsed } = useSidebar();
 
   // Local state
   const [showBadgeScanner, setShowBadgeScanner] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [imageViewer, setImageViewer] = useState<{ images: string[]; index: number } | null>(null);
 
   const isCurrentUser = clerkUser?.id === profile?.clerkId;

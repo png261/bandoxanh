@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import { Theme, NewsArticle, RecyclingEvent } from '@/types';
 import React from 'react';
 import { useNewsStore } from '@/store/newsStore';
+import { useSidebar } from '@/hooks/useSidebar';
+import { useTheme } from '@/hooks/useTheme';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -120,31 +122,8 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
 
 export default function News() {
   const router = useRouter();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState<Theme>('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme: Theme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+  const { isCollapsed: isSidebarCollapsed, setCollapsed: setIsSidebarCollapsed } = useSidebar();
+  const { theme, toggleTheme } = useTheme();
 
   const navigateTo = (path: string, options?: any) => {
     window.scrollTo(0, 0);
