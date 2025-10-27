@@ -20,7 +20,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ url, title, text, onClose, type
     {
       name: 'Facebook',
       icon: <FacebookIcon className="w-7 h-7" />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title + ' - ' + text.substring(0, 150))}`,
+      url: `https://www.facebook.com/dialog/share?app_id=1355636276138350&href=${encodeURIComponent(url)}&quote=${encodeURIComponent(title + ' - ' + text.substring(0, 200))}&display=popup`,
       color: 'text-blue-600 dark:text-blue-500',
     },
     {
