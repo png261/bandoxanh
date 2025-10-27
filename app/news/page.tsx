@@ -82,20 +82,12 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
   const [shareModalData, setShareModalData] = React.useState<{ url: string; title: string; text: string; type: 'post' | 'news' | 'event' } | null>(null);
   
   // Use Zustand store for news and events
-  const { newsArticles, events, loading, fetchNews, fetchEvents } = useNewsStore();
+  const { newsArticles, loading, fetchNews, fetchEvents } = useNewsStore();
 
   useEffect(() => {
     fetchNews();
     fetchEvents();
   }, [fetchNews, fetchEvents]);
-
-  const featuredArticle = newsArticles.find(a => a.isFeatured);
-  const otherArticles = newsArticles
-    .filter(a => !a.isFeatured)
-    .sort((a, b) => 
-      new Date(b.date.split('/').reverse().join('-')).getTime() - 
-      new Date(a.date.split('/').reverse().join('-')).getTime()
-    );
 
   const handleShare = (article: NewsArticle, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -119,18 +111,6 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
 
   return (
     <div className="space-y-8 sm:space-y-12">
-      {featuredArticle && (
-        <section>
-          <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Tin nổi bật</h2>
-          <NewsCard 
-            article={featuredArticle} 
-            isFeatured={true} 
-            onClick={() => navigateTo(`/news/${featuredArticle.id}`)} 
-            onShare={(e) => handleShare(featuredArticle, e)}
-          />
-        </section>
-      )}
-
       {/* Upcoming Events Section */}
       <section>
         <UpcomingEvents onEventClick={(event) => {
@@ -138,10 +118,11 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
         }} />
       </section>
 
+      {/* All News Articles */}
       <section>
-        <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-6 break-words">Tin tức khác</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-6 break-words">Tin tức</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {otherArticles.map(article => (
+          {newsArticles.map(article => (
             <NewsCard 
               key={article.id} 
               article={article} 
