@@ -1,43 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
+import BadgeDisplay from '@/components/BadgeDisplay';
+import BadgeScanner from '@/components/BadgeScanner';
 import { HeartIcon, ChatBubbleIcon, ArrowLeftIcon } from '@/components/Icons';
-import { Theme } from '@/types';
-
-interface UserProfile {
-  id: string;
-  clerkId: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  bio?: string;
-  joinDate: string;
-}
-
-interface PostDetail {
-  id: string;
-  content: string;
-  images?: string | string[];
-  likes?: number;
-  createdAt: string;
-  author: {
-    id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-  };
-  comments: Array<{
-    id: string;
-    content: string;
-    createdAt: string;
-  }>;
-}
+import { useProfile } from '@/hooks/useProfile';
+import { useBadges } from '@/hooks/useBadges';
+import { useUserPosts } from '@/hooks/useUserPosts';
+import { useTheme } from '@/hooks/useTheme';
+import { formatDate, parseImages, getAvatarUrl } from '@/lib/utils/helpers';
 
 export default function ProfilePage() {
   const { user: clerkUser } = useUser();
@@ -45,104 +22,25 @@ export default function ProfilePage() {
   const router = useRouter();
   const userId = params?.id as string;
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [userPosts, setUserPosts] = useState<PostDetail[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState<Theme>('light');
+  // Custom hooks
+  const { profile, loading: profileLoading } = useProfile(userId);
+  const { badges, addBadge } = useBadges(userId);
+  const { posts: userPosts } = useUserPosts(userId);
+  const { theme, toggleTheme } = useTheme();
+
+  // Local state
+  const [showBadgeScanner, setShowBadgeScanner] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [imageViewer, setImageViewer] = useState<{ images: string[]; index: number } | null>(null);
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    const prefersDark =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/users/${userId}`);
-        if (!response.ok) throw new Error('User not found');
-        const data = await response.json();
-        setProfile(data);
-
-        // Fetch user's posts
-        const postsResponse = await fetch(`/api/users/${userId}/posts`);
-        if (postsResponse.ok) {
-          const postsData = await postsResponse.json();
-          setUserPosts(postsData || []);
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userId) {
-      fetchProfile();
-    }
-  }, [userId]);
-
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString('vi-VN');
-    } catch {
-      return 'N/A';
-    }
-  };
-
-  const parseImages = (images: any): string[] => {
-    if (!images) return [];
-    
-    // If it's already an array, return it
-    if (Array.isArray(images)) return images;
-    
-    // If it's a string, try to parse it
-    if (typeof images === 'string') {
-      // Check if it's already a valid URL (not JSON)
-      if (images.startsWith('http') || images.startsWith('https')) {
-        return [images];
-      }
-      
-      // Try to parse as JSON
-      try {
-        const parsed = JSON.parse(images);
-        if (Array.isArray(parsed)) {
-          return parsed;
-        }
-        return [images]; // If parsed but not array, treat as single URL
-      } catch {
-        // If parsing fails, treat as single URL
-        return images.trim() ? [images] : [];
-      }
-    }
-    
-    return [];
-  };
-
   const isCurrentUser = clerkUser?.id === profile?.clerkId;
+  const loading = profileLoading;
+
+  const handleBadgeScanned = (badge: any) => {
+    addBadge(badge);
+    setShowBadgeScanner(false);
+    alert(`🎉 Bạn đã nhận được huy hiệu "${badge.name}"!`);
+  };
 
   if (loading) {
     return (
