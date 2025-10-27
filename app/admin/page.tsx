@@ -147,6 +147,16 @@ export default function AdminPage() {
       bgColor: 'bg-teal-50 dark:bg-teal-900/20',
       borderColor: 'border-teal-200',
     },
+    {
+      title: 'Quản lý Admin',
+      description: 'Thêm và quản lý quyền admin',
+      icon: '👥',
+      count: stats.users,
+      href: '/admin/users',
+      color: 'text-indigo-600 dark:text-indigo-400',
+      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
+      borderColor: 'border-indigo-200',
+    },
   ];
 
   if (loading) {
@@ -161,136 +171,125 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-gray-light dark:bg-black p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-brand-gray-dark dark:text-white mb-2">
-            🎛️ Quản trị hệ thống
-          </h1>
-          <p className="text-brand-gray-DEFAULT dark:text-gray-400">
-            Chào mừng {user?.firstName || 'Admin'}! Quản lý toàn bộ nội dung của BandoXanh
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                🎛️ Bảng điều khiển Admin
+              </h1>
+              <p className="text-gray-600 mt-2 text-lg">
+                Chào mừng {user?.firstName || 'Admin'}! Quản lý nội dung BandoXanh
+              </p>
+            </div>
+            <Link
+              href="/admin/help"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 transition-all flex items-center gap-2"
+            >
+              <span className="text-xl">❓</span>
+              <span>Hướng dẫn</span>
+            </Link>
+          </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-          {sections.map((section) => {
-            return (
-              <Link
-                key={section.title}
-                href={section.href}
-                className="group block p-6 bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm hover:shadow-lg transition-all border-2 border-gray-100 dark:border-gray-700 hover:border-brand-green dark:hover:border-brand-green transform hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-lg ${section.bgColor} group-hover:scale-110 transition-transform`}>
-                    <span className="text-3xl">{section.icon}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-bold text-brand-gray-dark dark:text-white">
-                      {section.count}
-                    </div>
-                    <div className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 uppercase tracking-wide">
-                      Total
-                    </div>
-                  </div>
-                </div>
-                <h3 className={`text-lg font-semibold mb-1 ${section.color}`}>
-                  {section.title}
-                </h3>
-                <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400">
-                  {section.description}
-                </p>
-              </Link>
-            );
-          })}
+        {/* Main Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl shadow-md p-6 border-2 border-green-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">📍</span>
+              <span className="text-3xl font-bold text-green-600">{stats.stations}</span>
+            </div>
+            <div className="text-gray-700 font-medium">Điểm thu gom</div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6 border-2 border-blue-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">📅</span>
+              <span className="text-3xl font-bold text-blue-600">{stats.events}</span>
+            </div>
+            <div className="text-gray-700 font-medium">Sự kiện</div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6 border-2 border-purple-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">📰</span>
+              <span className="text-3xl font-bold text-purple-600">{stats.news}</span>
+            </div>
+            <div className="text-gray-700 font-medium">Tin tức</div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6 border-2 border-orange-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">💬</span>
+              <span className="text-3xl font-bold text-orange-600">{stats.posts}</span>
+            </div>
+            <div className="text-gray-700 font-medium">Bài đăng</div>
+          </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm border-2 border-gray-100 dark:border-gray-700 p-6 mb-8">
-          <h2 className="text-2xl font-bold text-brand-gray-dark dark:text-white mb-6 flex items-center gap-2">
-            ⚡ Thao tác nhanh
+        {/* Management Sections */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            📋 Quản lý nội dung
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               href="/admin/stations"
-              className="group px-6 py-4 bg-brand-green hover:bg-brand-green-dark text-white rounded-lg text-center font-semibold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-5 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-lg border-2 border-green-200 transition-all"
             >
-              <span className="block mb-1 text-2xl">📍</span>
-              Thêm điểm thu gom
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">📍</span>
+                <div>
+                  <div className="font-bold text-gray-900 text-lg">Điểm thu gom</div>
+                  <div className="text-sm text-gray-600">Quản lý điểm thu gom rác thải</div>
+                </div>
+              </div>
+              <span className="text-2xl text-green-600 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
+
             <Link
               href="/admin/events"
-              className="group px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-semibold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg border-2 border-blue-200 transition-all"
             >
-              <span className="block mb-1 text-2xl">📅</span>
-              Thêm sự kiện
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">📅</span>
+                <div>
+                  <div className="font-bold text-gray-900 text-lg">Sự kiện</div>
+                  <div className="text-sm text-gray-600">Quản lý sự kiện tái chế</div>
+                </div>
+              </div>
+              <span className="text-2xl text-blue-600 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
+
             <Link
               href="/admin/news"
-              className="group px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-center font-semibold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-lg border-2 border-purple-200 transition-all"
             >
-              <span className="block mb-1 text-2xl">📰</span>
-              Thêm tin tức
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">📰</span>
+                <div>
+                  <div className="font-bold text-gray-900 text-lg">Tin tức</div>
+                  <div className="text-sm text-gray-600">Quản lý tin tức môi trường</div>
+                </div>
+              </div>
+              <span className="text-2xl text-purple-600 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
-          </div>
-        </div>
 
-        {/* Recent Activity & Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Info Card */}
-          <div className="bg-gradient-to-br from-brand-green-light to-brand-green/20 dark:from-brand-green/20 dark:to-brand-green/5 border-2 border-brand-green/30 rounded-xl p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 bg-white dark:bg-brand-gray-dark p-3 rounded-lg">
-                <svg
-                  className="h-6 w-6 text-brand-green"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+            <Link
+              href="/admin/users"
+              className="group flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 rounded-lg border-2 border-indigo-200 transition-all"
+            >
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">👥</span>
+                <div>
+                  <div className="font-bold text-gray-900 text-lg">Người dùng</div>
+                  <div className="text-sm text-gray-600">Quản lý admin & người dùng</div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-brand-gray-dark dark:text-white mb-2">
-                  Quyền quản trị
-                </h3>
-                <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-300">
-                  Bạn đang đăng nhập với quyền quản trị viên. Bạn có toàn quyền quản lý nội dung và người dùng trên nền tảng BandoXanh.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Platform Stats */}
-          <div className="bg-white dark:bg-brand-gray-dark border-2 border-gray-100 dark:border-gray-700 rounded-xl p-6">
-            <h3 className="font-bold text-brand-gray-dark dark:text-white mb-4 flex items-center gap-2">
-              📊 Tổng quan nền tảng
-            </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-brand-gray-DEFAULT dark:text-gray-400">Tổng nội dung</span>
-                <span className="font-bold text-brand-gray-dark dark:text-white">
-                  {stats.stations + stats.events + stats.news + stats.posts}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-brand-gray-DEFAULT dark:text-gray-400">Tương tác</span>
-                <span className="font-bold text-brand-gray-dark dark:text-white">
-                  {stats.reactions + stats.comments}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-brand-gray-DEFAULT dark:text-gray-400">Mức độ hoạt động</span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-brand-green text-white">
-                  🔥 Cao
-                </span>
-              </div>
-            </div>
+              <span className="text-2xl text-indigo-600 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
           </div>
         </div>
       </div>

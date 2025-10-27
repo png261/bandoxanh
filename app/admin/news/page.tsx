@@ -1,486 +1,255 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { toast } from 'react-hot-toast';
+import AdminHeader from '@/components/admin/AdminHeader';
+import SearchBar from '@/components/admin/SearchBar';
+import StatsCards from '@/components/admin/StatsCards';
+import Modal from '@/components/admin/Modal';
 import ImageUpload from '@/components/ImageUpload';
-
 
 interface NewsArticle {
   id: number;
   title: string;
   category: string;
   excerpt: string;
+  content: string;
   imageUrl: string;
   date: string;
   isFeatured: boolean;
-  content: string;
 }
 
 export default function NewsPage() {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState<number | null>(null);
-  const [editing, setEditing] = useState<NewsArticle | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [newArticle, setNewArticle] = useState<Omit<NewsArticle, 'id'>>({
+  const [showModal, setShowModal] = useState(false);
+  const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const [formData, setFormData] = useState({
     title: '',
-    category: 'Tin tức',
+    category: 'Môi trường',
     excerpt: '',
+    content: '',
     imageUrl: '',
     date: new Date().toISOString().split('T')[0],
     isFeatured: false,
-    content: '',
   });
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchArticles();
+    fetchNews();
   }, []);
 
-  async function fetchArticles() {
+  async function fetchNews() {
     try {
       const res = await fetch('/api/news');
       const data = await res.json();
-      setArticles(data);
+      setNews(data);
     } catch (error) {
       console.error('Error fetching news:', error);
+      toast.error('Không thể tải danh sách tin tức');
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this article?')) {
+  const handleAdd = () => {
+    setEditingNews(null);
+    setFormData({
+      title: '',
+      category: 'Môi trường',
+      excerpt: '',
+      content: '',
+      imageUrl: '',
+      date: new Date().toISOString().split('T')[0],
+      isFeatured: false,
+    });
+    setShowModal(true);
+  };
+
+  const handleEdit = (article: NewsArticle) => {
+    setEditingNews(article);
+    setFormData({
+      title: article.title,
+      category: article.category,
+      excerpt: article.excerpt,
+      content: article.content,
+      imageUrl: article.imageUrl,
+      date: article.date,
+      isFeatured: article.isFeatured,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
+    if (!formData.title || !formData.excerpt || !formData.content) {
+      toast.error('Vui lòng điền đầy đủ thông tin');
       return;
     }
 
-    setDeleting(id);
-    try {
-      const res = await fetch(`/api/news/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (res.ok) {
-        setArticles(articles.filter((a) => a.id !== id));
-      } else {
-        alert('Failed to delete article');
-      }
-    } catch (error) {
-      console.error('Error deleting article:', error);
-      alert('Error deleting article');
-    } finally {
-      setDeleting(null);
-    }
-  }
-
-  async function handleEdit(article: NewsArticle) {
-    setEditing(article);
-  }
-
-  async function handleSave() {
-    if (!editing) return;
-
     setSaving(true);
     try {
-      const res = await fetch(`/api/news/${editing.id}`, {
-        method: 'PUT',
+      const url = editingNews ? `/api/news/${editingNews.id}` : '/api/news';
+      const method = editingNews ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: editing.title,
-          category: editing.category,
-          excerpt: editing.excerpt,
-          imageUrl: editing.imageUrl,
-          date: editing.date,
-          isFeatured: editing.isFeatured,
-          content: editing.content,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      if (res.ok) {
-        const updated = await res.json();
-        setArticles(articles.map((a) => (a.id === updated.id ? updated : a)));
-        setEditing(null);
+      if (!res.ok) throw new Error('Failed to save');
+
+      const saved = await res.json();
+      
+      if (editingNews) {
+        setNews(news.map(n => n.id === saved.id ? saved : n));
+        toast.success('Cập nhật thành công!');
       } else {
-        alert('Failed to update article');
+        setNews([saved, ...news]);
+        toast.success('Thêm tin tức thành công!');
       }
+
+      setShowModal(false);
     } catch (error) {
-      console.error('Error updating article:', error);
-      alert('Error updating article');
+      console.error('Error saving news:', error);
+      toast.error('Không thể lưu tin tức');
     } finally {
       setSaving(false);
     }
-  }
+  };
 
-  async function handleCreate() {
-    setSaving(true);
+  const handleDelete = async (id: number) => {
+    if (!confirm('Bạn có chắc muốn xóa tin tức này?')) return;
+
     try {
-      const res = await fetch('/api/news', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newArticle),
-      });
-
-      if (res.ok) {
-        const created = await res.json();
-        setArticles([created, ...articles]);
-        setCreating(false);
-        setNewArticle({
-          title: '',
-          category: 'Tin tức',
-          excerpt: '',
-          imageUrl: '',
-          date: new Date().toISOString().split('T')[0],
-          isFeatured: false,
-          content: '',
-        });
-      } else {
-        const error = await res.json();
-        alert(error.error || 'Failed to create article');
-      }
+      const res = await fetch(`/api/news/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      setNews(news.filter(n => n.id !== id));
+      toast.success('Xóa thành công!');
     } catch (error) {
-      console.error('Error creating article:', error);
-      alert('Error creating article');
-    } finally {
-      setSaving(false);
+      console.error('Error deleting news:', error);
+      toast.error('Không thể xóa tin tức');
     }
-  }
+  };
+
+  const filteredNews = news.filter(n =>
+    n.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    n.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    n.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            News Articles
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Manage all news and blog posts
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setCreating(true)}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
-          >
-            + Create Article
-          </button>
-          <Link
-            href="/admin"
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-          >
-            ← Back to Dashboard
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <AdminHeader title="Quản lý Tin tức" description="Quản lý các bài viết và tin tức về môi trường" icon="📰" />
+        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} onAddClick={handleAdd} addButtonText="Thêm tin tức" placeholder="🔍 Tìm kiếm theo tiêu đề, danh mục hoặc nội dung..." />
+        <StatsCards stats={[
+          { label: 'Tổng số tin', value: news.length, color: 'text-purple-600' }, 
+          { label: 'Đang hiển thị', value: filteredNews.length, color: 'text-pink-600' },
+          { label: 'Nổi bật', value: news.filter(n => n.isFeatured).length, color: 'text-orange-600' }
+        ]} />
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
-          {articles.length === 0 ? (
-            <div className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-              No articles found
-            </div>
-          ) : (
-            articles.map((article) => (
-              <div
-                key={article.id}
-                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-              >
-                <div className="flex gap-6">
-                  <img
-                    src={article.imageUrl}
-                    alt={article.title}
-                    className="w-48 h-32 object-cover rounded-lg flex-shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
-                            {article.category}
-                          </span>
-                          {article.isFeatured && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
-                              ⭐ Featured
-                            </span>
-                          )}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Tiêu đề</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Danh mục</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Ngày đăng</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold">Trạng thái</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredNews.length === 0 ? (
+                  <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">{searchTerm ? 'Không tìm thấy tin tức nào' : 'Chưa có tin tức nào'}</td></tr>
+                ) : (
+                  filteredNews.map((article) => (
+                    <tr key={article.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900">{article.title}</div>
+                        <div className="text-sm text-gray-500 line-clamp-1">{article.excerpt}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">{article.category}</span>
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 text-sm">{new Date(article.date).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-6 py-4 text-center">
+                        {article.isFeatured && (
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">⭐ Nổi bật</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button onClick={() => handleEdit(article)} className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium">✏️ Sửa</button>
+                          <button onClick={() => handleDelete(article.id)} className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium">🗑️ Xóa</button>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                          {article.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
-                          {article.excerpt}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500">
-                          {new Date(article.date).toLocaleDateString('vi-VN', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(article)}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex-shrink-0"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(article.id)}
-                          disabled={deleting === article.id}
-                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex-shrink-0"
-                        >
-                          {deleting === article.id ? 'Deleting...' : 'Delete'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingNews ? '✏️ Chỉnh sửa tin tức' : '➕ Thêm tin tức mới'} onSave={handleSave} saving={saving} isEditing={!!editingNews}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
+              <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none" placeholder="VD: Cách phân loại rác thải tại nguồn" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+                <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none">
+                  <option value="Môi trường">Môi trường</option>
+                  <option value="Tái chế">Tái chế</option>
+                  <option value="Sự kiện">Sự kiện</option>
+                  <option value="Hướng dẫn">Hướng dẫn</option>
+                  <option value="Tin tức">Tin tức</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ngày đăng</label>
+                <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tóm tắt *</label>
+              <textarea value={formData.excerpt} onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })} rows={2} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none" placeholder="Tóm tắt ngắn về nội dung bài viết..."></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung *</label>
+              <textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} rows={6} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none" placeholder="Nội dung chi tiết của bài viết..."></textarea>
+            </div>
+            <div>
+              <ImageUpload
+                currentUrl={formData.imageUrl}
+                onUploadSuccess={(url) => setFormData({ ...formData, imageUrl: url })}
+                label="Hình ảnh bài viết"
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={formData.isFeatured} onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })} className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
+                <span className="text-sm font-medium text-gray-700">⭐ Đánh dấu là tin nổi bật</span>
+              </label>
+            </div>
+          </div>
+        </Modal>
       </div>
-
-      {/* Edit Modal */}
-      {editing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Edit News Article
-              </h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    value={editing.title}
-                    onChange={(e) => setEditing({ ...editing, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Category
-                    </label>
-                    <select
-                      value={editing.category}
-                      onChange={(e) => setEditing({ ...editing, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    >
-                      <option value="Tin tức">Tin tức</option>
-                      <option value="Hướng dẫn">Hướng dẫn</option>
-                      <option value="Sự kiện">Sự kiện</option>
-                      <option value="Môi trường">Môi trường</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Date
-                    </label>
-                    <input
-                      type="text"
-                      value={editing.date}
-                      onChange={(e) => setEditing({ ...editing, date: e.target.value })}
-                      placeholder="YYYY-MM-DD"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Excerpt
-                  </label>
-                  <textarea
-                    value={editing.excerpt}
-                    onChange={(e) => setEditing({ ...editing, excerpt: e.target.value })}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Content
-                  </label>
-                  <textarea
-                    value={editing.content}
-                    onChange={(e) => setEditing({ ...editing, content: e.target.value })}
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                  />
-                </div>
-
-                <ImageUpload
-                  currentUrl={editing.imageUrl}
-                  onUploadSuccess={(url) => setEditing({ ...editing, imageUrl: url })}
-                  label="Article Image"
-                />
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="featured"
-                    checked={editing.isFeatured}
-                    onChange={(e) => setEditing({ ...editing, isFeatured: e.target.checked })}
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="featured" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                    Featured Article
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  onClick={() => setEditing(null)}
-                  disabled={saving}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium disabled:opacity-50"
-                >
-                  {saving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Modal */}
-      {creating && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Create News Article
-              </h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    value={newArticle.title}
-                    onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Category
-                    </label>
-                    <select
-                      value={newArticle.category}
-                      onChange={(e) => setNewArticle({ ...newArticle, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    >
-                      <option value="Tin tức">Tin tức</option>
-                      <option value="Hướng dẫn">Hướng dẫn</option>
-                      <option value="Sự kiện">Sự kiện</option>
-                      <option value="Môi trường">Môi trường</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Date
-                    </label>
-                    <input
-                      type="date"
-                      value={newArticle.date}
-                      onChange={(e) => setNewArticle({ ...newArticle, date: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Excerpt
-                  </label>
-                  <textarea
-                    value={newArticle.excerpt}
-                    onChange={(e) => setNewArticle({ ...newArticle, excerpt: e.target.value })}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Content
-                  </label>
-                  <textarea
-                    value={newArticle.content}
-                    onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                  />
-                </div>
-
-                <ImageUpload
-                  currentUrl={newArticle.imageUrl}
-                  onUploadSuccess={(url) => setNewArticle({ ...newArticle, imageUrl: url })}
-                  label="Article Image"
-                />
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="featured-new"
-                    checked={newArticle.isFeatured}
-                    onChange={(e) => setNewArticle({ ...newArticle, isFeatured: e.target.checked })}
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="featured-new" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                    Featured Article
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  onClick={() => setCreating(false)}
-                  disabled={saving}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreate}
-                  disabled={saving}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium disabled:opacity-50"
-                >
-                  {saving ? 'Creating...' : 'Create Article'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

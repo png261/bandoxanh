@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,305 +7,269 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User Model
 model User {
-  id        Int     @id @default(autoincrement())
-  clerkId   String  @unique  // Clerk user ID
-  email     String  @unique
-  name      String?
-  avatar    String?
-  joinDate  String?
-  bio       String?
-  points    Int     @default(0)  // Points for ranking
-  level     Int     @default(1)  // User level
-  title     String  @default("Người mới")  // User title/rank
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  awards    UserAward[]
-  badges    UserBadge[]
-  posts     Post[]
-  comments  Comment[]
-  likes     PostLike[]
-  reactions PostReaction[]
+  id                 Int                 @id @default(autoincrement())
+  clerkId            String              @unique
+  email              String              @unique
+  name               String?
+  avatar             String?
+  joinDate           String?
+  bio                String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  level              Int                 @default(1)
+  points             Int                 @default(0)
+  title              String              @default("Người mới")
+  isAdmin            Boolean             @default(false)
+  comments           Comment[]
   eventRegistrations EventRegistration[]
-  notifications Notification[]
-  
-  // Follow relationships
-  followers UserFollow[] @relation("UserFollowers")
-  following UserFollow[] @relation("UserFollowing")
+  notifications      Notification[]
+  likes              PostLike[]
+  reactions          PostReaction[]
+  posts              Post[]
+  awards             UserAward[]
+  badges             UserBadge[]
+  followers          UserFollow[]        @relation("UserFollowers")
+  following          UserFollow[]        @relation("UserFollowing")
 
   @@map("users")
 }
 
-// Award Model
 model Award {
-  id          Int     @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   description String
   icon        String
-  createdAt   DateTime @default(now())
-
-  // Relations
-  users UserAward[]
+  createdAt   DateTime    @default(now())
+  users       UserAward[]
 
   @@map("awards")
 }
 
-// UserAward Junction Model
 model UserAward {
-  userId  Int
-  awardId Int
-  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  award   Award @relation(fields: [awardId], references: [id], onDelete: Cascade)
+  userId     Int
+  awardId    Int
   assignedAt DateTime @default(now())
+  award      Award    @relation(fields: [awardId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, awardId])
   @@map("user_awards")
 }
 
-// Station Model (Recycling Stations)
 model Station {
-  id        Int      @id @default(autoincrement())
-  name      String
-  address   String
-  latitude  Float
-  longitude Float
-  hours     String
-  wasteTypes String  // JSON array stored as string
-  image     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String
+  address    String
+  latitude   Float
+  longitude  Float
+  hours      String
+  wasteTypes String
+  image      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("stations")
 }
 
-// RecyclingEvent Model
 model RecyclingEvent {
-  id          Int      @id @default(autoincrement())
-  name        String
-  address     String
-  latitude    Float
-  longitude   Float
-  date        String
-  time        String
-  organizer   String
-  description String
-  image       String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
+  id            Int                 @id @default(autoincrement())
+  name          String
+  address       String
+  latitude      Float
+  longitude     Float
+  date          String
+  time          String
+  organizer     String
+  description   String
+  image         String
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
   registrations EventRegistration[]
 
   @@map("recycling_events")
 }
 
-// Post Model
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   content   String
-  images    String?  // JSON array stored as string
-  hashtags  String?  // JSON array of hashtags
-  poll      Poll?
+  images    String?
   timestamp String
-  likes     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
+  likes     Int            @default(0)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   authorId  Int
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  hashtags  String?
   comments  Comment[]
+  poll      Poll?
   likedBy   PostLike[]
   reactions PostReaction[]
+  author    User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("posts")
 }
 
-// PostLike Model (to track which users liked which posts)
 model PostLike {
   id        Int      @id @default(autoincrement())
   postId    Int
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])  // Ensure each user can only like a post once
+  @@unique([postId, userId])
   @@map("post_likes")
 }
 
-// Comment Model
 model Comment {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String
   timestamp String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // Relations
   postId    Int
-  post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
   authorId  Int
-  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@map("comments")
 }
 
-// Poll Model
 model Poll {
-  id        Int         @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   question  String
+  votedBy   String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  postId    Int          @unique
   options   PollOption[]
-  votedBy   String?     // JSON array of user IDs
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  // Relations
-  postId    Int         @unique
-  post      Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@map("polls")
 }
 
-// PollOption Model
 model PollOption {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   text      String
-  votes     Int     @default(0)
+  votes     Int      @default(0)
   createdAt DateTime @default(now())
-
-  // Relations
   pollId    Int
-  poll      Poll    @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
 
   @@map("poll_options")
 }
 
-// NewsArticle Model
 model NewsArticle {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   title      String
   category   String
   excerpt    String
   imageUrl   String
   date       String
-  isFeatured Boolean @default(false)
-  content    String  @db.Text
+  isFeatured Boolean  @default(false)
+  content    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@map("news_articles")
 }
 
-// WasteAnalysis Model (for storing AI analysis results)
 model WasteAnalysis {
-  id                  Int     @id @default(autoincrement())
+  id                  Int      @id @default(autoincrement())
   imageUrl            String
   wasteType           String
-  recyclingSuggestion String  @db.Text
+  recyclingSuggestion String
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
   @@map("waste_analyses")
 }
 
-// Badge Model (for achievements)
 model Badge {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   description String
   icon        String
   color       String
   category    String
-  qrCode      String?  @unique
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  users UserBadge[]
+  qrCode      String?     @unique
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  users       UserBadge[]
 
   @@map("badges")
 }
 
-// UserBadge Junction Model
 model UserBadge {
-  userId     Int
-  badgeId    Int
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge      Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
-  earnedAt   DateTime @default(now())
-  scannedAt  DateTime?
+  userId    Int
+  badgeId   Int
+  earnedAt  DateTime  @default(now())
+  scannedAt DateTime?
+  badge     Badge     @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, badgeId])
   @@map("user_badges")
 }
 
-// EventRegistration Model (users registering for events)
 model EventRegistration {
-  id        Int      @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   userId    Int
   eventId   Int
-  status    String   @default("interested") // "interested", "going"
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String         @default("interested")
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   event     RecyclingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId])
   @@map("event_registrations")
 }
 
-// Notification Model
 model Notification {
   id        Int      @id @default(autoincrement())
   userId    Int
-  type      String   // "event", "post", "badge", "comment", "follow", "reaction"
+  type      String
   title     String
   message   String
   link      String?
   isRead    Boolean  @default(false)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
 
-// UserFollow Model (follow/follower relationships)
 model UserFollow {
   id          Int      @id @default(autoincrement())
-  followerId  Int      // User who follows
-  followingId Int      // User being followed
+  followerId  Int
+  followingId Int
+  createdAt   DateTime @default(now())
   follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
   following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
 
   @@unique([followerId, followingId])
   @@map("user_follows")
 }
 
-// PostReaction Model (multiple reaction types)
 model PostReaction {
   id        Int      @id @default(autoincrement())
   postId    Int
   userId    Int
-  type      String   // "love", "like", "clap", "green_heart", "seedling", "recycle", "wow"
+  type      String
+  createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
 
   @@unique([postId, userId])
   @@map("post_reactions")
 }
 
-// Hashtag Model
 model Hashtag {
   id        Int      @id @default(autoincrement())
-  name      String   @unique  // без #, lowercase
+  name      String   @unique
   postCount Int      @default(0)
   trending  Boolean  @default(false)
   createdAt DateTime @default(now())

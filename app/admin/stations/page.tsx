@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { toast } from 'react-hot-toast';
+import AdminHeader from '@/components/admin/AdminHeader';
+import SearchBar from '@/components/admin/SearchBar';
+import StatsCards from '@/components/admin/StatsCards';
+import Modal from '@/components/admin/Modal';
 import ImageUpload from '@/components/ImageUpload';
-
 
 interface Station {
   id: number;
@@ -12,16 +15,29 @@ interface Station {
   latitude: number;
   longitude: number;
   hours: string;
-  wasteTypes: string;
-  imageUrl?: string | null;
+  wasteTypes: string | string[];
+  image?: string | null;
 }
 
 export default function StationsPage() {
   const [stations, setStations] = useState<Station[]>([]);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState<number | null>(null);
-  const [editing, setEditing] = useState<Station | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingStation, setEditingStation] = useState<Station | null>(null);
   const [saving, setSaving] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const WASTE_TYPES = ['Nhựa', 'Giấy', 'Kim loại', 'Thủy tinh', 'Pin', 'Điện tử', 'Vải', 'Khác'];
+
+  const [formData, setFormData] = useState({
+    name: '',
+    address: '',
+    latitude: 10.762622,
+    longitude: 106.660172,
+    hours: 'Thứ 2 - Chủ nhật: 8:00 - 17:00',
+    wasteTypes: [] as string[],
+    image: '',
+  });
 
   useEffect(() => {
     fetchStations();
@@ -34,308 +50,221 @@ export default function StationsPage() {
       setStations(data);
     } catch (error) {
       console.error('Error fetching stations:', error);
+      toast.error('Không thể tải danh sách điểm thu gom');
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this station?')) {
+  const handleAdd = () => {
+    setEditingStation(null);
+    setFormData({
+      name: '',
+      address: '',
+      latitude: 10.762622,
+      longitude: 106.660172,
+      hours: 'Thứ 2 - Chủ nhật: 8:00 - 17:00',
+      wasteTypes: [],
+      image: '',
+    });
+    setShowModal(true);
+  };
+
+  const handleEdit = (station: Station) => {
+    setEditingStation(station);
+    setFormData({
+      name: station.name,
+      address: station.address,
+      latitude: station.latitude,
+      longitude: station.longitude,
+      hours: station.hours,
+      wasteTypes: typeof station.wasteTypes === 'string' ? station.wasteTypes.split(',').map(t => t.trim()) : station.wasteTypes,
+      image: station.image || '',
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
+    if (!formData.name || !formData.address) {
+      toast.error('Vui lòng điền đầy đủ thông tin');
       return;
     }
 
-    setDeleting(id);
-    try {
-      const res = await fetch(`/api/admin/stations/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (res.ok) {
-        setStations(stations.filter((s) => s.id !== id));
-      } else {
-        alert('Failed to delete station');
-      }
-    } catch (error) {
-      console.error('Error deleting station:', error);
-      alert('Error deleting station');
-    } finally {
-      setDeleting(null);
-    }
-  }
-
-  async function handleEdit(station: Station) {
-    setEditing(station);
-  }
-
-  async function handleSave() {
-    if (!editing) return;
-
     setSaving(true);
     try {
-      const wasteTypes = JSON.parse(editing.wasteTypes || '[]');
-      
-      const res = await fetch(`/api/admin/stations/${editing.id}`, {
-        method: 'PUT',
+      const url = editingStation ? `/api/admin/stations/${editingStation.id}` : '/api/admin/stations';
+      const method = editingStation ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: editing.name,
-          address: editing.address,
-          latitude: editing.latitude,
-          longitude: editing.longitude,
-          hours: editing.hours,
-          wasteTypes: wasteTypes,
-          image: editing.imageUrl,
+          ...formData,
+          wasteTypes: formData.wasteTypes,
         }),
       });
 
-      if (res.ok) {
-        const updated = await res.json();
-        setStations(stations.map((s) => (s.id === updated.id ? updated : s)));
-        setEditing(null);
+      if (!res.ok) throw new Error('Failed to save');
+
+      const saved = await res.json();
+      
+      if (editingStation) {
+        setStations(stations.map(s => s.id === saved.id ? saved : s));
+        toast.success('Cập nhật thành công!');
       } else {
-        alert('Failed to update station');
+        setStations([saved, ...stations]);
+        toast.success('Thêm điểm thu gom thành công!');
       }
+
+      setShowModal(false);
     } catch (error) {
-      console.error('Error updating station:', error);
-      alert('Error updating station');
+      console.error('Error saving station:', error);
+      toast.error('Không thể lưu điểm thu gom');
     } finally {
       setSaving(false);
     }
-  }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Bạn có chắc muốn xóa điểm thu gom này?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/stations/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      setStations(stations.filter(s => s.id !== id));
+      toast.success('Xóa thành công!');
+    } catch (error) {
+      console.error('Error deleting station:', error);
+      toast.error('Không thể xóa điểm thu gom');
+    }
+  };
+
+  const filteredStations = stations.filter(s =>
+    s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.address.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Recycling Stations
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Manage all recycling station locations
-          </p>
-        </div>
-        <Link
-          href="/admin"
-          className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <AdminHeader title="Quản lý Điểm thu gom" description="Quản lý các điểm thu gom rác thải tái chế" icon="📍" />
+        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} onAddClick={handleAdd} addButtonText="Thêm điểm thu gom" placeholder="🔍 Tìm kiếm theo tên hoặc địa chỉ..." />
+        <StatsCards stats={[{ label: 'Tổng số điểm', value: stations.length, color: 'text-green-600' }, { label: 'Đang hiển thị', value: filteredStations.length, color: 'text-blue-600' }]} />
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Address
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Hours
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Waste Types
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {stations.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    No stations found
-                  </td>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Tên điểm</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Địa chỉ</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Giờ hoạt động</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Loại rác</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold">Thao tác</th>
                 </tr>
-              ) : (
-                stations.map((station) => {
-                  const wasteTypes = JSON.parse(station.wasteTypes || '[]');
-                  return (
-                    <tr key={station.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {station.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                          {station.address}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                          {station.hours}
-                        </div>
-                      </td>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredStations.length === 0 ? (
+                  <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">{searchTerm ? 'Không tìm thấy điểm thu gom nào' : 'Chưa có điểm thu gom nào'}</td></tr>
+                ) : (
+                  filteredStations.map((station) => (
+                    <tr key={station.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4"><div className="font-medium text-gray-900">{station.name}</div></td>
+                      <td className="px-6 py-4 text-gray-600 text-sm max-w-xs truncate">{station.address}</td>
+                      <td className="px-6 py-4 text-gray-600 text-sm">{station.hours}</td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {wasteTypes.slice(0, 3).map((type: string) => (
-                            <span
-                              key={type}
-                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
-                            >
-                              {type}
-                            </span>
-                          ))}
-                          {wasteTypes.length > 3 && (
-                            <span className="text-xs text-gray-500">
-                              +{wasteTypes.length - 3} more
-                            </span>
-                          )}
+                          {(() => {
+                            let types: string[] = [];
+                            if (Array.isArray(station.wasteTypes)) {
+                              types = station.wasteTypes;
+                            } else if (typeof station.wasteTypes === 'string') {
+                              types = station.wasteTypes.split(',').map(t => t.trim());
+                            }
+                            return types.slice(0, 3).map((type, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">{type}</span>
+                            ));
+                          })()}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                        <button
-                          onClick={() => handleEdit(station)}
-                          className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(station.id)}
-                          disabled={deleting === station.id}
-                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 disabled:opacity-50"
-                        >
-                          {deleting === station.id ? 'Deleting...' : 'Delete'}
-                        </button>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button onClick={() => handleEdit(station)} className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium">✏️ Sửa</button>
+                          <button onClick={() => handleDelete(station.id)} className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium">🗑️ Xóa</button>
+                        </div>
                       </td>
                     </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Edit Modal */}
-      {editing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Edit Station
-              </h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={editing.name}
-                    onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    value={editing.address}
-                    onChange={(e) => setEditing({ ...editing, address: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Latitude
-                    </label>
-                    <input
-                      type="number"
-                      step="0.000001"
-                      value={editing.latitude}
-                      onChange={(e) => setEditing({ ...editing, latitude: parseFloat(e.target.value) })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Longitude
-                    </label>
-                    <input
-                      type="number"
-                      step="0.000001"
-                      value={editing.longitude}
-                      onChange={(e) => setEditing({ ...editing, longitude: parseFloat(e.target.value) })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Hours
-                  </label>
-                  <input
-                    type="text"
-                    value={editing.hours}
-                    onChange={(e) => setEditing({ ...editing, hours: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Waste Types (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={JSON.parse(editing.wasteTypes || '[]').join(', ')}
-                    onChange={(e) => {
-                      const types = e.target.value.split(',').map(t => t.trim()).filter(t => t);
-                      setEditing({ ...editing, wasteTypes: JSON.stringify(types) });
-                    }}
-                    placeholder="Plastic, Glass, Paper, Metal"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-
-                <ImageUpload
-                  currentUrl={editing.imageUrl || ''}
-                  onUploadSuccess={(url) => setEditing({ ...editing, imageUrl: url })}
-                  label="Station Image"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  onClick={() => setEditing(null)}
-                  disabled={saving}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium disabled:opacity-50"
-                >
-                  {saving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-      )}
+
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingStation ? '✏️ Chỉnh sửa điểm thu gom' : '➕ Thêm điểm thu gom mới'} onSave={handleSave} saving={saving} isEditing={!!editingStation}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tên điểm thu gom *</label>
+              <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="VD: Trạm Thu Gom Quận 1" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ *</label>
+              <input type="text" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="VD: 123 Nguyễn Huệ, Quận 1, TP.HCM" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Vĩ độ</label>
+                <input type="number" step="0.000001" value={formData.latitude} onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Kinh độ</label>
+                <input type="number" step="0.000001" value={formData.longitude} onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Giờ hoạt động</label>
+              <input type="text" value={formData.hours} onChange={(e) => setFormData({ ...formData, hours: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" placeholder="VD: Thứ 2 - Chủ nhật: 8:00 - 17:00" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Loại rác thu gom</label>
+              <div className="grid grid-cols-2 gap-3">
+                {WASTE_TYPES.map((type) => (
+                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.wasteTypes.includes(type)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData({ ...formData, wasteTypes: [...formData.wasteTypes, type] });
+                        } else {
+                          setFormData({ ...formData, wasteTypes: formData.wasteTypes.filter(t => t !== type) });
+                        }
+                      }}
+                      className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                    />
+                    <span className="text-sm text-gray-700">{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <ImageUpload
+                currentUrl={formData.image}
+                onUploadSuccess={(url) => setFormData({ ...formData, image: url })}
+                label="Hình ảnh điểm thu gom"
+              />
+            </div>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 }
