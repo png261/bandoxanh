@@ -9,11 +9,15 @@ interface Post {
   imageUrls: string | null;
   userId: string;
   createdAt: string;
-  user: {
+  user?: {
     name: string;
     avatar: string | null;
   };
-  _count: {
+  author?: {
+    name: string;
+    avatar: string | null;
+  };
+  _count?: {
     likes: number;
     comments: number;
   };
@@ -99,6 +103,8 @@ export default function PostsPage() {
         ) : (
           posts.map((post) => {
             const images = post.imageUrls ? JSON.parse(post.imageUrls) : [];
+            const author = post.user || post.author || { name: 'Unknown User', avatar: null };
+            
             return (
               <div
                 key={post.id}
@@ -106,15 +112,15 @@ export default function PostsPage() {
               >
                 <div className="flex gap-4">
                   <img
-                    src={post.user.avatar || 'https://via.placeholder.com/40'}
-                    alt={post.user.name}
-                    className="w-12 h-12 rounded-full flex-shrink-0"
+                    src={author.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(author.name || 'User')}&background=10b981&color=fff`}
+                    alt={author.name}
+                    className="w-12 h-12 rounded-full flex-shrink-0 object-cover"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div>
                         <p className="font-semibold text-gray-900 dark:text-white">
-                          {post.user.name}
+                          {author.name || 'Người dùng ẩn danh'}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(post.createdAt).toLocaleDateString('vi-VN', {
@@ -153,8 +159,8 @@ export default function PostsPage() {
                     )}
 
                     <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span>👍 {post._count.likes} likes</span>
-                      <span>💬 {post._count.comments} comments</span>
+                      <span>👍 {post._count?.likes || 0} likes</span>
+                      <span>💬 {post._count?.comments || 0} comments</span>
                     </div>
                   </div>
                 </div>
