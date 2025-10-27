@@ -42,6 +42,7 @@ export const useFollow = (userId: number) => {
         fetchFollowStats();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const toggleFollow = async () => {

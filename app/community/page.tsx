@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
 import ReactionPicker from '@/components/ReactionPicker';
+import FollowButton from '@/components/FollowButton';
 import { ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
 import { useEffect, useRef } from 'react';
 import React from 'react';
@@ -448,6 +449,15 @@ export default function CommunityPage() {
                       </button>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(post.createdAt)}</p>
                     </div>
+                    
+                    {/* Follow button for non-author posts */}
+                    {user && post.author?.email !== user?.emailAddresses?.[0]?.emailAddress && post.author?.id && (
+                      <FollowButton 
+                        userId={Number(post.author.id)} 
+                        className="text-xs px-2 py-1"
+                      />
+                    )}
+                    
                     {/* Edit/Delete actions - only for post author */}
                     {user && post.author?.email === user?.emailAddresses?.[0]?.emailAddress && (
                       <div className="relative">

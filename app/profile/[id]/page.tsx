@@ -10,6 +10,7 @@ import ImageViewer from '@/components/ImageViewer';
 import BadgeDisplay from '@/components/BadgeDisplay';
 import BadgeScanner from '@/components/BadgeScanner';
 import FollowButton from '@/components/FollowButton';
+import FollowersModal from '@/components/FollowersModal';
 import { HeartIcon, ChatBubbleIcon, ArrowLeftIcon } from '@/components/Icons';
 import { useProfile } from '@/hooks/useProfile';
 import { useBadges } from '@/hooks/useBadges';
@@ -36,6 +37,10 @@ export default function ProfilePage() {
   // Local state
   const [showBadgeScanner, setShowBadgeScanner] = useState(false);
   const [imageViewer, setImageViewer] = useState<{ images: string[]; index: number } | null>(null);
+  const [followersModal, setFollowersModal] = useState<{ isOpen: boolean; type: 'followers' | 'following' }>({
+    isOpen: false,
+    type: 'followers',
+  });
 
   const isCurrentUser = clerkUser?.id === profile?.clerkId;
   const loading = profileLoading;
@@ -168,14 +173,20 @@ export default function ProfilePage() {
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Bình luận</p>
               </div>
-              <div className="text-center">
+              <button
+                onClick={() => setFollowersModal({ isOpen: true, type: 'followers' })}
+                className="text-center hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors py-2"
+              >
                 <p className="text-xl sm:text-2xl font-bold text-brand-green">{followStats.followersCount || 0}</p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Người theo dõi</p>
-              </div>
-              <div className="text-center">
+              </button>
+              <button
+                onClick={() => setFollowersModal({ isOpen: true, type: 'following' })}
+                className="text-center hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors py-2"
+              >
                 <p className="text-xl sm:text-2xl font-bold text-brand-green">{followStats.followingCount || 0}</p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Đang theo dõi</p>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -228,6 +239,14 @@ export default function ProfilePage() {
         </main>
         <Footer />
       </div>
+
+      {/* Followers/Following Modal */}
+      <FollowersModal
+        isOpen={followersModal.isOpen}
+        onClose={() => setFollowersModal({ ...followersModal, isOpen: false })}
+        userId={Number(userId)}
+        type={followersModal.type}
+      />
 
       {/* Image Viewer Modal */}
       {imageViewer && (
