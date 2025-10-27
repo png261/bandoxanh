@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useReactionsStore } from '@/store/reactionsStore';
 
 export type ReactionType = 'love' | 'like' | 'clap' | 'green_heart' | 'seedling' | 'recycle' | 'wow';
 
@@ -13,11 +14,22 @@ export interface ReactionData {
 }
 
 export const useReactions = (postId: number) => {
-  const [reactionData, setReactionData] = useState<ReactionData>({
-    reactions: [],
-    userReaction: null,
-  });
+  const { postReactions, setPostReactions, updateReaction, getPostReactions } = useReactionsStore();
   const [loading, setLoading] = useState(false);
+
+  // Get from store or initialize empty
+  const storedData = getPostReactions(postId);
+  const [reactionData, setReactionData] = useState<ReactionData>(
+    storedData || { reactions: [], userReaction: null }
+  );
+
+  // Update local state when store changes
+  useEffect(() => {
+    const stored = getPostReactions(postId);
+    if (stored) {
+      setReactionData({ reactions: stored.reactions, userReaction: stored.userReaction });
+    }
+  }, [postReactions, postId, getPostReactions]);
 
   const fetchReactions = async () => {
     try {
@@ -33,7 +45,8 @@ export const useReactions = (postId: number) => {
         // Find current user's reaction
         const userReaction = data.users?.find((r: any) => r.isCurrentUser)?.type || null;
         
-        setReactionData({ reactions, userReaction });
+        // Update store
+        setPostReactions(postId, reactions, userReaction);
       }
     } catch (error) {
       console.error('Error fetching reactions:', error);
@@ -41,7 +54,7 @@ export const useReactions = (postId: number) => {
   };
 
   useEffect(() => {
-    if (postId) {
+    if (postId && !storedData) {
       fetchReactions();
     }
   }, [postId]);
@@ -49,39 +62,9 @@ export const useReactions = (postId: number) => {
   const react = async (type: ReactionType) => {
     setLoading(true);
     
-    // Optimistic update
+    // Optimistic update in store
     const currentUserReaction = reactionData.userReaction;
-    const updatedReactions = [...reactionData.reactions];
-    
-    // If clicking the same reaction, remove it
-    if (currentUserReaction === type) {
-      setReactionData({
-        reactions: updatedReactions.map(r => 
-          r.type === type ? { ...r, count: Math.max(0, r.count - 1) } : r
-        ).filter(r => r.count > 0),
-        userReaction: null,
-      });
-    } else {
-      // Remove old reaction count
-      let reactions = updatedReactions.map(r => 
-        r.type === currentUserReaction ? { ...r, count: Math.max(0, r.count - 1) } : r
-      ).filter(r => r.count > 0);
-      
-      // Add new reaction count
-      const existingReaction = reactions.find(r => r.type === type);
-      if (existingReaction) {
-        reactions = reactions.map(r => 
-          r.type === type ? { ...r, count: r.count + 1 } : r
-        );
-      } else {
-        reactions.push({ type, count: 1 });
-      }
-      
-      setReactionData({
-        reactions,
-        userReaction: type,
-      });
-    }
+    updateReaction(postId, type, currentUserReaction);
     
     try {
       const response = await fetch(`/api/posts/${postId}/react`, {
@@ -94,19 +77,13 @@ export const useReactions = (postId: number) => {
         // Fetch actual data from server to confirm
         await fetchReactions();
       } else {
-        // Revert on error
-        setReactionData({
-          reactions: reactionData.reactions,
-          userReaction: reactionData.userReaction,
-        });
+        // Revert on error - fetch from server
+        await fetchReactions();
       }
     } catch (error) {
       console.error('Error reacting to post:', error);
-      // Revert on error
-      setReactionData({
-        reactions: reactionData.reactions,
-        userReaction: reactionData.userReaction,
-      });
+      // Revert on error - fetch from server
+      await fetchReactions();
     } finally {
       setLoading(false);
     }
