@@ -22,25 +22,54 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClick, onShare }) => (
   <div 
-    className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex ${isFeatured ? 'flex-col md:flex-row' : 'flex-col'} hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 h-full group relative`}>
-    <div onClick={onClick} className="cursor-pointer flex-1 flex flex-col md:flex-row">
-      <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all`} loading="lazy" />
-      <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
-        <div>
-          <span className="px-2 py-0.5 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded">{article.category}</span>
-          <h3 className={`font-bold mt-2 sm:mt-2.5 text-brand-gray-dark dark:text-gray-100 ${isFeatured ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg'} line-clamp-2 break-words`}>{article.title}</h3>
-          <p className="text-xs sm:text-sm text-brand-gray-DEFAULT dark:text-gray-400 mt-2 line-clamp-3 break-words">{article.excerpt}</p>
-        </div>
-        <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-3">{article.date}</p>
-      </div>
-    </div>
+    className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 h-full group relative flex flex-col ${isFeatured ? 'md:flex-row' : ''}`}>
+    
+    {/* Share Button */}
     <button
       onClick={onShare}
-      className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-2 rounded-full hover:bg-brand-green hover:text-white dark:hover:bg-brand-green transition-all shadow-sm z-10"
+      className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-2 rounded-full hover:bg-brand-green hover:text-white dark:hover:bg-brand-green transition-all shadow-md z-10 opacity-0 group-hover:opacity-100"
       title="Chia sẻ tin tức"
     >
-      <ShareIcon className="w-5 h-5" />
+      <ShareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
     </button>
+
+    {/* Clickable Content */}
+    <div onClick={onClick} className="cursor-pointer flex-1 flex flex-col h-full">
+      {/* Image */}
+      <div className={`relative overflow-hidden ${isFeatured ? 'md:w-1/2 md:min-h-full' : 'w-full'}`}>
+        <img 
+          src={article.imageUrl} 
+          alt={article.title} 
+          className={`w-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFeatured ? 'h-56 sm:h-64 md:h-full' : 'h-48 sm:h-52'}`}
+          loading="lazy" 
+        />
+      </div>
+
+      {/* Content */}
+      <div className={`p-4 sm:p-5 flex flex-col flex-1 ${isFeatured ? 'md:w-1/2' : ''}`}>
+        <div className="flex-1">
+          {/* Category Badge */}
+          <span className="inline-block px-2.5 py-1 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded-md">
+            {article.category}
+          </span>
+          
+          {/* Title */}
+          <h3 className={`font-bold mt-2.5 text-brand-gray-dark dark:text-gray-100 line-clamp-2 break-words group-hover:text-brand-green dark:group-hover:text-brand-green transition-colors ${isFeatured ? 'text-xl sm:text-2xl md:text-3xl' : 'text-base sm:text-lg'}`}>
+            {article.title}
+          </h3>
+          
+          {/* Excerpt */}
+          <p className={`text-brand-gray-DEFAULT dark:text-gray-400 mt-2 break-words ${isFeatured ? 'text-sm sm:text-base line-clamp-4' : 'text-xs sm:text-sm line-clamp-3'}`}>
+            {article.excerpt}
+          </p>
+        </div>
+        
+        {/* Date */}
+        <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-500 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+          📅 {article.date}
+        </p>
+      </div>
+    </div>
   </div>
 );
 
@@ -110,8 +139,8 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
       </section>
 
       <section>
-        <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Tin tức khác</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-6 break-words">Tin tức khác</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {otherArticles.map(article => (
             <NewsCard 
               key={article.id} 
