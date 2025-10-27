@@ -6,7 +6,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
-import UpcomingEvents from '@/components/UpcomingEvents';
 import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
 import { useEffect, useRef } from 'react';
 import React from 'react';
@@ -396,12 +395,11 @@ export default function CommunityPage() {
         setCollapsed={setSidebarCollapsed}
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
-        {/* 2-column layout: Main Content + Events Sidebar */}
-        <div className="max-w-[1400px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Single column layout - Posts Feed */}
+        <div className="max-w-2xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
 
             {/* Main Content - Posts Feed */}
-            <main className="lg:col-span-8 space-y-4">
+            <main className="space-y-4">
               {/* Create Post Section */}
               <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">Tạo bài viết</h2>
@@ -743,22 +741,10 @@ export default function CommunityPage() {
               ))
             )}
           </div>
-          </main>
-
-          {/* Right Sidebar - Events */}
-          <aside className="hidden lg:block lg:col-span-4">
-            <div className="sticky top-20 space-y-4">
-              {/* Upcoming Events Section */}
-              <UpcomingEvents onEventClick={(event) => {
-                router.push(`/map?lat=${event.latitude}&lng=${event.longitude}&zoom=15`);
-              }} />
-            </div>
-          </aside>
-
-        </div>
+        </main>
       </div>
-      <Footer />
     </div>
+    <Footer />
 
     {/* Image Viewer Modal */}
     {imageViewer && (

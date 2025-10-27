@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { CalendarIcon } from '@/components/Icons';
+import UpcomingEvents from '@/components/UpcomingEvents';
 import { useState, useEffect } from 'react';
 import { Theme, NewsArticle, RecyclingEvent } from '@/types';
 import React from 'react';
@@ -33,29 +33,12 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
   </div>
 );
 
-const EventCard: React.FC<{ event: RecyclingEvent }> = ({ event }) => (
-    <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex flex-col hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-md transition-all duration-200 cursor-pointer h-full group">
-      <img src={event.image} alt={event.name} className="w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all" />
-      <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
-        <div>
-            <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 text-xs font-semibold rounded">Sự kiện</span>
-            <h3 className="font-bold text-base sm:text-lg mt-2 sm:mt-2.5 text-purple-700 dark:text-purple-400 line-clamp-2 break-words">{event.name}</h3>
-            <div className="mt-2 flex items-center text-xs text-gray-500 dark:text-gray-400">
-              <CalendarIcon className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
-              <span className="truncate">{event.date} - {event.time}</span>
-            </div>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 break-words">{event.description}</p>
-        </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 truncate">Tổ chức: {event.organizer}</p>
-      </div>
-    </div>
-);
-
 interface NewsPageProps {
   navigateTo: (path: string, options?: any) => void;
 }
 
 const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
+  const router = useRouter();
   // Use Zustand store for news and events
   const { newsArticles, events, loading, fetchNews, fetchEvents } = useNewsStore();
 
@@ -93,16 +76,12 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
         </section>
       )}
 
-      {events.length > 0 && (
-        <section>
-          <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Sự kiện sắp diễn ra</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              {events.map(event => (
-                  <EventCard key={event.id} event={event as RecyclingEvent} />
-              ))}
-          </div>
-        </section>
-      )}
+      {/* Upcoming Events Section */}
+      <section>
+        <UpcomingEvents onEventClick={(event) => {
+          router.push(`/map?lat=${event.latitude}&lng=${event.longitude}&zoom=15`);
+        }} />
+      </section>
 
       <section>
         <h2 className="text-xl sm:text-2xl font-bold text-brand-gray-dark dark:text-gray-100 mb-4 sm:mb-5 break-words">Tin tức khác</h2>
