@@ -108,94 +108,90 @@ export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+    <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+      <h2 className="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
         📅 Sự kiện sắp diễn ra
-        <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+        <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
           ({events.length})
         </span>
       </h2>
 
-      <div className="space-y-4">
-        {events.map(event => (
+      <div className="space-y-3">
+        {events.slice(0, 3).map(event => (
           <div
             key={event.id}
-            className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-lg transition-shadow cursor-pointer"
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => onEventClick?.(event)}
           >
-            <div className="flex gap-4">
-              {/* Event Image */}
-              <img
-                src={event.image}
-                alt={event.name}
-                className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-              />
+            {/* Event Image */}
+            <img
+              src={event.image}
+              alt={event.name}
+              className="w-full h-32 rounded-lg object-cover mb-2"
+            />
 
-              {/* Event Info */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-gray-900 dark:text-white mb-2 truncate">
-                  {event.name}
-                </h3>
-                
-                <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{event.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <ClockIcon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{event.time}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPinIcon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{event.address}</span>
-                  </div>
+            {/* Event Info */}
+            <div>
+              <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-2 line-clamp-2">
+                {event.name}
+              </h3>
+              
+              <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-1.5">
+                  <CalendarIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{event.date}</span>
                 </div>
-
-                {/* Registration Counts */}
-                <div className="flex items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
-                  <span className="flex items-center gap-1">
-                    <UsersIcon className="w-4 h-4" />
-                    {event.goingCount || 0} tham gia
-                  </span>
-                  <span>•</span>
-                  <span>{event.interestedCount || 0} quan tâm</span>
+                <div className="flex items-center gap-1.5">
+                  <ClockIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{event.time}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <MapPinIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate line-clamp-1">{event.address}</span>
                 </div>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRegister(event.id, 'going');
-                }}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                  event.userStatus === 'going'
-                    ? 'bg-brand-green text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                {event.userStatus === 'going' ? '✓ Sẽ tham gia' : 'Tham gia'}
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRegister(event.id, 'interested');
-                }}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                  event.userStatus === 'interested'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                {event.userStatus === 'interested' ? '★ Quan tâm' : 'Quan tâm'}
-              </button>
+              {/* Compact Action Buttons */}
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRegister(event.id, 'going');
+                  }}
+                  className={`flex-1 py-1.5 px-2 rounded text-xs font-medium transition-colors ${
+                    event.userStatus === 'going'
+                      ? 'bg-brand-green text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {event.userStatus === 'going' ? '✓ Tham gia' : 'Tham gia'}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRegister(event.id, 'interested');
+                  }}
+                  className={`flex-1 py-1.5 px-2 rounded text-xs font-medium transition-colors ${
+                    event.userStatus === 'interested'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {event.userStatus === 'interested' ? '★' : '☆'}
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
+
+      {events.length > 3 && (
+        <button 
+          className="w-full mt-3 py-2 text-sm font-medium text-brand-green hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          Xem thêm
+        </button>
+      )}
     </div>
   );
 }
