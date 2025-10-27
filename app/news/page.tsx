@@ -70,7 +70,8 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
 
   const handleShare = (article: NewsArticle, e: React.MouseEvent) => {
     e.stopPropagation();
-    const newsUrl = `${window.location.origin}/news/${article.id}`;
+    // Use dynamic share route for better OG tags
+    const newsUrl = `${window.location.origin}/share/news/${article.id}`;
     setShareModalData({
       url: newsUrl,
       title: article.title,

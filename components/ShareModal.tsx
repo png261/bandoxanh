@@ -16,11 +16,14 @@ const ShareModal: React.FC<ShareModalProps> = ({ url, title, text, onClose, type
                      type === 'news' ? 'Chia sẻ tin tức' : 
                      'Chia sẻ sự kiện';
 
+  // Get Facebook App ID from environment
+  const facebookAppId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '1355636276138350';
+
   const shareTargets = [
     {
       name: 'Facebook',
       icon: <FacebookIcon className="w-7 h-7" />,
-      url: `https://www.facebook.com/dialog/share?app_id=1355636276138350&href=${encodeURIComponent(url)}&quote=${encodeURIComponent(title + ' - ' + text.substring(0, 200))}&display=popup`,
+      url: `https://www.facebook.com/dialog/share?app_id=${facebookAppId}&href=${encodeURIComponent(url)}&quote=${encodeURIComponent(title + ' - ' + text.substring(0, 200))}&display=popup`,
       color: 'text-blue-600 dark:text-blue-500',
     },
     {

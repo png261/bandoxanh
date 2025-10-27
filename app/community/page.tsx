@@ -693,7 +693,8 @@ export default function CommunityPage() {
                     {/* Share Button */}
                     <button
                       onClick={() => {
-                        const postUrl = `${window.location.origin}/community?post=${post.id}`;
+                        // Use dynamic share route for better OG tags
+                        const postUrl = `${window.location.origin}/share/post/${post.id}`;
                         setShareModalData({
                           url: postUrl,
                           title: post.content.substring(0, 100) + (post.content.length > 100 ? '...' : ''),
