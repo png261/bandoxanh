@@ -21,7 +21,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
   <div 
     onClick={onClick}
     className={`bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex ${isFeatured ? 'flex-col md:flex-row' : 'flex-col'} hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 cursor-pointer h-full group`}>
-    <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all`} />
+    <img src={article.imageUrl} alt={article.title} className={`${isFeatured ? 'md:w-1/2' : ''} w-full h-40 sm:h-48 object-cover group-hover:brightness-105 transition-all`} loading="lazy" />
     <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
       <div>
         <span className="px-2 py-0.5 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded">{article.category}</span>

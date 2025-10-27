@@ -88,7 +88,7 @@ function IdentifyPageContent() {
           <div className="flex flex-col">
             <div className="w-full h-60 sm:h-72 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
               {previewUrl ? (
-                <img src={previewUrl} alt="Preview" className="max-h-full max-w-full object-contain rounded-md" />
+                <img src={previewUrl} alt="Preview" className="max-h-full max-w-full object-contain rounded-md" loading="lazy" />
               ) : (
                 <div className="text-center text-gray-500 dark:text-gray-400 p-3 sm:p-4">
                   <UploadIcon className="mx-auto h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />

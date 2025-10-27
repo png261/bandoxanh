@@ -47,7 +47,7 @@ const NewsPreviewCard: React.FC<{ article: NewsArticle; navigateTo: (page: strin
     className="bg-card dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden group cursor-pointer h-full flex flex-col"
   >
     <div className="overflow-hidden">
-      <img src={article.imageUrl} alt={article.title} className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300"/>
+      <img src={article.imageUrl} alt={article.title} className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
     </div>
     <div className="p-4 sm:p-5 flex flex-col flex-grow">
       <h3 className="font-semibold text-base sm:text-lg text-foreground dark:text-gray-100 group-hover:text-brand-green transition-colors flex-grow break-words line-clamp-2">{article.title}</h3>
@@ -194,7 +194,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigateTo, isAuthenticated = false
             )}
           </div>
           <div className="h-48 sm:h-64 md:h-full order-1 md:order-2">
-            <img src="https://picsum.photos/seed/greenfuture/800/600" alt="Green Future" className="w-full h-full object-cover"/>
+            <img src="https://picsum.photos/seed/greenfuture/800/600" alt="Green Future" className="w-full h-full object-cover" loading="lazy" />
           </div>
         </div>
       </section>

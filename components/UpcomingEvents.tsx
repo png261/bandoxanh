@@ -128,6 +128,7 @@ export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
               src={event.image}
               alt={event.name}
               className="w-full h-32 rounded-lg object-cover mb-2"
+              loading="lazy"
             />
 
             {/* Event Info */}

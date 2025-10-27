@@ -73,6 +73,7 @@ export default function ImageUpload({ currentUrl, onUploadSuccess, label = 'Imag
               src={preview}
               alt="Preview"
               className="w-32 h-32 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+              loading="lazy"
             />
             <button
               type="button"

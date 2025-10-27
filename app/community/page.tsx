@@ -419,7 +419,7 @@ export default function CommunityPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {previewUrls.map((url, index) => (
                     <div key={index} className="relative group">
-                      <img src={url} alt={`Preview ${index}`} className="w-full h-16 sm:h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600" />
+                      <img src={url} alt={`Preview ${index}`} className="w-full h-16 sm:h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600" loading="lazy" />
                       <button
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-all"

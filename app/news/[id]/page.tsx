@@ -77,7 +77,7 @@ const NewsDetailPageComponent: React.FC<NewsDetailPageProps> = ({ articleId, nav
         <h1 className="text-3xl md:text-5xl font-bold text-brand-gray-dark dark:text-gray-100 my-4 leading-tight">{article.title}</h1>
         <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400 mb-6">{article.date}</p>
         
-        <img src={article.imageUrl} alt={article.title} className="w-full h-auto max-h-[500px] object-cover rounded-lg mb-8" />
+        <img src={article.imageUrl} alt={article.title} className="w-full h-auto max-h-[500px] object-cover rounded-lg mb-8" loading="lazy" />
         
         <div className="prose lg:prose-lg max-w-none text-brand-gray-dark dark:text-gray-300 leading-relaxed dark:prose-invert prose-p:mb-4">
           {article.content.split('\n').map((paragraph, index) => (

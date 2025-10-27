@@ -33,7 +33,7 @@ const StationCard: React.FC<{ station: Station & { distance: number | null } }> 
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`;
     return (
     <div className="bg-white dark:bg-brand-gray-dark rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 cursor-pointer group">
-        <img src={station.image} alt={station.name} className="w-full h-24 object-cover group-hover:brightness-105 transition-all" />
+        <img src={station.image} alt={station.name} className="w-full h-24 object-cover group-hover:brightness-105 transition-all" loading="lazy" />
         <div className="p-3">
         <h3 className="font-semibold text-sm text-brand-green-dark dark:text-brand-green-light truncate">{station.name}</h3>
         <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1 flex items-start line-clamp-2">
@@ -73,7 +73,7 @@ const EventCard: React.FC<{ event: RecyclingEvent & { distance: number | null } 
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${event.lat},${event.lng}`;
     return (
     <div className="bg-white dark:bg-brand-gray-dark rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-md transition-all duration-200 cursor-pointer group">
-      <img src={event.image} alt={event.name} className="w-full h-24 object-cover group-hover:brightness-105 transition-all" />
+      <img src={event.image} alt={event.name} className="w-full h-24 object-cover group-hover:brightness-105 transition-all" loading="lazy" />
       <div className="p-3">
         <h3 className="font-semibold text-sm text-purple-700 dark:text-purple-400 truncate">{event.name}</h3>
         <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-start line-clamp-2">
