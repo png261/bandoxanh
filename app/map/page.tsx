@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Station, WasteType, RecyclingEvent } from '@/types';
 import { MapPinIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CalendarIcon, DirectionsIcon } from '@/components/Icons';
 import Header from '@/components/Header';
@@ -237,6 +238,7 @@ const MapComponent: React.FC<{
 };
 
 function MapPage() {
+  const searchParams = useSearchParams();
   const MAX_DISTANCE = 20;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedWasteTypes, setSelectedWasteTypes] = useState<WasteType[]>([]);
@@ -250,6 +252,30 @@ function MapPage() {
   
   // Use Zustand store for stations and events
   const { stations, events, loading, fetchStations, fetchEvents } = useMapStore();
+
+  // Handle URL parameters (from Identify page)
+  useEffect(() => {
+    if (!searchParams) return;
+    
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    const zoom = searchParams.get('zoom');
+    const selectedId = searchParams.get('selected');
+
+    if (lat && lng) {
+      const coords = { lat: parseFloat(lat), lng: parseFloat(lng) };
+      setUserLocation(coords);
+      
+      // If a station is selected, focus on it
+      if (selectedId && stations.length > 0) {
+        const station = stations.find(s => s.id === parseInt(selectedId));
+        if (station) {
+          setFocusedItem({ ...station, distance: null });
+          setIsPanelOpen(true);
+        }
+      }
+    }
+  }, [searchParams, stations]);
 
   // Fetch stations and events from API with cache
   useEffect(() => {

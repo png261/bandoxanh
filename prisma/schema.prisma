@@ -22,14 +22,20 @@ model User {
   avatar    String?
   joinDate  String?
   bio       String?
+  points    Int     @default(0)  // Points for ranking
+  level     Int     @default(1)  // User level
+  title     String  @default("Người mới")  // User title/rank
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
   awards    UserAward[]
+  badges    UserBadge[]
   posts     Post[]
   comments  Comment[]
   likes     PostLike[]
+  eventRegistrations EventRegistration[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -90,6 +96,9 @@ model RecyclingEvent {
   image       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relations
+  registrations EventRegistration[]
 
   @@map("recycling_events")
 }
@@ -202,3 +211,65 @@ model WasteAnalysis {
   @@map("waste_analyses")
 }
 
+// Badge Model (for achievements)
+model Badge {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  icon        String
+  color       String
+  category    String
+  qrCode      String?  @unique
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users UserBadge[]
+
+  @@map("badges")
+}
+
+// UserBadge Junction Model
+model UserBadge {
+  userId     Int
+  badgeId    Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge      Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt   DateTime @default(now())
+  scannedAt  DateTime?
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
+}
+
+// EventRegistration Model (users registering for events)
+model EventRegistration {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  eventId   Int
+  status    String   @default("interested") // "interested", "going"
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     RecyclingEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, eventId])
+  @@map("event_registrations")
+}
+
+// Notification Model
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String   // "event", "post", "badge", "comment"
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notifications")
+}

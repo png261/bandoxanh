@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { identifyWaste } from '@/services/geminiService';
-import { GptAnalysis, WasteType, Theme } from '@/types';
+import { GptAnalysis, WasteType, Theme, Station } from '@/types';
 import { STATIONS } from '@/constants';
 import { UploadIcon, CameraIcon, RecycleIcon, MapPinIcon } from '@/components/Icons';
 import Header from '@/components/Header';
@@ -21,6 +22,7 @@ const wasteExamples = [
 ];
 
 function IdentifyPageContent() {
+  const router = useRouter();
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<GptAnalysis | null>(null);
@@ -161,6 +163,16 @@ function IdentifyPageContent() {
                           <MapPinIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 mt-0.5 flex-shrink-0" />
                           {suitableStation.address}
                         </p>
+                        <button
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                            router.push(`/map?lat=${suitableStation.lat}&lng=${suitableStation.lng}&zoom=16&selected=${suitableStation.id}`);
+                          }}
+                          className="mt-2 w-full px-3 py-1.5 bg-brand-green text-white text-xs sm:text-sm font-medium rounded-md hover:bg-brand-green-dark transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <MapPinIcon className="w-4 h-4" />
+                          Xem trên bản đồ
+                        </button>
                       </div>
                     </div>
                   )}

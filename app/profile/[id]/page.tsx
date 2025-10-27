@@ -117,10 +117,17 @@ export default function ProfilePage() {
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-brand-green flex-shrink-0"
               />
               <div className="flex-1 text-center sm:text-left min-w-0 w-full">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{profile.name}</h1>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-2 truncate">{profile.email}</p>
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{profile.name}</h1>
+                </div>
+                {/* User Title/Rank - Mock for now until DB migration */}
+                <div className="mb-2">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-green-400 to-emerald-500 text-white shadow-sm">
+                    🏆 Chiến binh xanh
+                  </span>
+                </div>
                 {profile.bio && (
-                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-3 break-words">{profile.bio}</p>
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-3 mt-2 break-words">{profile.bio}</p>
                 )}
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   Tham gia ngày: {formatDate(profile.joinDate)}

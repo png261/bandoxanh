@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
+import UpcomingEvents from '@/components/UpcomingEvents';
 import { HeartIcon, ChatBubbleIcon, ImageIcon, XIcon } from '@/components/Icons';
 import { useEffect, useRef } from 'react';
 import React from 'react';
@@ -396,6 +397,14 @@ export default function CommunityPage() {
       />
       <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
         <main className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8 max-w-2xl">
+          {/* Upcoming Events Section */}
+          <div className="mb-6">
+            <UpcomingEvents onEventClick={(event) => {
+              // Navigate to map with event location
+              router.push(`/map?lat=${event.latitude}&lng=${event.longitude}&zoom=15`);
+            }} />
+          </div>
+
           {/* Create Post Section */}
           <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 sm:p-5 mb-4 sm:mb-6 border border-gray-200 dark:border-gray-700">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">Tạo bài viết</h2>
