@@ -8,6 +8,7 @@ import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
 import ReactionPicker from '@/components/ReactionPicker';
 import FollowButton from '@/components/FollowButton';
+import SignInPrompt from '@/components/SignInPrompt';
 import { ChatBubbleIcon, ImageIcon, XIcon, ShareIcon } from '@/components/Icons';
 import ShareModal from '@/components/ShareModal';
 import { useEffect, useRef } from 'react';
@@ -16,11 +17,13 @@ import { useCommunityStore, type DBPost, type DBComment } from '@/store/communit
 import { useTheme } from '@/hooks/useTheme';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useFeedTabStore } from '@/store/feedTabStore';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 export default function CommunityPage() {
   const router = useRouter();
   const { user } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { requireAuth, showSignInPrompt, setShowSignInPrompt, promptFeature } = useRequireAuth();
 
   // Local state for edit/delete modals
   const [editingPostId, setEditingPostId] = React.useState<string | null>(null);
@@ -486,13 +489,29 @@ export default function CommunityPage() {
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">Tạo bài viết</h2>
 
             {/* Post Input */}
-            <div className="space-y-3">
+            <div className="space-y-3 relative">
+              {!user && (
+                <div 
+                  onClick={() => requireAuth(() => {}, 'đăng bài')}
+                  className="absolute inset-0 bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center cursor-pointer hover:bg-gray-100/90 dark:hover:bg-gray-900/90 transition-colors"
+                >
+                  <div className="text-center p-6">
+                    <p className="text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                      Đăng nhập để chia sẻ bài viết
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Click để đăng nhập hoặc tạo tài khoản
+                    </p>
+                  </div>
+                </div>
+              )}
               <textarea
                 value={newPostContent}
                 onChange={(e) => setNewPostContent(e.target.value)}
                 placeholder="Chia sẻ suy nghĩ của bạn về bảo vệ môi trường..."
                 className="w-full p-2.5 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-brand-gray-darker text-sm sm:text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 resize-none transition-all break-words"
                 rows={3}
+                disabled={!user}
               />
 
               {/* Image Previews */}
@@ -681,7 +700,7 @@ export default function CommunityPage() {
                   <div className="flex items-center justify-between gap-3 sm:gap-4 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-4 sm:gap-6">
                       {/* Reaction Picker */}
-                      <ReactionPicker postId={parseInt(post.id)} />
+                      <ReactionPicker postId={parseInt(post.id)} requireAuth={requireAuth} />
                       
                       {/* Comments Count */}
                       <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600 dark:text-gray-400">
@@ -815,7 +834,17 @@ export default function CommunityPage() {
                   )}
 
                   {/* Comment Input - Always Visible */}
-                  <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 relative">
+                    {!user && (
+                      <div 
+                        onClick={() => requireAuth(() => {}, 'bình luận')}
+                        className="absolute inset-0 bg-gray-100/60 dark:bg-gray-900/60 backdrop-blur-[2px] rounded-lg z-10 flex items-center justify-center cursor-pointer hover:bg-gray-100/70 dark:hover:bg-gray-900/70 transition-colors"
+                      >
+                        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                          Đăng nhập để bình luận
+                        </p>
+                      </div>
+                    )}
                     <div className="flex gap-2 sm:gap-3">
                       <img
                         src={user?.imageUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.fullName || 'User')}
@@ -838,6 +867,7 @@ export default function CommunityPage() {
                           }}
                           placeholder="Viết bình luận..."
                           className="flex-1 px-2.5 sm:px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-brand-gray-darker text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+                          disabled={!user}
                         />
                         <button
                           onClick={() => handleAddComment(post.id)}
@@ -877,6 +907,13 @@ export default function CommunityPage() {
         onClose={() => setShareModalData(null)}
       />
     )}
+
+    {/* Sign In Prompt */}
+    <SignInPrompt
+      isOpen={showSignInPrompt}
+      onClose={() => setShowSignInPrompt(false)}
+      feature={promptFeature}
+    />
     </div>
   );
 }

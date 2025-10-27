@@ -6,13 +6,20 @@ import { useReactions, ReactionType, REACTION_EMOJIS, REACTION_LABELS } from '@/
 interface ReactionPickerProps {
   postId: number;
   onReact?: () => void;
+  requireAuth?: (callback: () => void, feature?: string) => void;
 }
 
-const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact }) => {
+const ReactionPicker: React.FC<ReactionPickerProps> = ({ postId, onReact, requireAuth }) => {
   const { reactionData, react } = useReactions(postId);
 
   const handleReact = async (type: ReactionType) => {
-    await react(type);
+    if (requireAuth) {
+      requireAuth(async () => {
+        await react(type);
+      }, 'thả cảm xúc');
+    } else {
+      await react(type);
+    }
   };
 
   return (
