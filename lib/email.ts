@@ -20,7 +20,7 @@ export async function sendWelcomeEmail({ email, name }: WelcomeEmailData) {
       subject: 'Chào mừng bạn đến với Bandoxanh! 🌱',
       html: getWelcomeEmailHTML(name, email),
       // Add text version to avoid spam filters
-      text: `Xin chào ${name},\n\nCảm ơn bạn đã tham gia cộng đồng Bandoxanh!\n\nTruy cập: https://bandoxanh.org\n\nBandoxanh - Cùng nhau vì một môi trường xanh`,
+      text: `Xin chào ${name},\n\nCảm ơn bạn đã tham gia cộng đồng Bandoxanh!\n\nTruy cập: https://www.bandoxanh.org\n\nBandoxanh - Cùng nhau vì một môi trường xanh`,
       // Add headers to improve deliverability
       headers: {
         'X-Entity-Ref-ID': `${Date.now()}`,
@@ -40,7 +40,7 @@ export async function sendWelcomeEmail({ email, name }: WelcomeEmailData) {
 }
 
 function getWelcomeEmailHTML(name: string, email: string): string {
-  const unsubscribeUrl = `https://bandoxanh.org/unsubscribe?email=${encodeURIComponent(email)}`;
+  const unsubscribeUrl = `https://www.bandoxanh.org/unsubscribe?email=${encodeURIComponent(email)}`;
   return `
 <!DOCTYPE html>
 <html lang="vi">
@@ -90,7 +90,7 @@ function getWelcomeEmailHTML(name: string, email: string): string {
               <table role="presentation" style="margin: 0 auto;">
                 <tr>
                   <td style="background-color: #22c55e; border-radius: 6px; text-align: center;">
-                    <a href="https://bandoxanh.org" style="display: inline-block; padding: 14px 40px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px;">
+                    <a href="https://www.bandoxanh.org" style="display: inline-block; padding: 14px 40px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px;">
                       Khám phá ngay 🚀
                     </a>
                   </td>
@@ -110,7 +110,7 @@ function getWelcomeEmailHTML(name: string, email: string): string {
                 <strong>Bandoxanh</strong> - Cùng nhau vì một môi trường xanh
               </p>
               <p style="margin: 0 0 10px; color: #999999; font-size: 12px;">
-                📧 Email: hello@bandoxanh.org | 🌐 Website: bandoxanh.org
+                📧 Email: hello@bandoxanh.org | 🌐 Website: www.bandoxanh.org
               </p>
               <p style="margin: 0; color: #999999; font-size: 12px;">
                 <a href="${unsubscribeUrl}" style="color: #999999; text-decoration: underline;">Hủy đăng ký</a> | Email này được gửi tới ${email}

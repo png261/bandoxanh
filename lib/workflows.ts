@@ -78,7 +78,7 @@ export async function welcomeEmailWorkflow(payload: {
               <table role="presentation" style="margin: 0 auto;">
                 <tr>
                   <td style="background-color: #22c55e; border-radius: 6px; text-align: center;">
-                    <a href="https://bandoxanh.vercel.app" style="display: inline-block; padding: 14px 40px; color: #ffffff; text-decoration: none; font-weight: 600;">Khám phá ngay 🚀</a>
+                    <a href="https://www.bandoxanh.org" style="display: inline-block; padding: 14px 40px; color: #ffffff; text-decoration: none; font-weight: 600;">Khám phá ngay 🚀</a>
                   </td>
                 </tr>
               </table>
@@ -130,7 +130,7 @@ export async function weeklyDigestWorkflow(payload: {
       <li>📅 <strong>${payload.stats.newEvents}</strong> sự kiện môi trường mới</li>
       <li>📰 <strong>${payload.stats.newNews}</strong> tin tức về tái chế</li>
     </ul>
-    <a href="https://bandoxanh.vercel.app" style="display: inline-block; padding: 12px 30px; background: #22c55e; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">Xem chi tiết</a>
+    <a href="https://www.bandoxanh.org" style="display: inline-block; padding: 12px 30px; background: #22c55e; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">Xem chi tiết</a>
   </div>
 </body>
 </html>

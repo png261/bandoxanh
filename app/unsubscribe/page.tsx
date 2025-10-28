@@ -82,7 +82,7 @@ function UnsubscribeContent() {
         </p>
 
         <a 
-          href="https://bandoxanh.org"
+          href="https://www.bandoxanh.org"
           style={{
             display: 'inline-block',
             padding: '12px 30px',
