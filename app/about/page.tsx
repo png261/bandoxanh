@@ -38,11 +38,11 @@ const userGrowthData = [
 ];
 
 const teamMembers = [
-    { name: 'Hoàng An', role: 'Founder & Project Lead', avatar: 'https://picsum.photos/seed/team1/200/200' },
-    { name: 'Minh Thư', role: 'Lead Developer', avatar: 'https://picsum.photos/seed/team2/200/200' },
-    { name: 'Quốc Bảo', role: 'UX/UI Designer', avatar: 'https://picsum.photos/seed/team3/200/200' },
-    { name: 'Lan Chi', role: 'Community Manager', avatar: 'https://picsum.photos/seed/team4/200/200' },
-    { name: 'Đức Minh', role: 'Marketing Lead', avatar: 'https://picsum.photos/seed/team5/200/200' },
+    { name: 'Hoàng Thu Hiền', role: 'Co-Founder', avatar: 'https://picsum.photos/seed/team1/200/200' },
+    { name: 'Mai Thị Ngọc Ánh', role: 'Co-Founder', avatar: 'https://picsum.photos/seed/team2/200/200' },
+    { name: 'Lê Thị Quỳnh Mai', role: 'Founder', avatar: 'https://picsum.photos/seed/team3/200/200' },
+    { name: 'Phạm Thảo Ngân', role: 'Co-Founder', avatar: 'https://picsum.photos/seed/team4/200/200' },
+    { name: 'Nguyễn Hữu Phương', role: 'Co-Founder', avatar: 'https://scontent.fhan9-1.fna.fbcdn.net/v/t39.30808-6/500053618_2177335612684241_2036936929288114882_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=HR42ZR5G-zYQ7kNvwFozVFt&_nc_oc=Admb2Mz-TjM5PH0V0Z_pylw2SAjOXn7jDSMSaZhEsUbcWkUXWvgGr3vss_TyuOOD3Pg&_nc_zt=23&_nc_ht=scontent.fhan9-1.fna&_nc_gid=EobEkaN8lxLPuMng31q-IQ&oh=00_AffjBqMH71RAdSRPLekiNcyBcLeZkX0dgPcsg6OewZRaDg&oe=6906A0A9' },
 ];
 
 const testimonials = [
@@ -82,10 +82,10 @@ const stats = [
 ];
 
 const timeline = [
-  { year: '2024 Q1', title: 'Khởi đầu', description: 'Ý tưởng BandoXanh ra đời từ nhóm sinh viên yêu môi trường' },
-  { year: '2024 Q2', title: 'Phát triển', description: 'Xây dựng MVP với các tính năng cơ bản: bản đồ và cộng đồng' },
-  { year: '2024 Q3', title: 'AI Integration', description: 'Tích hợp công nghệ AI để nhận diện và phân loại rác thải' },
-  { year: '2024 Q4', title: 'Ra mắt', description: 'Chính thức phát hành ứng dụng và đạt 1000+ người dùng' },
+  { year: '10.2025', title: 'Khởi đầu', description: 'Ý tưởng BandoXanh ra đời từ nhóm sinh viên yêu môi trường' },
+  { year: '10.2025', title: 'Phát triển', description: 'Xây dựng MVP với các tính năng cơ bản: bản đồ và cộng đồng' },
+  { year: '10.2025', title: 'Tích hợp trí tuệ nhân tạo AI', description: 'Tích hợp công nghệ AI để nhận diện và phân loại rác thải' },
+  { year: '10.2025', title: 'Ra mắt', description: 'Chính thức phát hành ứng dụng' },
 ];
 
 interface AboutPageProps {
@@ -123,23 +123,6 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
           <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
             <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="currentColor" className="text-brand-gray-light dark:text-black"/>
           </svg>
-        </div>
-      </section>
-
-      {/* --- STATISTICS --- */}
-      <section className="mb-16 sm:mb-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                    {stats.map((stat, index) => (
-            <div key={index} className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-5 md:p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <stat.icon className="text-brand-green w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 mx-auto mb-2 sm:mb-3" />
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-brand-gray-dark dark:text-white mb-1 break-words">
-                {stat.value}
-              </div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium break-words">
-                {stat.label}
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
@@ -261,74 +244,6 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
         </div>
       </section>
       
-      {/* --- IMPACT (CHARTS) --- */}
-      <section className="mb-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-3">
-            Dấu ấn & Tác động
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Con số minh chứng cho nỗ lực chung
-          </p>
-        </div>
-        <div className="bg-white dark:bg-brand-gray-dark border border-gray-200 dark:border-gray-700 rounded-2xl p-6 md:p-10">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="w-full h-72">
-              <h3 className="text-lg font-semibold text-center text-brand-gray-dark dark:text-gray-200 mb-3">
-                Phân bố loại rác đã nhận diện
-              </h3>
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie 
-                    data={wasteDistributionData} 
-                    cx="50%" 
-                    cy="50%" 
-                    labelLine={false} 
-                    outerRadius={120} 
-                    fill="#8884d8" 
-                    dataKey="value" 
-                    nameKey="name" 
-                    label={{ fill: textColor, fontSize: 12 }}
-                  >
-                    {wasteDistributionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: theme === 'dark' ? '#1F2937' : '#FFFFFF', 
-                      border: '1px solid #4B5563', 
-                      borderRadius: '0.5rem' 
-                    }} 
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="w-full h-72">
-              <h3 className="text-lg font-semibold text-center text-brand-gray-dark dark:text-gray-200 mb-3">
-                Tăng trưởng cộng đồng
-              </h3>
-              <ResponsiveContainer>
-                <LineChart data={userGrowthData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#4B5563' : '#E5E7EB'} />
-                  <XAxis dataKey="month" tick={{ fill: textColor }} />
-                  <YAxis tick={{ fill: textColor }} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: theme === 'dark' ? '#1F2937' : '#FFFFFF', 
-                      border: '1px solid #4B5563', 
-                      borderRadius: '0.5rem' 
-                    }} 
-                  />
-                  <Legend wrapperStyle={{ color: textColor }} />
-                  <Line type="monotone" dataKey="users" name="Thành viên" stroke="#10B981" strokeWidth={3} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* --- TEAM --- */}
       <section className="mb-16 sm:mb-20">
         <div className="text-center mb-8 sm:mb-12 px-2">
