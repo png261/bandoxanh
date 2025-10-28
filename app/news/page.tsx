@@ -37,12 +37,21 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, isFeatured = false, onClic
     <div onClick={onClick} className="cursor-pointer flex-1 flex flex-col h-full">
       {/* Image */}
       <div className={`relative overflow-hidden ${isFeatured ? 'md:w-1/2 md:h-full' : 'w-full'}`}>
-        <img 
-          src={article.imageUrl} 
-          alt={article.title} 
-          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFeatured ? 'h-48 sm:h-56' : 'h-48 sm:h-52'}`}
-          loading="lazy" 
-        />
+        {article.imageUrl && article.imageUrl.trim() !== '' ? (
+          <img 
+            src={article.imageUrl} 
+            alt={article.title} 
+            className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isFeatured ? 'h-48 sm:h-56' : 'h-48 sm:h-52'}`}
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src = 'https://placehold.co/600x400/16a34a/white?text=Tin+tức';
+            }}
+          />
+        ) : (
+          <div className={`w-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center ${isFeatured ? 'h-48 sm:h-56' : 'h-48 sm:h-52'}`}>
+            <span className="text-white text-5xl">📰</span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
