@@ -43,6 +43,9 @@ export default function CommunityPage() {
     followingPosts,
     exploreLoading,
     followingLoading,
+    addPost,
+    deletePost,
+    updatePost,
   } = useFeedTabStore();
 
   // Get current posts and loading state based on active tab
@@ -203,6 +206,34 @@ export default function CommunityPage() {
 
     try {
       setUploading(true);
+      
+      // Create optimistic post immediately for better UX
+      const optimisticPost = {
+        id: `temp-${Date.now()}`,
+        content: newPostContent,
+        images: previewUrls.length > 0 ? JSON.stringify(previewUrls) : undefined,
+        likes: 0,
+        createdAt: new Date().toISOString(),
+        authorId: user.id,
+        author: {
+          id: user.id,
+          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.fullName || 'User',
+          email: user.emailAddresses?.[0]?.emailAddress || '',
+          avatar: user.imageUrl,
+        },
+        comments: [],
+        _count: {
+          likedBy: 0,
+        },
+        likedBy: [],
+      };
+
+      // Add optimistic post to UI immediately
+      addPost(optimisticPost);
+      
+      // Clear form immediately for better UX
+      storeClearPostForm();
+
       let imageUrls: string[] = [];
 
       // Upload images to Supabase via API if any
@@ -230,7 +261,6 @@ export default function CommunityPage() {
         } catch (uploadError) {
           console.error('Image upload failed:', uploadError);
           // Continue with post creation even if images fail to upload
-          alert('Cảnh báo: Không thể tải ảnh lên. Bài viết sẽ được đăng mà không có ảnh.');
         }
       }
 
@@ -249,15 +279,30 @@ export default function CommunityPage() {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create post');
+      if (!response.ok) {
+        // Remove optimistic post if creation failed
+        deletePost(optimisticPost.id);
+        throw new Error('Failed to create post');
+      }
 
       const newPost = await response.json();
 
-      // Add new post to the top of the list and invalidate cache
-      setPostsWithCache([newPost, ...posts]);
+      // Replace optimistic post with real post from server
+      deletePost(optimisticPost.id);
+      addPost({
+        ...newPost,
+        author: {
+          id: newPost.author?.id || user.id,
+          name: newPost.author?.name || optimisticPost.author.name,
+          email: newPost.author?.email || optimisticPost.author.email,
+          avatar: newPost.author?.avatar || user.imageUrl,
+        },
+        comments: newPost.comments || [],
+        _count: {
+          likedBy: newPost._count?.likedBy || 0,
+        },
+      });
 
-      // Reset form
-      storeClearPostForm();
     } catch (error) {
       console.error('Error creating post:', error);
       alert('Có lỗi xảy ra khi tạo bài viết');

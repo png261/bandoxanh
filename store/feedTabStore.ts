@@ -46,6 +46,11 @@ interface FeedTabState {
   setExploreLoading: (loading: boolean) => void;
   setFollowingLoading: (loading: boolean) => void;
   
+  // Post mutations (for both tabs)
+  addPost: (post: DBPost) => void;
+  deletePost: (postId: string) => void;
+  updatePost: (postId: string, updates: Partial<DBPost>) => void;
+  
   // Check if cache is valid (2 minutes)
   isExploreCacheValid: () => boolean;
   isFollowingCacheValid: () => boolean;
@@ -80,6 +85,28 @@ export const useFeedTabStore = create<FeedTabState>((set, get) => ({
   
   setExploreLoading: (loading) => set({ exploreLoading: loading }),
   setFollowingLoading: (loading) => set({ followingLoading: loading }),
+  
+  // Add new post to both tabs (prepend to start of array)
+  addPost: (post) => set((state) => ({
+    explorePosts: [post, ...state.explorePosts],
+    followingPosts: [post, ...state.followingPosts],
+  })),
+  
+  // Delete post from both tabs
+  deletePost: (postId) => set((state) => ({
+    explorePosts: state.explorePosts.filter(p => p.id !== postId),
+    followingPosts: state.followingPosts.filter(p => p.id !== postId),
+  })),
+  
+  // Update post in both tabs
+  updatePost: (postId, updates) => set((state) => ({
+    explorePosts: state.explorePosts.map(p => 
+      p.id === postId ? { ...p, ...updates } : p
+    ),
+    followingPosts: state.followingPosts.map(p => 
+      p.id === postId ? { ...p, ...updates } : p
+    ),
+  })),
   
   isExploreCacheValid: () => {
     const { exploreLastFetch } = get();
