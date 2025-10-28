@@ -16,6 +16,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTheme } from '@/hooks/useTheme';
+import Image from "next/image";
 
 // --- DỮ LIỆU MẪU ---
 const wasteDistributionData = [
@@ -98,15 +99,12 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
     <div className="max-w-7xl mx-auto">
       {/* --- HERO SECTION --- */}
       <section className="relative overflow-hidden bg-gradient-to-br from-brand-green to-emerald-600 dark:from-emerald-800 dark:to-brand-green-dark text-white py-12 sm:py-16 md:py-20 lg:py-28 -mx-3 sm:-mx-4 md:-mx-6 rounded-2xl sm:rounded-3xl mb-12 sm:mb-16">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzBoLTEydjEyaDEyVjMwem0wIDBWMThIMjR2MTJoMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10"></div>
         <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center flex flex-col justify-center items-center">
             <div className="inline-block mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm font-medium">
               🌱 Vì một tương lai xanh
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight break-words">
-              BandoXanh
-            </h1>
+            <Image src="logo.png" width={1000} height={500} alt="BandoXanh Logo" />
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-emerald-50 leading-relaxed break-words px-2">
               Nền tảng kết nối cộng đồng để bảo vệ môi trường,<br className="hidden md:block" />
               biến hành động nhỏ thành tác động lớn

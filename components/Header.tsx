@@ -6,6 +6,7 @@ import { Theme } from '@/types';
 import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityIcon, NewspaperIcon, InformationCircleIcon, ChevronLeftIcon, ChevronRightIcon, SunIcon, MoonIcon, AdminIcon } from './Icons';
 import UserButton from './UserButton';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import Image from "next/image";
 
 interface HeaderProps {
   isCollapsed: boolean;
@@ -95,8 +96,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
             className="flex items-center cursor-pointer"
             onClick={() => navigateTo('/map')}
           >
-            <LeafIcon className="h-8 w-8 text-brand-green flex-shrink-0" />
-            {!isCollapsed && <h1 className="ml-3 text-2xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">BandoXanh</h1>}
+            <Image src="logo.png" alt="BandoXanh Logo" width={400} height={200} />
           </div>
         </div>
 

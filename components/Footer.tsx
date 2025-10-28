@@ -1,12 +1,13 @@
 import React from 'react';
-import { LeafIcon, FacebookIcon, YoutubeIcon, TiktokIcon, InstagramIcon, MailIcon } from './Icons';
+import Image from 'next/image';
+import { FacebookIcon, YoutubeIcon, TiktokIcon, InstagramIcon, MailIcon } from './Icons';
 
 const Footer: React.FC = () => {
   const socialLinks = [
-    { name: 'Facebook', icon: FacebookIcon, href: 'https://facebook.com' },
-    { name: 'YouTube', icon: YoutubeIcon, href: 'https://youtube.com' },
-    { name: 'TikTok', icon: TiktokIcon, href: 'https://tiktok.com' },
-    { name: 'Instagram', icon: InstagramIcon, href: 'https://instagram.com' },
+    { name: 'Facebook', icon: FacebookIcon, href: 'https://www.facebook.com/bandoxanh.org/' },
+    { name: 'YouTube', icon: YoutubeIcon, href: 'https://youtube.com/bandoxanh.org' },
+    { name: 'TikTok', icon: TiktokIcon, href: 'https://tiktok.com/bandoxanh.org' },
+    { name: 'Instagram', icon: InstagramIcon, href: 'https://instagram.com/bandoxanh.org' },
   ];
 
   return (
@@ -16,8 +17,7 @@ const Footer: React.FC = () => {
           {/* Brand Info */}
           <div className="md:col-span-2">
             <div className="flex items-center">
-              <LeafIcon className="h-10 w-10 text-brand-green" />
-              <h2 className="ml-3 text-3xl font-bold">BandoXanh</h2>
+              <Image src="logo.png" alt="BandoXanh Logo" width={400} height={200} />
             </div>
             <p className="mt-4 text-gray-400 max-w-md">
               Dự án phi lợi nhuận với mục tiêu ứng dụng công nghệ để giải quyết các vấn đề về rác thải tại Việt Nam.
@@ -28,10 +28,10 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4 text-white">Liên kết nhanh</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-brand-green transition-colors">Trang chủ</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-brand-green transition-colors">Bản đồ</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-brand-green transition-colors">Tin tức</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-brand-green transition-colors">Về dự án</a></li>
+              <li><a href="https://bandoxanh.org/map" className="text-gray-400 hover:text-brand-green transition-colors">Bản đồ</a></li>
+              <li><a href="https://bandoxanh.org/identify" className="text-gray-400 hover:text-brand-green transition-colors">Nhận diện</a></li>
+              <li><a href="https://bandoxanh.org/community" className="text-gray-400 hover:text-brand-green transition-colors">Cộng đồng</a></li>
+              <li><a href="https://bandoxanh.org/news" className="text-gray-400 hover:text-brand-green transition-colors">Tin tức</a></li>
             </ul>
           </div>
 
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
             <h3 className="font-semibold text-lg mb-4 text-white">Kết nối với chúng tôi</h3>
             <div className="flex items-center space-x-2 text-gray-400 mb-4">
               <MailIcon className="w-5 h-5"/>
-              <a href="mailto:contact@bandoxanh.vn" className="hover:text-brand-green transition-colors">contact@bandoxanh.vn</a>
+              <a href="mailto:contact@bandoxanh.org" className="hover:text-brand-green transition-colors">contact@bandoxanh.org</a>
             </div>
             <div className="flex space-x-4">
               {socialLinks.map((link) => (
@@ -53,7 +53,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} BandoXanh. All rights reserved. Một dự án vì cộng đồng.</p>
+          <p>&copy; {new Date().getFullYear()} Bản Đồ Xanh. All rights reserved. Một dự án vì cộng đồng.</p>
         </div>
       </div>
     </footer>
