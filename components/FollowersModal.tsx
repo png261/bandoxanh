@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import FollowButton from './FollowButton';
+import LoadingSpinner from './LoadingSpinner';
 
 interface User {
   id: number;
@@ -66,7 +67,7 @@ export default function FollowersModal({ isOpen, onClose, userId, type }: Follow
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+              <LoadingSpinner size="md" />
             </div>
           ) : users.length === 0 ? (
             <div className="text-center py-8 text-gray-500 dark:text-gray-400">

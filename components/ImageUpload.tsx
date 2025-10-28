@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import LoadingSpinner from './LoadingSpinner';
 
 interface ImageUploadProps {
   currentUrl?: string;
@@ -110,8 +111,8 @@ export default function ImageUpload({ currentUrl, onUploadSuccess, label = 'Imag
           >
             {uploading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-400">Uploading...</span>
+                <LoadingSpinner size="sm" />
+                <span className="text-sm text-gray-600 dark:text-gray-400 animate-pulse">Uploading...</span>
               </>
             ) : (
               <>

@@ -8,6 +8,7 @@ import StatsCards from '@/components/admin/StatsCards';
 import Modal from '@/components/admin/Modal';
 import ImageUpload from '@/components/ImageUpload';
 import MapPicker from '@/components/MapPicker';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface Station {
   id: number;
@@ -148,7 +149,7 @@ export default function StationsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

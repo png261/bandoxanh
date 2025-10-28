@@ -18,6 +18,7 @@ import { useCommunityStore, type DBPost, type DBComment } from '@/store/communit
 import { useTheme } from '@/hooks/useTheme';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useFeedTabStore } from '@/store/feedTabStore';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 export default function CommunityPage() {
@@ -618,8 +619,8 @@ export default function CommunityPage() {
           <div className="space-y-3 sm:space-y-4">
             {loading ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-brand-green mx-auto mb-3"></div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Đang tải bài viết...</p>
+                <LoadingSpinner size="lg" className="mx-auto mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 text-sm animate-pulse">Đang tải bài viết...</p>
               </div>
             ) : posts.length === 0 ? (
               <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-8 text-center border border-gray-200 dark:border-gray-700">

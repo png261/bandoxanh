@@ -13,6 +13,7 @@ import FollowButton from '@/components/FollowButton';
 import FollowersModal from '@/components/FollowersModal';
 import SignInPrompt from '@/components/SignInPrompt';
 import { HeartIcon, ChatBubbleIcon, ArrowLeftIcon } from '@/components/Icons';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useProfile } from '@/hooks/useProfile';
 import { useBadges } from '@/hooks/useBadges';
 import { useUserPosts } from '@/hooks/useUserPosts';
@@ -119,8 +120,9 @@ export default function ProfilePage() {
           isCollapsed={isSidebarCollapsed}
           setCollapsed={setIsSidebarCollapsed}
         />
-        <div className="flex justify-center items-center min-h-[60vh]">
-          <p className="text-gray-600 dark:text-gray-400">Đang tải...</p>
+        <div className="flex flex-col justify-center items-center min-h-[60vh] gap-3">
+          <LoadingSpinner size="lg" />
+          <p className="text-gray-600 dark:text-gray-400 animate-pulse">Đang tải...</p>
         </div>
       </div>
     );

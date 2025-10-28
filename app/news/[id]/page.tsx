@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Theme, NewsArticle } from '@/types';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTheme } from '@/hooks/useTheme';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface NewsDetailPageProps {
   articleId: number;
@@ -41,7 +42,7 @@ const NewsDetailPageComponent: React.FC<NewsDetailPageProps> = ({ articleId, nav
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

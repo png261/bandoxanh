@@ -12,6 +12,7 @@ import { useNewsStore } from '@/store/newsStore';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTheme } from '@/hooks/useTheme';
 import { ShareIcon } from '@/components/Icons';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -113,7 +114,7 @@ const NewsPageComponent: React.FC<NewsPageProps> = ({ navigateTo }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

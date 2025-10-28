@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
+import LoadingSpinner from './LoadingSpinner';
 
 interface MapPickerProps {
   latitude: number;
@@ -121,7 +122,12 @@ export default function MapPicker({ latitude, longitude, onLocationSelect, label
   };
 
   if (!mounted) {
-    return <div className="w-full h-[400px] bg-gray-100 rounded-lg flex items-center justify-center">Đang tải bản đồ...</div>;
+    return (
+      <div className="w-full h-[400px] bg-gray-100 dark:bg-gray-800 rounded-lg flex flex-col items-center justify-center gap-3">
+        <LoadingSpinner size="md" />
+        <p className="text-gray-600 dark:text-gray-400 animate-pulse">Đang tải bản đồ...</p>
+      </div>
+    );
   }
 
   return (

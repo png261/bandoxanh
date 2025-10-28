@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface Stats {
   stations: number;
@@ -162,9 +163,9 @@ export default function AdminPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-brand-gray-light dark:bg-black">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-brand-green mx-auto mb-4"></div>
-          <p className="text-brand-gray-dark dark:text-gray-300 font-medium">Đang tải dữ liệu...</p>
+        <div className="text-center flex flex-col items-center gap-4">
+          <LoadingSpinner size="lg" />
+          <p className="text-brand-gray-dark dark:text-gray-300 font-medium animate-pulse">Đang tải dữ liệu...</p>
         </div>
       </div>
     );

@@ -248,7 +248,7 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
       <section className="mb-16 sm:mb-20">
         <div className="text-center mb-8 sm:mb-12 px-2">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-2 sm:mb-3 break-words">
-            Những người đồng hành
+            Người sáng lập
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400 break-words">
             Đội ngũ tâm huyết và nhiệt huyết

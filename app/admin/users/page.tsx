@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface User {
   id: number;
@@ -126,7 +127,7 @@ export default function AdminUsersPage() {
   if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
