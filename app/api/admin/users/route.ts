@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
+    console.log('[Admin Users API] Auth userId:', userId);
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -16,8 +17,11 @@ export async function GET(request: NextRequest) {
       where: { clerkId: userId },
       select: { isAdmin: true } as any,
     }) as { isAdmin: boolean } | null;
+    
+    console.log('[Admin Users API] Current user:', currentUser);
 
     if (!currentUser?.isAdmin) {
+      console.log('[Admin Users API] User is not admin');
       return NextResponse.json({ error: 'Forbidden - Admin only' }, { status: 403 });
     }
 
@@ -42,6 +46,8 @@ export async function GET(request: NextRequest) {
         createdAt: 'desc',
       },
     }) as any[];
+    
+    console.log('[Admin Users API] Fetched users count:', users.length);
 
     return NextResponse.json(users);
   } catch (error) {
@@ -54,6 +60,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const { userId } = await auth();
+    console.log('[Admin Users PATCH] Auth userId:', userId);
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -64,13 +71,17 @@ export async function PATCH(request: NextRequest) {
       where: { clerkId: userId },
       select: { isAdmin: true, id: true } as any,
     }) as { isAdmin: boolean; id: number } | null;
+    
+    console.log('[Admin Users PATCH] Current user:', currentUser);
 
     if (!currentUser?.isAdmin) {
+      console.log('[Admin Users PATCH] User is not admin');
       return NextResponse.json({ error: 'Forbidden - Admin only' }, { status: 403 });
     }
 
     const body = await request.json();
     const { targetUserId, isAdmin } = body;
+    console.log('[Admin Users PATCH] Request body:', { targetUserId, isAdmin });
 
     if (!targetUserId || typeof isAdmin !== 'boolean') {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
@@ -82,6 +93,8 @@ export async function PATCH(request: NextRequest) {
         error: 'Bạn không thể xóa quyền admin của chính mình' 
       }, { status: 400 });
     }
+
+    console.log('[Admin Users PATCH] Updating user:', targetUserId, 'to admin:', isAdmin);
 
     // Update user admin status
     const updatedUser = await prisma.user.update({
@@ -103,6 +116,8 @@ export async function PATCH(request: NextRequest) {
         },
       } as any,
     }) as any;
+    
+    console.log('[Admin Users PATCH] Updated user:', updatedUser);
 
     return NextResponse.json(updatedUser);
   } catch (error) {

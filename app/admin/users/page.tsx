@@ -47,6 +47,7 @@ export default function AdminUsersPage() {
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/admin/users');
+      console.log('Fetch users response status:', response.status);
       
       if (response.status === 403) {
         toast.error('Bạn không có quyền truy cập trang này');
@@ -61,6 +62,7 @@ export default function AdminUsersPage() {
       }
       
       const data = await response.json();
+      console.log('Users data:', data);
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);

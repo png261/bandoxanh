@@ -83,6 +83,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     
     // Return cached data if valid
     if (isStationsCacheValid()) {
+      console.log('Using cached stations data');
       return;
     }
     
@@ -103,6 +104,7 @@ export const useMapStore = create<MapState>((set, get) => ({
           image: s.image,
         }));
         setStations(transformedStations);
+        console.log('Fetched fresh stations data');
       }
     } catch (error) {
       console.error('Error fetching stations:', error);
@@ -117,6 +119,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     
     // Return cached data if valid
     if (isEventsCacheValid()) {
+      console.log('Using cached events data');
       return;
     }
     
@@ -139,6 +142,7 @@ export const useMapStore = create<MapState>((set, get) => ({
           image: e.imageUrl || e.image || '',
         }));
         setEvents(transformedEvents);
+        console.log('Fetched fresh events data');
       }
     } catch (error) {
       console.error('Error fetching events:', error);

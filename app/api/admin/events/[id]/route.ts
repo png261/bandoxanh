@@ -40,6 +40,9 @@ export async function PUT(
     const id = parseInt(idStr);
     const body = await request.json();
     
+    console.log('PUT /api/admin/events - Body received:', body);
+    console.log('Image value:', body.imageUrl || body.image);
+    
     const imageValue = body.imageUrl !== undefined ? body.imageUrl : body.image;
     
     const event = await prisma.recyclingEvent.update({

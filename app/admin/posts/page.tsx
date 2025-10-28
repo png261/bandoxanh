@@ -6,37 +6,75 @@ import Link from 'next/link';
 interface Post {
   id: number;
   content: string;
-  imageUrls: string | null;
-  userId: string;
+  images: string | null;
   createdAt: string;
-  user?: {
+  author: {
+    id: number;
     name: string;
+    email: string;
     avatar: string | null;
+    clerkId: string;
   };
-  author?: {
-    name: string;
-    avatar: string | null;
-  };
-  _count?: {
-    likes: number;
+  _count: {
     comments: number;
+    likedBy: number;
+    reactions: number;
   };
+}
+
+interface Stats {
+  totalPosts: number;
+  postsToday: number;
+  postsThisWeek: number;
+  postsThisMonth: number;
+  totalComments: number;
+  totalLikes: number;
+  avgCommentsPerPost: number;
 }
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [search, page]);
+
+  async function fetchStats() {
+    try {
+      const res = await fetch('/api/admin/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'stats' }),
+      });
+      const data = await res.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  }
 
   async function fetchPosts() {
     try {
-      const res = await fetch('/api/posts');
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '20',
+        ...(search && { search }),
+      });
+      const res = await fetch(`/api/admin/posts?${params}`);
       const data = await res.json();
-      setPosts(data);
+      setPosts(data.posts);
+      setTotalPages(data.pagination.totalPages);
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
@@ -45,30 +83,31 @@ export default function PostsPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+    if (!confirm('Bạn có chắc muốn xóa bài đăng này? Hành động này không thể hoàn tác.')) {
       return;
     }
 
     setDeleting(id);
     try {
-      const res = await fetch(`/api/posts/${id}`, {
+      const res = await fetch(`/api/admin/posts/${id}`, {
         method: 'DELETE',
       });
 
       if (res.ok) {
         setPosts(posts.filter((p) => p.id !== id));
+        fetchStats(); // Refresh stats
       } else {
-        alert('Failed to delete post');
+        alert('Không thể xóa bài đăng');
       }
     } catch (error) {
       console.error('Error deleting post:', error);
-      alert('Error deleting post');
+      alert('Lỗi khi xóa bài đăng');
     } finally {
       setDeleting(null);
     }
   }
 
-  if (loading) {
+  if (loading && page === 1) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
@@ -81,29 +120,109 @@ export default function PostsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Community Posts
+            Quản lý Bài đăng
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Monitor and moderate user-generated content
+            Theo dõi và quản lý nội dung từ cộng đồng
           </p>
         </div>
         <Link
           href="/admin"
           className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
         >
-          ← Back to Dashboard
+          ← Quản trị
         </Link>
       </div>
 
+      {/* Stats Cards */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Tổng bài đăng</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                  {stats.totalPosts.toLocaleString()}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">📝</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Hôm nay</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                  {stats.postsToday}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">📅</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Tổng bình luận</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                  {stats.totalComments.toLocaleString()}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">💬</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Tổng lượt thích</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                  {stats.totalLikes.toLocaleString()}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">👍</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <input
+          type="text"
+          placeholder="Tìm kiếm bài đăng theo nội dung hoặc tác giả..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
+        />
+      </div>
+
+      {/* Posts List */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-        {posts.length === 0 ? (
+        {loading ? (
+          <div className="px-6 py-12 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+          </div>
+        ) : posts.length === 0 ? (
           <div className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-            No posts found
+            Không tìm thấy bài đăng
           </div>
         ) : (
           posts.map((post) => {
-            const images = post.imageUrls ? JSON.parse(post.imageUrls) : [];
-            const author = post.user || post.author || { name: 'Unknown User', avatar: null };
+            const images = post.images ? JSON.parse(post.images) : [];
+            const author = post.author;
             
             return (
               <div
@@ -122,7 +241,10 @@ export default function PostsPage() {
                         <p className="font-semibold text-gray-900 dark:text-white">
                           {author.name || 'Người dùng ẩn danh'}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {author.email}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                           {new Date(post.createdAt).toLocaleDateString('vi-VN', {
                             year: 'numeric',
                             month: 'long',
@@ -137,7 +259,7 @@ export default function PostsPage() {
                         disabled={deleting === post.id}
                         className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex-shrink-0"
                       >
-                        {deleting === post.id ? 'Deleting...' : 'Delete'}
+                        {deleting === post.id ? 'Đang xóa...' : 'Xóa'}
                       </button>
                     </div>
 
@@ -155,12 +277,18 @@ export default function PostsPage() {
                             className="w-full h-32 object-cover rounded-lg"
                           />
                         ))}
+                        {images.length > 6 && (
+                          <div className="w-full h-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-600 dark:text-gray-400">
+                            +{images.length - 6} ảnh
+                          </div>
+                        )}
                       </div>
                     )}
 
                     <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                      <span>👍 {post._count?.likes || 0} likes</span>
-                      <span>💬 {post._count?.comments || 0} comments</span>
+                      <span>👍 {post._count.likedBy} lượt thích</span>
+                      <span>💬 {post._count.comments} bình luận</span>
+                      <span>❤️ {post._count.reactions} tương tác</span>
                     </div>
                   </div>
                 </div>
@@ -169,6 +297,29 @@ export default function PostsPage() {
           })
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            ← Trước
+          </button>
+          <span className="px-4 py-2 text-gray-700 dark:text-gray-300">
+            Trang {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Sau →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

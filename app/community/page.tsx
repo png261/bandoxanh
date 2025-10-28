@@ -49,6 +49,19 @@ export default function CommunityPage() {
   const posts = activeTab === 'explore' ? explorePosts : followingPosts;
   const loading = activeTab === 'explore' ? exploreLoading : followingLoading;
 
+  // Debug logs
+  React.useEffect(() => {
+    console.log('Community Page State:', {
+      activeTab,
+      explorePostsCount: explorePosts.length,
+      followingPostsCount: followingPosts.length,
+      currentPostsCount: posts.length,
+      loading,
+      exploreLoading,
+      followingLoading
+    });
+  }, [activeTab, explorePosts, followingPosts, posts, loading, exploreLoading, followingLoading]);
+
   // Global state
   const { isCollapsed: isSidebarCollapsed, setCollapsed: setSidebarCollapsed } = useSidebar();
   const { theme, toggleTheme } = useTheme();
@@ -80,9 +93,11 @@ export default function CommunityPage() {
     
     // Use cache if valid and not forcing refresh
     if (!force && state.isExploreCacheValid()) {
+      console.log('Using cached explore posts');
       return;
     }
 
+    console.log('Fetching explore posts...');
     state.setExploreLoading(true);
     try {
       const response = await fetch('/api/posts');
@@ -90,6 +105,7 @@ export default function CommunityPage() {
       const data = await response.json();
       // API returns array directly, not { posts: [...] }
       const posts = Array.isArray(data) ? data : (data.posts || []);
+      console.log('Explore posts fetched:', posts.length);
       state.setExplorePosts(posts);
     } catch (error) {
       console.error('Error fetching explore posts:', error);
@@ -104,9 +120,11 @@ export default function CommunityPage() {
     
     // Use cache if valid and not forcing refresh
     if (!force && state.isFollowingCacheValid()) {
+      console.log('Using cached following posts');
       return;
     }
 
+    console.log('Fetching following posts...');
     state.setFollowingLoading(true);
     try {
       const response = await fetch('/api/posts/following');
@@ -117,6 +135,7 @@ export default function CommunityPage() {
       }
       if (!response.ok) throw new Error('Failed to fetch following posts');
       const data = await response.json();
+      console.log('Following posts fetched:', data.posts?.length || 0);
       state.setFollowingPosts(data.posts || []);
     } catch (error) {
       console.error('Error fetching following posts:', error);
@@ -209,6 +228,7 @@ export default function CommunityPage() {
             }
           }
         } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
           // Continue with post creation even if images fail to upload
           alert('Cảnh báo: Không thể tải ảnh lên. Bài viết sẽ được đăng mà không có ảnh.');
         }

@@ -69,6 +69,7 @@ export async function uploadImage(
       throw new Error('Failed to generate public URL');
     }
 
+    console.log('Image uploaded successfully:', publicUrl);
     return publicUrl;
   } catch (error) {
     console.error('Error uploading image:', error);
