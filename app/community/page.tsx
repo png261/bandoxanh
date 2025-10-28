@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import { toast } from 'react-hot-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ImageGallery from '@/components/ImageGallery';
@@ -208,41 +209,17 @@ export default function CommunityPage() {
     try {
       setUploading(true);
       
-      // Create optimistic post immediately for better UX
-      const optimisticPost = {
-        id: `temp-${Date.now()}`,
-        content: newPostContent,
-        images: previewUrls.length > 0 ? JSON.stringify(previewUrls) : undefined,
-        likes: 0,
-        createdAt: new Date().toISOString(),
-        authorId: user.id,
-        author: {
-          id: user.id,
-          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.fullName || 'User',
-          email: user.emailAddresses?.[0]?.emailAddress || '',
-          avatar: user.imageUrl,
-        },
-        comments: [],
-        _count: {
-          likedBy: 0,
-        },
-        likedBy: [],
-      };
-
-      // Add optimistic post to UI immediately
-      addPost(optimisticPost);
-      
-      // Clear form immediately for better UX
-      storeClearPostForm();
-
+      // Upload images FIRST before creating post
       let imageUrls: string[] = [];
-
-      // Upload images to Supabase via API if any
+      
       if (postImages.length > 0) {
         try {
-          for (const file of postImages) {
+          for (let i = 0; i < postImages.length; i++) {
+            const file = postImages[i];
             const formData = new FormData();
             formData.append('file', file);
+
+            console.log(`Uploading image ${i + 1}/${postImages.length}...`);
 
             const uploadResponse = await fetch('/api/upload', {
               method: 'POST',
@@ -259,13 +236,43 @@ export default function CommunityPage() {
               imageUrls.push(uploadData.url);
             }
           }
+          console.log(`All ${imageUrls.length} images uploaded successfully`);
         } catch (uploadError) {
           console.error('Image upload failed:', uploadError);
-          // Continue with post creation even if images fail to upload
+          toast.error(uploadError instanceof Error ? uploadError.message : 'Không thể tải ảnh lên');
+          setUploading(false);
+          return; // Stop post creation if upload fails
         }
       }
+      
+      // Create optimistic post with uploaded images
+      const optimisticPost = {
+        id: `temp-${Date.now()}`,
+        content: newPostContent,
+        images: imageUrls.length > 0 ? JSON.stringify(imageUrls) : undefined,
+        likes: 0,
+        createdAt: new Date().toISOString(),
+        authorId: user.id,
+        author: {
+          id: user.id,
+          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.fullName || 'User',
+          email: user.emailAddresses?.[0]?.emailAddress || '',
+          avatar: user.imageUrl,
+        },
+        comments: [],
+        _count: {
+          likedBy: 0,
+        },
+        likedBy: [],
+      };
 
-      // Create post in database
+      // Add optimistic post to UI
+      addPost(optimisticPost);
+      
+      // Clear form after adding to UI
+      storeClearPostForm();
+
+      // Create post in database with uploaded images
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
