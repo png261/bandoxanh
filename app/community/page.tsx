@@ -505,7 +505,7 @@ export default function CommunityPage() {
         isCollapsed={isSidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
-      <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+      <div className={`min-h-screen pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
         {/* Single column layout - Posts Feed */}
         <div className="max-w-2xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
 

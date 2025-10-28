@@ -1,6 +1,8 @@
+
 import React from 'react';
 import Image from 'next/image';
 import { FacebookIcon, YoutubeIcon, TiktokIcon, InstagramIcon, MailIcon } from './Icons';
+import logo from "@/public/logo.png";
 
 const Footer: React.FC = () => {
   const socialLinks = [
@@ -17,7 +19,7 @@ const Footer: React.FC = () => {
           {/* Brand Info */}
           <div className="md:col-span-2">
             <div className="flex items-center">
-              <Image src="logo.png" alt="BandoXanh Logo" width={400} height={200} />
+              <Image src={logo} alt="BandoXanh Logo" width={400} height={200} />
             </div>
             <p className="mt-4 text-gray-400 max-w-md">
               Dự án phi lợi nhuận với mục tiêu ứng dụng công nghệ để giải quyết các vấn đề về rác thải tại Việt Nam.

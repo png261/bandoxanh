@@ -7,6 +7,7 @@ import { LeafIcon, MenuIcon, XIcon, HomeIcon, MapPinIcon, CameraIcon, CommunityI
 import UserButton from './UserButton';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import Image from "next/image";
+import logo from "@/public/logo.png";
 
 interface HeaderProps {
   isCollapsed: boolean;
@@ -96,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
             className="flex items-center cursor-pointer"
             onClick={() => navigateTo('/map')}
           >
-            <Image src="logo.png" alt="BandoXanh Logo" width={400} height={200} />
+            <Image src={logo} alt="BandoXanh Logo" width={400} height={200} />
           </div>
         </div>
 
