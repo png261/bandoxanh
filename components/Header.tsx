@@ -78,8 +78,6 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAdmin, loading } = useIsAdmin();
 
-  console.log('Admin status:', { isAdmin, loading });
-
   const navigateTo = (path: string) => {
     window.scrollTo(0, 0);
     router.push(path);

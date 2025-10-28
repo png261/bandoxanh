@@ -6,8 +6,6 @@ export async function GET() {
   try {
     const { userId } = await auth();
     
-    console.log('Auth userId:', userId);
-    
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -22,8 +20,6 @@ export async function GET() {
         avatar: true,
       },
     });
-
-    console.log('Found user:', user);
 
     // If user doesn't exist in database, try to find by email or create them
     if (!user) {
@@ -60,7 +56,6 @@ export async function GET() {
             avatar: true,
           },
         });
-        console.log('Updated existing user with new clerkId:', user);
       } else {
         // Create new user
         user = await prisma.user.create({
@@ -79,13 +74,11 @@ export async function GET() {
             avatar: true,
           },
         });
-        console.log('Created new user:', user);
       }
     }
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error('Error fetching user:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

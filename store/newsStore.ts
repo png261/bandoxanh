@@ -82,7 +82,6 @@ export const useNewsStore = create<NewsState>((set, get) => ({
     
     // Return cached data if valid
     if (isNewsCacheValid()) {
-      console.log('Using cached news data');
       return;
     }
     
@@ -93,7 +92,6 @@ export const useNewsStore = create<NewsState>((set, get) => ({
         const data = await res.json();
         // API already returns data in correct format
         setNewsArticles(data);
-        console.log('Fetched fresh news data from database');
       }
     } catch (error) {
       console.error('Error fetching news:', error);
@@ -108,7 +106,6 @@ export const useNewsStore = create<NewsState>((set, get) => ({
     
     // Return cached data if valid
     if (isEventsCacheValid()) {
-      console.log('Using cached events data');
       return;
     }
     
@@ -131,7 +128,6 @@ export const useNewsStore = create<NewsState>((set, get) => ({
           image: e.imageUrl || e.image || '',
         }));
         setEvents(transformedEvents);
-        console.log('Fetched fresh events data for news');
       }
     } catch (error) {
       console.error('Error fetching events:', error);
