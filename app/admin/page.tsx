@@ -278,6 +278,20 @@ export default function AdminPage() {
             </Link>
 
             <Link
+              href="/admin/posts"
+              className="group flex items-center justify-between p-5 bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-lg border-2 border-orange-200 transition-all"
+            >
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">💬</span>
+                <div>
+                  <div className="font-bold text-gray-900 text-lg">Bài đăng</div>
+                  <div className="text-sm text-gray-600">Quản lý bài đăng cộng đồng</div>
+                </div>
+              </div>
+              <span className="text-2xl text-orange-600 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+
+            <Link
               href="/admin/users"
               className="group flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 rounded-lg border-2 border-indigo-200 transition-all"
             >
