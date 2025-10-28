@@ -126,12 +126,22 @@ export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
             onClick={() => onEventClick?.(event)}
           >
             {/* Event Image */}
-            <img
-              src={event.image}
-              alt={event.name}
-              className="w-full h-32 rounded-lg object-cover mb-2"
-              loading="lazy"
-            />
+            {event.image && event.image.trim() !== '' ? (
+              <img
+                src={event.image}
+                alt={event.name}
+                className="w-full h-32 rounded-lg object-cover mb-2"
+                loading="lazy"
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  e.currentTarget.src = 'https://placehold.co/600x400/22c55e/white?text=Sự+kiện';
+                }}
+              />
+            ) : (
+              <div className="w-full h-32 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mb-2">
+                <span className="text-white text-4xl">🌱</span>
+              </div>
+            )}
 
             {/* Event Info */}
             <div>
