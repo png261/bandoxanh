@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/admin';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   const adminCheck = await checkAdmin(request);
@@ -40,28 +40,33 @@ export async function POST(request: NextRequest) {
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = `admin/${fileName}`;
 
+    console.log('Uploading file:', { fileName, filePath, size: file.size, type: file.type });
+
     // Convert File to ArrayBuffer then to Buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Supabase
-    const { data, error } = await supabase.storage
+    // Upload to Supabase using admin client (bypasses RLS)
+    const { data, error } = await supabaseAdmin.storage
       .from('bandoxanh-admin')
       .upload(filePath, buffer, {
         contentType: file.type,
         upsert: false,
+        cacheControl: '3600',
       });
 
     if (error) {
       console.error('Supabase upload error:', error);
       return NextResponse.json(
-        { error: 'Failed to upload file' },
+        { error: `Upload failed: ${error.message}` },
         { status: 500 }
       );
     }
 
+    console.log('Upload successful:', data);
+
     // Get public URL
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = supabaseAdmin.storage
       .from('bandoxanh-admin')
       .getPublicUrl(filePath);
 

@@ -100,11 +100,15 @@ export const useMapStore = create<MapState>((set, get) => ({
           lat: s.latitude,
           lng: s.longitude,
           hours: s.hours,
-          wasteTypes: JSON.parse(s.wasteTypes),
-          image: s.image,
+          wasteTypes: typeof s.wasteTypes === 'string' 
+            ? s.wasteTypes.split(',').map((t: string) => t.trim()).filter(Boolean)
+            : s.wasteTypes || [],
+          image: s.image || '/placeholder-station.jpg',
         }));
         setStations(transformedStations);
-        console.log('Fetched fresh stations data');
+        console.log('Fetched fresh stations data:', transformedStations.length, 'stations');
+      } else {
+        console.error('Failed to fetch stations:', res.status, res.statusText);
       }
     } catch (error) {
       console.error('Error fetching stations:', error);
