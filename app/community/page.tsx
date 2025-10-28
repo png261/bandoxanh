@@ -86,9 +86,10 @@ export default function CommunityPage() {
     setCommentText,
     removePostImage: storeRemovePostImage,
     clearPostForm: storeClearPostForm,
-    addComment: storeAddComment,
-    replaceComment,
   } = useCommunityStore();
+  
+  // Get comment actions from feedTabStore
+  const { addComment: storeAddComment, replaceComment } = useFeedTabStore();
 
   // Fetch explore posts
   const fetchExplorePosts = React.useCallback(async (force = false) => {

@@ -51,6 +51,12 @@ interface FeedTabState {
   deletePost: (postId: string) => void;
   updatePost: (postId: string, updates: Partial<DBPost>) => void;
   
+  // Comment mutations
+  addComment: (postId: string, comment: any) => void;
+  replaceComment: (postId: string, tempId: string, actualComment: any) => void;
+  deleteComment: (postId: string, commentId: string) => void;
+  updateComment: (postId: string, commentId: string, content: string) => void;
+  
   // Check if cache is valid (2 minutes)
   isExploreCacheValid: () => boolean;
   isFollowingCacheValid: () => boolean;
@@ -105,6 +111,79 @@ export const useFeedTabStore = create<FeedTabState>((set, get) => ({
     ),
     followingPosts: state.followingPosts.map(p => 
       p.id === postId ? { ...p, ...updates } : p
+    ),
+  })),
+  
+  // Comment mutations
+  addComment: (postId, comment) => set((state) => ({
+    explorePosts: state.explorePosts.map(post =>
+      post.id === postId 
+        ? { ...post, comments: [...post.comments, comment] }
+        : post
+    ),
+    followingPosts: state.followingPosts.map(post =>
+      post.id === postId 
+        ? { ...post, comments: [...post.comments, comment] }
+        : post
+    ),
+  })),
+
+  replaceComment: (postId, tempId, actualComment) => set((state) => ({
+    explorePosts: state.explorePosts.map(post =>
+      post.id === postId
+        ? {
+            ...post,
+            comments: post.comments.map(c =>
+              c.id === tempId ? actualComment : c
+            ),
+          }
+        : post
+    ),
+    followingPosts: state.followingPosts.map(post =>
+      post.id === postId
+        ? {
+            ...post,
+            comments: post.comments.map(c =>
+              c.id === tempId ? actualComment : c
+            ),
+          }
+        : post
+    ),
+  })),
+
+  deleteComment: (postId, commentId) => set((state) => ({
+    explorePosts: state.explorePosts.map(post =>
+      post.id === postId
+        ? { ...post, comments: post.comments.filter(c => c.id !== commentId) }
+        : post
+    ),
+    followingPosts: state.followingPosts.map(post =>
+      post.id === postId
+        ? { ...post, comments: post.comments.filter(c => c.id !== commentId) }
+        : post
+    ),
+  })),
+
+  updateComment: (postId, commentId, content) => set((state) => ({
+    explorePosts: state.explorePosts.map(post =>
+      post.id === postId
+        ? {
+            ...post,
+            comments: post.comments.map(c =>
+              c.id === commentId ? { ...c, content } : c
+            ),
+          }
+        : post
+    ),
+    followingPosts: state.followingPosts.map(post =>
+      post.id === postId
+        ? {
+            ...post,
+            comments: post.comments.map(c =>
+              c.id === commentId ? { ...c, content } : c
+            ),
+          }
+        : post
     ),
   })),
   
