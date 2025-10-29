@@ -103,14 +103,14 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
   return (
     <div className="max-w-7xl mx-auto">
       {/* --- HERO SECTION --- */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-green to-emerald-600 dark:from-emerald-800 dark:to-brand-green-dark text-white py-12 sm:py-16 md:py-20 lg:py-28 -mx-3 sm:-mx-4 md:-mx-6 rounded-2xl sm:rounded-3xl mb-12 sm:mb-16">
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-green to-emerald-600 dark:from-emerald-800 dark:to-brand-green-dark text-white py-12 sm:py-16 md:py-20 lg:pb-28 lg:pt-10 -mx-3 sm:-mx-4 md:-mx-6 rounded-2xl sm:rounded-3xl mb-12 sm:mb-16">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center flex flex-col justify-center items-center">
             <div className="inline-block mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm font-medium">
               🌱 Vì một tương lai xanh
             </div>
-            <Image src="logo.png" width={1000} height={500} alt="BandoXanh Logo" />
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-emerald-50 leading-relaxed break-words px-2">
+            <Image src="logo.png" width={400} height={200} alt="BandoXanh Logo" />
+            <p className="text-base sm:text-lg md:text-xl mt-5 lg:text-2xl mb-6 sm:mb-8 text-emerald-50 leading-relaxed break-words px-2">
               Nền tảng kết nối cộng đồng để bảo vệ môi trường,<br className="hidden md:block" />
               biến hành động nhỏ thành tác động lớn
             </p>
@@ -323,7 +323,7 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
       <section className="mb-16 sm:mb-20">
         <div className="text-center mb-8 sm:mb-12 px-2">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-gray-dark dark:text-white mb-2 sm:mb-3 break-words">
-            Khoảnh khắc BandoXanh
+            Khoảnh khắc 
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400 break-words">
             Những hoạt động ý nghĩa của cộng đồng

@@ -92,12 +92,12 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
       {/* --- Sidebar for Desktop --- */}
       <aside className={`bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 ${isCollapsed ? 'w-24 overflow-visible' : 'w-72'}`}>
         {/* Header with Logo */}
-        <div className={`flex items-center border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2 justify-center' : 'px-6'}`}>
+        <div className={`flex justify-center items-center border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2 justify-center' : 'px-6'}`}>
           <div 
             className="flex items-center cursor-pointer"
             onClick={() => navigateTo('/map')}
           >
-            <Image src={logo} alt="BandoXanh Logo" width={400} height={200} />
+            <Image src={logo} alt="BandoXanh Logo" width={150} height={80} />
           </div>
         </div>
 
@@ -128,8 +128,7 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
       <header className="bg-white dark:bg-brand-gray-dark border-b border-gray-200 dark:border-gray-700 w-full fixed top-0 left-0 z-40 md:hidden h-20 flex items-center">
         <div className="container mx-auto px-4 flex items-center justify-between w-full">
           <div className="flex items-center cursor-pointer" onClick={() => navigateTo('/map')}>
-            <LeafIcon className="h-8 w-8 text-brand-green" />
-            <h1 className="ml-2 text-xl font-semibold text-gray-800 dark:text-white">BandoXanh</h1>
+            <Image src={logo} alt="BandoXanh Logo" width={100} height={50} />
           </div>
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white p-2 z-50">
             {isMobileMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
