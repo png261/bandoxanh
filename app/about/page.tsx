@@ -17,6 +17,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useSidebar } from '@/hooks/useSidebar';
 import { useTheme } from '@/hooks/useTheme';
 import Image from "next/image";
+import hien_avt from "@/public/images/hien.jpg"
+import anh_avt from "@/public/images/anh.jpg"
+import mai_avt from "@/public/images/mai.jpg"
+import ngan_avt from "@/public/images/ngan.jpg"
+import phuong_avt from "@/public/images/phuong.jpg"
 
 // --- DỮ LIỆU MẪU ---
 const wasteDistributionData = [
@@ -38,11 +43,11 @@ const userGrowthData = [
 ];
 
 const teamMembers = [
-    { name: 'Hoàng Thu Hiền', role: 'Co-Founder', avatar: 'https://picsum.photos/seed/team1/200/200' },
-    { name: 'Mai Thị Ngọc Ánh', role: 'Co-Founder', avatar: 'https://picsum.photos/seed/team2/200/200' },
-    { name: 'Lê Thị Quỳnh Mai', role: 'Founder', avatar: 'https://picsum.photos/seed/team3/200/200' },
-    { name: 'Phạm Thảo Ngân', role: 'Co-Founder', avatar: 'https://picsum.photos/seed/team4/200/200' },
-    { name: 'Nguyễn Hữu Phương', role: 'Co-Founder', avatar: 'https://scontent.fhan9-1.fna.fbcdn.net/v/t39.30808-6/500053618_2177335612684241_2036936929288114882_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=HR42ZR5G-zYQ7kNvwFozVFt&_nc_oc=Admb2Mz-TjM5PH0V0Z_pylw2SAjOXn7jDSMSaZhEsUbcWkUXWvgGr3vss_TyuOOD3Pg&_nc_zt=23&_nc_ht=scontent.fhan9-1.fna&_nc_gid=EobEkaN8lxLPuMng31q-IQ&oh=00_AffjBqMH71RAdSRPLekiNcyBcLeZkX0dgPcsg6OewZRaDg&oe=6906A0A9' },
+    { name: 'Hoàng Thu Hiền', role: 'Co-Founder', avatar: hien_avt },
+    { name: 'Mai Thị Ngọc Ánh', role: 'Co-Founder', avatar: anh_avt },
+    { name: 'Lê Thị Quỳnh Mai', role: 'Founder', avatar: mai_avt },
+    { name: 'Phạm Thảo Ngân', role: 'Co-Founder', avatar: ngan_avt },
+    { name: 'Nguyễn Hữu Phương', role: 'Co-Founder', avatar: phuong_avt },
 ];
 
 const testimonials = [
@@ -261,7 +266,7 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
               className="group bg-white dark:bg-brand-gray-dark rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="relative overflow-hidden">
-                <img 
+                <Image 
                   src={member.avatar} 
                   alt={member.name} 
                   className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500" 
