@@ -37,14 +37,14 @@ const StationCard: React.FC<{ station: Station & { distance: number | null } }> 
           <img 
             src={station.image} 
             alt={station.name} 
-            className="w-full h-24 object-cover group-hover:brightness-105 transition-all" 
+            className="w-full object-cover group-hover:brightness-105 transition-all" 
             loading="lazy"
             onError={(e) => {
               e.currentTarget.src = 'https://placehold.co/600x400/22c55e/white?text=Trạm+thu+gom';
             }}
           />
         ) : (
-          <div className="w-full h-24 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+          <div className="w-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
             <span className="text-white text-3xl">♻️</span>
           </div>
         )}
@@ -91,14 +91,14 @@ const EventCard: React.FC<{ event: RecyclingEvent & { distance: number | null } 
         <img 
           src={event.image} 
           alt={event.name} 
-          className="w-full h-24 object-cover group-hover:brightness-105 transition-all" 
+          className="w-full object-cover group-hover:brightness-105 transition-all" 
           loading="lazy"
           onError={(e) => {
             e.currentTarget.src = 'https://placehold.co/600x400/a855f7/white?text=Sự+kiện';
           }}
         />
       ) : (
-        <div className="w-full h-24 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+        <div className="w-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
           <span className="text-white text-3xl">🎉</span>
         </div>
       )}
@@ -211,21 +211,59 @@ const MapComponent: React.FC<{
       let icon;
       let popupContent;
       const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`;
-      const directionsButton = `<div class="mt-3 pt-2 border-t border-gray-200"><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold text-sm hover:underline flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M21.71 11.29l-9-9a1 1 0 0 0-1.42 0l-9 9a1 1 0 0 0 0 1.42l9 9a1 1 0 0 0 1.42 0l9-9a1 1 0 0 0 0-1.42zM14 14.5V12h-4v3H8v-4c0-.6.4-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>Chỉ đường trên Google Maps</a></div>`;
+      const directionsButton = `<div class="mt-3 pt-2 border-t border-gray-200"><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold text-sm hover:underline flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M21.71 11.29l-9-9a1 1 0 0 0-1.42 0l-9 9a1 1 0 0 0 0 1.42l9 9a1 1 0 0 0 1.42 0l9-9a1 1 0 0 0 0-1.42zM14 14.5V12h-4v3H8v-4c0-.6.4-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>Chỉ đường</a></div>`;
 
       if (isStation(item)) {
-        icon = getStationIcon(item, false);
-        const imageHtml = item.image && item.image.trim() !== '' 
-          ? `<img src="${item.image}" alt="${item.name}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/600x400/22c55e/white?text=Trạm+thu+gom'" />` 
-          : `<div class="w-full h-32 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center"><span class="text-white text-4xl">♻️</span></div>`;
-        popupContent = `<div class="w-64 -m-3">${imageHtml}<div class="p-3"><h3 class="font-bold text-md text-brand-green-dark">${item.name}</h3><p class="text-xs text-gray-600 mt-1">${item.address}</p><div class="mt-2 flex flex-wrap gap-1">${item.wasteTypes.map(type => `<span class="px-1.5 py-0.5 bg-brand-green-light text-brand-green-dark text-[10px] font-semibold rounded-full">${type}</span>`).join('')}</div>${directionsButton}</div></div>`;
-      } else {
-        icon = getEventIcon(item, false);
-        const imageHtml = item.image && item.image.trim() !== '' 
-          ? `<img src="${item.image}" alt="${item.name}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/600x400/a855f7/white?text=Sự+kiện'" />` 
-          : `<div class="w-full h-32 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center"><span class="text-white text-4xl">🎉</span></div>`;
-        popupContent = `<div class="w-64 -m-3">${imageHtml}<div class="p-3"><h3 class="font-bold text-md text-purple-700">${item.name}</h3><p class="text-xs text-gray-600 mt-1">${item.address}</p><div class="mt-2 text-xs text-gray-500"><p><strong>Tổ chức:</strong> ${item.organizer}</p><p><strong>Thời gian:</strong> ${item.date} - ${item.time}</p></div>${directionsButton}</div></div>`;
-      }
+  icon = getStationIcon(item, false);
+
+  const imageHtml =
+    item.image && item.image.trim() !== ''
+      ? `<img src="${item.image}" alt="${item.name}" class="w-full h-32 object-cover rounded-t-xl" onerror="this.src='https://placehold.co/600x400/22c55e/white?text=Trạm+thu+gom'" />`
+      : `<div class="w-full h-32 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center rounded-t-xl">
+          <span class="text-white text-4xl">♻️</span>
+        </div>`;
+
+  popupContent = `
+    <div class="w-64 bg-white rounded-xl shadow-md overflow-hidden">
+      ${imageHtml}
+      <div class="p-3 space-y-2">
+        <h3 class="font-semibold text-sm text-brand-green-dark">${item.name}</h3>
+        <p class="text-xs text-gray-600 m-0">${item.address}</p>
+        <div class="flex flex-wrap gap-1">
+          ${item.wasteTypes
+            .map(
+              (type) =>
+                `<span class="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded-full">${type}</span>`
+            )
+            .join('')}
+        </div>
+        ${directionsButton}
+      </div>
+    </div>`;
+} else {
+  icon = getEventIcon(item, false);
+
+  const imageHtml =
+    item.image && item.image.trim() !== ''
+      ? `<img src="${item.image}" alt="${item.name}" class="w-full h-32 object-cover rounded-t-xl" onerror="this.src='https://placehold.co/600x400/a855f7/white?text=Sự+kiện'" />`
+      : `<div class="w-full h-32 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center rounded-t-xl">
+          <span class="text-white text-4xl">🎉</span>
+        </div>`;
+
+  popupContent = `
+    <div class="w-64 bg-white rounded-xl shadow-md overflow-hidden">
+      ${imageHtml}
+      <div class="p-3 space-y-2">
+        <h3 class="font-semibold text-sm text-purple-700">${item.name}</h3>
+        <p class="text-xs text-gray-600 m-0">${item.address}</p>
+        <div class="text-xs text-gray-500 space-y-1">
+          <p class="m-0"><strong>Tổ chức:</strong> ${item.organizer}</p>
+          <p class="m-0"><strong>Thời gian:</strong> ${item.date} - ${item.time}</p>
+        </div>
+        ${directionsButton}
+      </div>
+    </div>`;
+}
       const marker = L.marker([item.lat, item.lng], { icon }).addTo(map);
       marker.bindPopup(popupContent);
       itemMarkersRef.current[item.id] = marker;
