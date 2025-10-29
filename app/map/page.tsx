@@ -199,6 +199,34 @@ const MapComponent: React.FC<{
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
     }).addTo(map);
     mapRef.current = map;
+    
+    // Fix map size after initialization and when window resizes
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+  }, []);
+
+  // Handle window resize to fix map dimensions
+  useEffect(() => {
+    const handleResize = () => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize();
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Also invalidate size on mount to ensure correct dimensions
+    const timeoutId = setTimeout(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize();
+      }
+    }, 250);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   useEffect(() => {
@@ -409,7 +437,7 @@ function MapPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-5rem)] md:h-screen w-full">
+    <div className="flex flex-col md:flex-row h-screen md:h-screen w-full">
         {/* Mobile: Search bar overlay at top (below header) */}
         <div className="md:hidden fixed top-20 left-0 right-0 z-30 bg-white dark:bg-brand-gray-dark shadow-lg border-b border-gray-200 dark:border-gray-700">
             <div className="p-3">
@@ -558,15 +586,17 @@ function MapPage() {
 
         {/* Map container - full screen on mobile, flexible on desktop */}
         <div 
-            className="flex-grow h-full z-10 pt-[132px] md:pt-0"
+            className="flex-grow h-full z-10 pt-[132px] md:pt-0 relative"
             onClick={() => setShowSearchResults(false)}
         >
-            <MapComponent
-                items={filteredAndSortedItems}
-                hoveredItemId={hoveredItemId}
-                userLocation={userLocation}
-                focusedItem={focusedItem}
-            />
+            <div className="absolute inset-0 top-[132px] md:top-0">
+                <MapComponent
+                    items={filteredAndSortedItems}
+                    hoveredItemId={hoveredItemId}
+                    userLocation={userLocation}
+                    focusedItem={focusedItem}
+                />
+            </div>
         </div>
     </div>
   );
