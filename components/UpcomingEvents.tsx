@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CalendarIcon, MapPinIcon, ClockIcon, UsersIcon, ShareIcon } from './Icons';
+import Image from 'next/image';
+import { CalendarIcon, MapPinIcon, ShareIcon } from './Icons';
 import ShareModal from './ShareModal';
 
 interface RecyclingEvent {
@@ -12,11 +13,8 @@ interface RecyclingEvent {
   longitude: number;
   date: string;
   time: string;
-  organizer: string;
   description: string;
   image: string;
-  interestedCount?: number;
-  goingCount?: number;
   userStatus?: 'interested' | 'going' | null;
 }
 
@@ -27,186 +25,172 @@ interface UpcomingEventsProps {
 export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
   const [events, setEvents] = useState<RecyclingEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [shareModalData, setShareModalData] = useState<{ url: string; title: string; text: string; type: 'post' | 'news' | 'event' } | null>(null);
+  const [shareModalData, setShareModalData] = useState<{
+    url: string;
+    title: string;
+    text: string;
+    type: 'event';
+  } | null>(null);
 
   useEffect(() => {
-    fetchEvents();
+    fetch('/api/events/upcoming')
+      .then(res => res.json())
+      .then(setEvents)
+      .catch(err => console.error('Error fetching events:', err))
+      .finally(() => setLoading(false));
   }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch('/api/events/upcoming');
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data);
-      }
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleRegister = async (eventId: number, status: 'interested' | 'going') => {
     try {
-      const response = await fetch('/api/events/register', {
+      await fetch('/api/events/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId, status }),
       });
 
-      if (response.ok) {
-        // Update local state
-        setEvents(events.map(event => {
-          if (event.id === eventId) {
-            const wasInterested = event.userStatus === 'interested';
-            const wasGoing = event.userStatus === 'going';
-            
-            return {
-              ...event,
-              userStatus: event.userStatus === status ? null : status,
-              interestedCount: status === 'interested'
-                ? (event.userStatus === 'interested' ? (event.interestedCount || 0) - 1 : (event.interestedCount || 0) + 1)
-                : wasInterested ? (event.interestedCount || 0) - 1 : event.interestedCount,
-              goingCount: status === 'going'
-                ? (event.userStatus === 'going' ? (event.goingCount || 0) - 1 : (event.goingCount || 0) + 1)
-                : wasGoing ? (event.goingCount || 0) - 1 : event.goingCount,
-            };
-          }
-          return event;
-        }));
-      }
+      setEvents(events.map(event =>
+        event.id === eventId
+          ? { ...event, userStatus: event.userStatus === status ? null : status }
+          : event
+      ));
     } catch (error) {
-      console.error('Error registering for event:', error);
+      console.error('Error registering:', error);
     }
   };
 
+  const SkeletonCard = () => (
+    <div className="flex-shrink-0 w-64 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800 animate-pulse">
+      <div className="w-full h-32 bg-gray-200 dark:bg-gray-700"></div>
+      <div className="p-3 space-y-2">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+        <div className="flex justify-between mt-3">
+          <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+          <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+          <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-700">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-          📅 Sự kiện sắp diễn ra
-        </h2>
-        <div className="animate-pulse space-y-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">📅 Sự kiện sắp diễn ra</h2>
+        <div className="flex overflow-x-auto gap-4 pb-2">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+            <SkeletonCard key={i} />
           ))}
         </div>
       </div>
     );
   }
 
-  if (events.length === 0) {
+  if (!events.length) {
     return (
-      <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-700">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-          📅 Sự kiện sắp diễn ra
-        </h2>
-        <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-          Chưa có sự kiện nào sắp diễn ra
-        </p>
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 text-center">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">📅 Sự kiện sắp diễn ra</h2>
+        <p className="text-gray-500 dark:text-gray-400">Hiện chưa có sự kiện nào</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-brand-gray-dark rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-      <h2 className="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+    <div>
+      <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
         📅 Sự kiện sắp diễn ra
-        <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
-          ({events.length})
-        </span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">({events.length})</span>
       </h2>
 
-      <div className="space-y-3">
-        {events.slice(0, 3).map(event => (
+      <div className="flex overflow-x-auto gap-4 pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+        {events.slice(0, 6).map(event => (
           <div
             key={event.id}
-            className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer"
+            className="flex-shrink-0 w-64 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800 hover:shadow transition-all cursor-pointer"
             onClick={() => onEventClick?.(event)}
           >
-            {/* Event Image */}
-            {event.image && event.image.trim() !== '' ? (
-              <img
-                src={event.image}
-                alt={event.name}
-                className="w-full h-32 rounded-lg object-cover mb-2"
-                loading="lazy"
-                onError={(e) => {
-                  // Fallback to placeholder if image fails to load
-                  e.currentTarget.src = 'https://placehold.co/600x400/22c55e/white?text=Sự+kiện';
-                }}
-              />
+            {event.image ? (
+              <div className="relative w-full h-32">
+                <Image
+                  src={event.image}
+                  alt={event.name}
+                  fill
+                  sizes="100%"
+                  className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/fallback.png';
+                  }}
+                />
+              </div>
             ) : (
-              <div className="w-full h-32 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mb-2">
-                <span className="text-white text-4xl">🌱</span>
+              <div className="w-full h-32 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-3xl text-white">
+                🌱
               </div>
             )}
 
-            {/* Event Info */}
-            <div>
-              <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-2 line-clamp-2">
+            <div className="p-3">
+              <h3 className="font-semibold text-sm text-gray-900 dark:text-white line-clamp-2 mb-1">
                 {event.name}
               </h3>
-              
+
               <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
                 <div className="flex items-center gap-1.5">
-                  <CalendarIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{event.date}</span>
+                  <CalendarIcon className="w-4 h-4 shrink-0" />
+                  <span>{event.date} • {event.time}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <ClockIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{event.time}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <MapPinIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate line-clamp-1">{event.address}</span>
+                  <MapPinIcon className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{event.address}</span>
                 </div>
               </div>
 
-              {/* Compact Action Buttons */}
-              <div className="flex gap-2 mt-3">
+              <div className="flex items-center justify-between mt-3 text-gray-500 dark:text-gray-400">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRegister(event.id, 'going');
                   }}
-                  className={`flex-1 py-1.5 px-2 rounded text-xs font-medium transition-colors ${
+                  className={`p-1.5 rounded-md transition-all ${
                     event.userStatus === 'going'
-                      ? 'bg-brand-green text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      ? 'bg-green-500 text-white'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
+                  title="Tham gia"
                 >
-                  {event.userStatus === 'going' ? '✓ Tham gia' : 'Tham gia'}
+                  ✓
                 </button>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRegister(event.id, 'interested');
                   }}
-                  className={`flex-1 py-1.5 px-2 rounded text-xs font-medium transition-colors ${
+                  className={`p-1.5 rounded-md transition-all ${
                     event.userStatus === 'interested'
                       ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
+                  title="Quan tâm"
                 >
-                  {event.userStatus === 'interested' ? '★' : '☆'}
+                  ★
                 </button>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const eventUrl = `${window.location.origin}/map?lat=${event.latitude}&lng=${event.longitude}&zoom=15`;
                     setShareModalData({
-                      url: eventUrl,
+                      url: `${window.location.origin}/map?lat=${event.latitude}&lng=${event.longitude}`,
                       title: event.name,
-                      text: `${event.description}\n📅 ${event.date} - ${event.time}\n📍 ${event.address}`,
-                      type: 'event'
+                      text: `${event.description}\n📅 ${event.date} • ${event.time}\n📍 ${event.address}`,
+                      type: 'event',
                     });
                   }}
-                  className="p-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-brand-green hover:text-white transition-colors"
-                  title="Chia sẻ sự kiện"
+                  className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                  title="Chia sẻ"
                 >
-                  <ShareIcon className="w-4 h-4" />
+                  <ShareIcon className="w-4 h-4 shrink-0" />
                 </button>
               </div>
             </div>
@@ -214,23 +198,8 @@ export default function UpcomingEvents({ onEventClick }: UpcomingEventsProps) {
         ))}
       </div>
 
-      {events.length > 3 && (
-        <button 
-          className="w-full mt-3 py-2 text-sm font-medium text-brand-green hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
-        >
-          Xem thêm
-        </button>
-      )}
-
-      {/* Share Modal */}
       {shareModalData && (
-        <ShareModal
-          url={shareModalData.url}
-          title={shareModalData.title}
-          text={shareModalData.text}
-          type={shareModalData.type}
-          onClose={() => setShareModalData(null)}
-        />
+        <ShareModal {...shareModalData} onClose={() => setShareModalData(null)} />
       )}
     </div>
   );
