@@ -118,9 +118,6 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
               <a href="#features" className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-brand-green font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm sm:text-base">
                 Khám phá tính năng
               </a>
-              <a href="#community" className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300 text-sm sm:text-base">
-                Tham gia ngay
-              </a>
             </div>
           </div>
         </div>
