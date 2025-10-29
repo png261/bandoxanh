@@ -50,7 +50,7 @@ const StationCard: React.FC<{ station: Station & { distance: number | null } }> 
         )}
         <div className="p-3">
         <h3 className="font-semibold text-sm text-brand-green-dark dark:text-brand-green-light truncate">{station.name}</h3>
-        <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1 flex items-start line-clamp-2">
+        <p className="text-xs text-brand-gray-DEFAULT dark:text-gray-400 mt-1 flex items-center line-clamp-2">
             <MapPinIcon className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
             <span className="line-clamp-2">{station.address}</span>
         </p>
@@ -104,7 +104,7 @@ const EventCard: React.FC<{ event: RecyclingEvent & { distance: number | null } 
       )}
       <div className="p-3">
         <h3 className="font-semibold text-sm text-purple-700 dark:text-purple-400 truncate">{event.name}</h3>
-        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-start line-clamp-2">
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 flex items-center line-clamp-2">
           <MapPinIcon className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
           <span className="line-clamp-2">{event.address}</span>
         </p>
