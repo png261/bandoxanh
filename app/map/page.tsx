@@ -30,7 +30,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number): nu
 };
 
 const StationCard: React.FC<{ station: Station & { distance: number | null } }> = ({ station }) => {
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(station.address)}`;
     return (
     <div className="bg-white dark:bg-brand-gray-dark rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-brand-green dark:hover:border-brand-green hover:shadow-md transition-all duration-200 cursor-pointer group">
         {station.image && station.image.trim() !== '' ? (
@@ -84,7 +84,7 @@ const StationCard: React.FC<{ station: Station & { distance: number | null } }> 
 };
 
 const EventCard: React.FC<{ event: RecyclingEvent & { distance: number | null } }> = ({ event }) => {
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${event.lat},${event.lng}`;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(event.address)}`;
     return (
     <div className="bg-white dark:bg-brand-gray-dark rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-md transition-all duration-200 cursor-pointer group">
       {event.image && event.image.trim() !== '' ? (
@@ -210,7 +210,7 @@ const MapComponent: React.FC<{
     items.forEach(item => {
       let icon;
       let popupContent;
-      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}`;
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`;
       const directionsButton = `<div class="mt-3 pt-2 border-t border-gray-200"><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold text-sm hover:underline flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M21.71 11.29l-9-9a1 1 0 0 0-1.42 0l-9 9a1 1 0 0 0 0 1.42l9 9a1 1 0 0 0 1.42 0l9-9a1 1 0 0 0 0-1.42zM14 14.5V12h-4v3H8v-4c0-.6.4-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>Chỉ đường trên Google Maps</a></div>`;
 
       if (isStation(item)) {
