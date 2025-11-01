@@ -1,4 +1,7 @@
 # 🌿 BandoXanh - Nền tảng Cộng đồng Tái chế & Bảo vệ Môi trường
+<img width="1552" height="1012" alt="Screenshot 2025-11-01 at 13 42 08" src="https://github.com/user-attachments/assets/7766e980-620a-4538-8016-46dc7efad2f6" />
+<img width="1552" height="1012" alt="Screenshot 2025-11-01 at 13 45 26" src="https://github.com/user-attachments/assets/54fe2199-e39e-4e79-a64f-086635a626ff" />
+<img width="1552" height="1012" alt="Screenshot 2025-11-01 at 13 44 03" src="https://github.com/user-attachments/assets/e5b387d5-a642-4104-abf5-642d1737da7f" />
 
 Nền tảng web xây dựng trên Next.js nhằm thúc đẩy hoạt động tái chế và nâng cao nhận thức về bảo vệ môi trường thông qua cộng đồng tương tác.
 
