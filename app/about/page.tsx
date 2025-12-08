@@ -43,7 +43,6 @@ const userGrowthData = [
 ];
 
 const teamMembers = [
-    { name: 'Hoàng Thu Hiền', role: 'Co-Founder', avatar: hien_avt },
     { name: 'Mai Thị Ngọc Ánh', role: 'Co-Founder', avatar: anh_avt },
     { name: 'Lê Thị Quỳnh Mai', role: 'Founder', avatar: mai_avt },
     { name: 'Phạm Thảo Ngân', role: 'Co-Founder', avatar: ngan_avt },
