@@ -556,7 +556,8 @@ function ResultDisplay({ result, tab, onReset }: { result: any; tab: typeof tabs
     return null;
 }
 
-export default function AIScannerPage() {
+// Split content into a client component that uses searchParams
+function AIScannerContent() {
     const searchParams = useSearchParams();
     const tabParam = searchParams?.get('tab');
     const [activeTab, setActiveTab] = useState<TabId>(() => {
@@ -623,5 +624,18 @@ export default function AIScannerPage() {
                 <AITool key={activeTab} tab={currentTab} />
             </div>
         </div>
+    );
+}
+
+// Main page component wrapped in Suspense
+export default function AIScannerPage() {
+    return (
+        <React.Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+            </div>
+        }>
+            <AIScannerContent />
+        </React.Suspense>
     );
 }
