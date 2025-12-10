@@ -7,6 +7,7 @@ import { useUser } from '@clerk/nextjs';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 
+
 interface Stats {
   stations: number;
   events: number;
@@ -20,6 +21,7 @@ interface Stats {
   restaurants: number;
   donations: number;
   bikes: number;
+  diy: number;
 }
 
 export default function AdminPage() {
@@ -39,6 +41,7 @@ export default function AdminPage() {
     restaurants: 0,
     donations: 0,
     bikes: 0,
+    diy: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +56,8 @@ export default function AdminPage() {
       try {
         const [
           stationsRes, eventsRes, newsRes, postsRes,
-          dishesRes, restaurantsRes, donationsRes, bikesRes
+          dishesRes, restaurantsRes, donationsRes, bikesRes,
+          diyRes
         ] = await Promise.all([
           fetch('/api/stations'),
           fetch('/api/events'),
@@ -63,11 +67,13 @@ export default function AdminPage() {
           fetch('/api/restaurants'),
           fetch('/api/donations'),
           fetch('/api/bikes'),
+          fetch('/api/admin/diy'),
         ]);
 
         const [
           stations, events, news, posts,
-          dishes, restaurants, donations, bikes
+          dishes, restaurants, donations, bikes,
+          diy
         ] = await Promise.all([
           stationsRes.json(),
           eventsRes.json(),
@@ -77,6 +83,7 @@ export default function AdminPage() {
           restaurantsRes.json(),
           donationsRes.json(),
           bikesRes.json(),
+          diyRes.json(),
         ]);
 
         // Calculate additional stats from posts data
@@ -103,6 +110,7 @@ export default function AdminPage() {
           restaurants: Array.isArray(restaurants) ? restaurants.length : 0,
           donations: Array.isArray(donations) ? donations.length : 0,
           bikes: Array.isArray(bikes) ? bikes.length : 0,
+          diy: Array.isArray(diy) ? diy.length : 0,
         });
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -319,6 +327,20 @@ export default function AdminPage() {
               <div>
                 <div className="font-bold text-gray-900 text-lg">Thuê xe đạp</div>
                 <div className="text-sm text-gray-600">Quản lý trạm xe công cộng</div>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/diy"
+              className="group flex flex-col p-5 bg-yellow-50 rounded-xl border-2 border-yellow-100 hover:border-yellow-300 transition-all hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">🛠️</span>
+                <span className="bg-yellow-200 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">{stats.diy} ý tưởng</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Ý tưởng DIY</div>
+                <div className="text-sm text-gray-600">Quản lý các ý tưởng tái chế</div>
               </div>
             </Link>
 

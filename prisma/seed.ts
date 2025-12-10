@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-
+import fs from 'fs';
+import path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -25,6 +26,8 @@ async function main() {
     await prisma.wasteAnalysis.deleteMany();
     await prisma.bikeRental.deleteMany();
     await prisma.vegetarianRestaurant.deleteMany();
+    await prisma.vegetarianDish.deleteMany();
+    await prisma.diyIdea.deleteMany();
     await prisma.donationPoint.deleteMany();
 
     // Create awards
@@ -114,64 +117,18 @@ async function main() {
       ],
     });
 
-    // Create stations - Real data from Hanoi 2024
+    // Load data from JSON files
+    const dataDir = path.join(__dirname, 'data');
+
+    const stations = JSON.parse(fs.readFileSync(path.join(dataDir, 'recycling_stations.json'), 'utf-8'));
+    const vegetarianRestaurants = JSON.parse(fs.readFileSync(path.join(dataDir, 'vegetarian_restaurants.json'), 'utf-8'));
+    const vegetarianDishes = JSON.parse(fs.readFileSync(path.join(dataDir, 'vegetarian_dishes.json'), 'utf-8'));
+    const diyIdeas = JSON.parse(fs.readFileSync(path.join(dataDir, 'diy_ideas.json'), 'utf-8'));
+    const donationPoints = JSON.parse(fs.readFileSync(path.join(dataDir, 'donation_points.json'), 'utf-8'));
+
+    // Create stations
     await prisma.station.createMany({
-      data: [
-        {
-          name: 'Điểm thu gom rác điện tử - Nghĩa Tân',
-          address: '45 Nghĩa Tân, Quận Cầu Giấy, Hà Nội',
-          latitude: 21.0423,
-          longitude: 105.7934,
-          hours: '8:00 - 17:00 (T2-T6)',
-          wasteTypes: JSON.stringify(['Điện tử', 'Pin', 'Thiết bị gia dụng']),
-          image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-        },
-        {
-          name: 'Điểm thu gom rác điện tử - Hoàn Kiếm',
-          address: '02 Cổ Tân, Tràng Tiền, Quận Hoàn Kiếm, Hà Nội',
-          latitude: 21.0242,
-          longitude: 105.8544,
-          hours: '8:00 - 17:00 (T2-T6)',
-          wasteTypes: JSON.stringify(['Điện tử', 'Pin']),
-          image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-        },
-        {
-          name: 'Điểm thu gom rác điện tử - Ba Đình',
-          address: '12-14 Phan Đình Phùng, Quán Thánh, Quận Ba Đình, Hà Nội',
-          latitude: 21.0397,
-          longitude: 105.8382,
-          hours: '8:00 - 17:00 (T2-T6)',
-          wasteTypes: JSON.stringify(['Điện tử', 'Pin', 'Thiết bị IT']),
-          image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-        },
-        {
-          name: 'Chi Cục Bảo Vệ Môi Trường Hà Nội',
-          address: '17 Trung Yên 3, Trung Hòa, Quận Cầu Giấy, Hà Nội',
-          latitude: 21.0119,
-          longitude: 105.7915,
-          hours: '8:00 - 17:00 (T2-T6)',
-          wasteTypes: JSON.stringify(['Điện tử', 'Pin', 'Hóa chất']),
-          image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-        },
-        {
-          name: 'TH true mart - Thu gom vỏ hộp sữa',
-          address: '280 Tây Sơn, Đống Đa, Hà Nội',
-          latitude: 21.0089,
-          longitude: 105.8232,
-          hours: '8:00 - 17:30 hàng ngày',
-          wasteTypes: JSON.stringify(['Vỏ hộp sữa', 'Giấy']),
-          image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-        },
-        {
-          name: 'Điểm thu gom phân loại rác - Nam Đồng',
-          address: 'Phường Nam Đồng, Quận Đống Đa, Hà Nội',
-          latitude: 21.0132,
-          longitude: 105.8289,
-          hours: '6:00 - 21:00',
-          wasteTypes: JSON.stringify(['Nhựa', 'Giấy', 'Hữu cơ', 'Kim loại']),
-          image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-        },
-      ],
+      data: stations,
     });
 
     // Create Bike Rentals - Real data
@@ -213,158 +170,24 @@ async function main() {
       ],
     });
 
-    // Create Vegetarian Restaurants - Real data from Hanoi 2024
+    // Create Vegetarian Restaurants
     await prisma.vegetarianRestaurant.createMany({
-      data: [
-        {
-          name: 'Zenith Vegan Restaurant & Café',
-          address: '99B ngõ 275 Âu Cơ, Tây Hồ, Hà Nội',
-          latitude: 21.0589,
-          longitude: 105.8195,
-          priceRange: '80.000 - 200.000 VNĐ',
-          hours: '9:00 - 16:00 hàng ngày',
-          menu: 'Cơm bento, phở chay, mì soba, tacos, pizza, pasta. Kết hợp món Âu - Á.',
-          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800',
-        },
-        {
-          name: 'Nhà hàng Chay Vị Lai',
-          address: '67 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội',
-          latitude: 21.0245,
-          longitude: 105.8465,
-          priceRange: '100.000 - 300.000 VNĐ',
-          hours: '10:30 - 14:00, 17:30 - 22:00',
-          menu: 'Lẩu chay, salad, soup, tráng miệng. Ẩm thực chay Á - Âu theo mùa.',
-          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800',
-        },
-        {
-          name: 'Ưu Đàm Chay',
-          address: '55 Nguyễn Du, Hoàn Kiếm, Hà Nội',
-          latitude: 21.0178,
-          longitude: 105.8510,
-          priceRange: '100.000 - 250.000 VNĐ',
-          hours: 'T2-T5: 9:00-22:00, T6-CN: 9:00-22:30',
-          menu: 'Sâm đất tấn bí đỏ, pizza sầu riêng, cơm, lẩu. Phong cách Phật Giáo.',
-          image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800',
-        },
-        {
-          name: 'Sadhu Chay - Lotte Mall',
-          address: 'Tầng 3 Lotte Mall West Lake, Tây Hồ, Hà Nội',
-          latitude: 21.0667,
-          longitude: 105.8156,
-          priceRange: '250.000 - 400.000 VNĐ',
-          hours: '10:00 - 22:00',
-          menu: 'Buffet chay phục vụ tại bàn. Món ăn chế biến tinh tế, thanh tịnh.',
-          image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800',
-        },
-        {
-          name: 'Cồ Đàm Chay',
-          address: '68 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội',
-          latitude: 21.0227,
-          longitude: 105.8509,
-          priceRange: '150.000 - 350.000 VNĐ',
-          hours: '10:00 - 22:00',
-          menu: 'Ẩm thực chay sáng tạo, thẩm mỹ cao trong không gian sang trọng.',
-          image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800',
-        },
-        {
-          name: 'Veggie Castle - Ngọc Khánh',
-          address: '38 Ngọc Khánh, Ba Đình, Hà Nội',
-          latitude: 21.0235,
-          longitude: 105.8156,
-          priceRange: '100.000 - 180.000 VNĐ',
-          hours: '10:00 - 21:00',
-          menu: 'Buffet thuần chay, thực đơn thay đổi hàng ngày. Rau củ tươi sạch.',
-          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800',
-        },
-        {
-          name: 'Buffet Chay Hương Thiền',
-          address: '261 Xã Đàn, Nam Đồng, Đống Đa, Hà Nội',
-          latitude: 21.0108,
-          longitude: 105.8311,
-          priceRange: '80.000 - 150.000 VNĐ',
-          hours: '10:00 - 21:00',
-          menu: 'Buffet chay hơn 100 món thuần chay Việt và món giả mặn.',
-          image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800',
-        },
-        {
-          name: 'Haan Vegan',
-          address: '71 Đào Tấn, Ngọc Khánh, Ba Đình, Hà Nội',
-          latitude: 21.0267,
-          longitude: 105.8123,
-          priceRange: '60.000 - 120.000 VNĐ',
-          hours: '10:00 - 21:00',
-          menu: 'Lẩu Thái chay, bún riêu cua chay, phở xào, nem Hà Nội. Menu thay đổi mỗi ngày.',
-          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800',
-        },
-      ],
+      data: vegetarianRestaurants,
     });
 
-    // Create Donation Points - Real data from Hanoi 2024
+    // Create Vegetarian Dishes
+    await prisma.vegetarianDish.createMany({
+      data: vegetarianDishes,
+    });
+
+    // Create DIY Ideas
+    await prisma.diyIdea.createMany({
+      data: diyIdeas,
+    });
+
+    // Create Donation Points
     await prisma.donationPoint.createMany({
-      data: [
-        {
-          name: 'Tủ Quần Áo 0 Đồng - Bà Triệu',
-          address: '226 Bà Triệu, Hai Bà Trưng, Hà Nội',
-          latitude: 21.0145,
-          longitude: 105.8512,
-          hours: '24/7',
-          acceptedItems: 'Quần áo cũ còn sạch sẽ, dùng tốt',
-          beneficiary: 'Ai thiếu đến lấy - Ai thừa ủng hộ',
-          image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
-          beneficiaryImage: 'https://images.unsplash.com/photo-1524677708096-7c957816ec48?w=800',
-        },
-        {
-          name: 'Tủ Quần Áo 0 Đồng - Thái Hà',
-          address: '70 Thái Hà, Đống Đa, Hà Nội',
-          latitude: 21.0123,
-          longitude: 105.8210,
-          hours: '24/7',
-          acceptedItems: 'Quần áo cũ sạch sẽ, gấp gọn',
-          beneficiary: 'Người lao động nghèo',
-          image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
-        },
-        {
-          name: 'Tủ Quần Áo 0 Đồng - Tây Sơn',
-          address: '420 Tây Sơn, Đống Đa, Hà Nội',
-          latitude: 21.0067,
-          longitude: 105.8198,
-          hours: '24/7',
-          acceptedItems: 'Quần áo, giày dép còn dùng được',
-          beneficiary: 'Người có hoàn cảnh khó khăn',
-          image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
-        },
-        {
-          name: 'E2K - Điểm quyên góp Hồ Tùng Mậu',
-          address: '18, ngách 1, ngõ 199 Hồ Tùng Mậu, Nam Từ Liêm, Hà Nội',
-          latitude: 21.0389,
-          longitude: 105.7634,
-          hours: '8:00 - 20:00',
-          acceptedItems: 'Quần áo, sách truyện, văn phòng phẩm',
-          beneficiary: 'Dự án 2.000 đồng - Hỗ trợ hoàn cảnh khó khăn',
-          image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800',
-        },
-        {
-          name: 'Nhóm Thiện Nguyện 74 Liên Cơ',
-          address: '74 Liên Cơ, Đại Mỗ, Nam Từ Liêm, Hà Nội',
-          latitude: 21.0156,
-          longitude: 105.7523,
-          hours: '8:00 - 18:00',
-          acceptedItems: 'Quần áo ấm, chăn màn, đồ dùng học tập',
-          beneficiary: 'Trẻ em vùng cao, gia đình khó khăn',
-          image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
-          beneficiaryImage: 'https://images.unsplash.com/photo-1524677708096-7c957816ec48?w=800',
-        },
-        {
-          name: 'Sạp Hàng S-Nối - Quỹ Từ Thiện Ngọc Đức',
-          address: 'P1204, N17.3, KĐT Sài Đồng, Long Biên, Hà Nội',
-          latitude: 21.0367,
-          longitude: 105.9123,
-          hours: '9:00 - 17:00 (T2-T7)',
-          acceptedItems: 'Quần áo cũ, đồ dùng gia đình',
-          beneficiary: 'Gây quỹ hỗ trợ em nhỏ, gia đình khó khăn',
-          image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
-        },
-      ],
+      data: donationPoints,
     });
 
 

@@ -1,0 +1,182 @@
+[
+    {
+        "name": "Điểm thu gom rác điện tử - Nghĩa Tân",
+        "address": "45 Nghĩa Tân, Quận Cầu Giấy, Hà Nội",
+        "latitude": 21.0423,
+        "longitude": 105.7934,
+        "hours": "8:00 - 17:00 (T2-T6)",
+        "wasteTypes": "[\"Điện tử\", \"Pin\", \"Thiết bị gia dụng\"]",
+        "image": "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=800"
+    },
+    {
+        "name": "Điểm thu gom rác điện tử - Hoàn Kiếm",
+        "address": "02 Cổ Tân, Tràng Tiền, Quận Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0242,
+        "longitude": 105.8544,
+        "hours": "8:00 - 17:00 (T2-T6)",
+        "wasteTypes": "[\"Điện tử\", \"Pin\"]",
+        "image": "https://images.unsplash.com/photo-1591193686104-fddba4d0e4d8?w=800"
+    },
+    {
+        "name": "Điểm thu gom rác điện tử - Ba Đình",
+        "address": "12-14 Phan Đình Phùng, Quán Thánh, Quận Ba Đình, Hà Nội",
+        "latitude": 21.0397,
+        "longitude": 105.8382,
+        "hours": "8:00 - 17:00 (T2-T6)",
+        "wasteTypes": "[\"Điện tử\", \"Pin\", \"Thiết bị IT\"]",
+        "image": "https://images.unsplash.com/photo-1526951521990-620dc14c214b?w=800"
+    },
+    {
+        "name": "Chi Cục Bảo Vệ Môi Trường Hà Nội",
+        "address": "17 Trung Yên 3, Trung Hòa, Quận Cầu Giấy, Hà Nội",
+        "latitude": 21.0119,
+        "longitude": 105.7915,
+        "hours": "8:00 - 17:00 (T2-T6)",
+        "wasteTypes": "[\"Điện tử\", \"Pin\", \"Hóa chất\"]",
+        "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800"
+    },
+    {
+        "name": "TH true mart - Tây Sơn",
+        "address": "280 Tây Sơn, Đống Đa, Hà Nội",
+        "latitude": 21.0089,
+        "longitude": 105.8232,
+        "hours": "8:00 - 17:30 hàng ngày",
+        "wasteTypes": "[\"Vỏ hộp sữa\", \"Giấy\"]",
+        "image": "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=800"
+    },
+    {
+        "name": "Điểm thu gom phân loại rác - Nam Đồng",
+        "address": "Phường Nam Đồng, Quận Đống Đa, Hà Nội",
+        "latitude": 21.0132,
+        "longitude": 105.8289,
+        "hours": "6:00 - 21:00",
+        "wasteTypes": "[\"Nhựa\", \"Giấy\", \"Hữu cơ\", \"Kim loại\"]",
+        "image": "https://images.unsplash.com/photo-1503596476-1c12a8ab9a86?w=800"
+    },
+    {
+        "name": "Trạm Thu Gom Dầu Ăn Thừa - Cầu Giấy",
+        "address": "123 Xuân Thủy, Cầu Giấy, Hà Nội",
+        "latitude": 21.0365,
+        "longitude": 105.7832,
+        "hours": "8:00 - 17:00 (T2-T7)",
+        "wasteTypes": "[\"Dầu ăn thừa\"]",
+        "image": "https://images.unsplash.com/photo-1596522354195-e84e9c0a5dc2?w=800"
+    },
+    {
+        "name": "Điểm Tiếp Nhận Dầu Thừa - Đống Đa",
+        "address": "45 Thái Hà, Đống Đa, Hà Nội",
+        "latitude": 21.0125,
+        "longitude": 105.8190,
+        "hours": "9:00 - 18:00",
+        "wasteTypes": "[\"Dầu ăn thừa\"]",
+        "image": "https://images.unsplash.com/photo-1596522354195-e84e9c0a5dc2?w=800"
+    },
+    {
+        "name": "Bếp Ăn Công Nghiệp Xanh - Thanh Xuân",
+        "address": "88 Nguyễn Trãi, Thanh Xuân, Hà Nội",
+        "latitude": 21.0016,
+        "longitude": 105.8080,
+        "hours": "7:00 - 19:00",
+        "wasteTypes": "[\"Dầu ăn thừa\", \"Hữu cơ\"]",
+        "image": "https://images.unsplash.com/photo-1596522354195-e84e9c0a5dc2?w=800"
+    },
+    {
+        "name": "Center of Environment Training and Communication",
+        "address": "556 Nguyễn Văn Cừ, Long Biên, Hà Nội",
+        "latitude": 21.0450,
+        "longitude": 105.8820,
+        "hours": "8:00 - 17:00",
+        "wasteTypes": "[\"Giấy\", \"Nhựa\", \"Kim loại\"]",
+        "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800"
+    },
+    {
+        "name": "URENCO 4 - Điểm Thu Gom",
+        "address": "15 Đào Duy Anh, Đống Đa, Hà Nội",
+        "latitude": 21.0080,
+        "longitude": 105.8390,
+        "hours": "6:00 - 22:00",
+        "wasteTypes": "[\"Rác thải sinh hoạt\", \"Rác cồng kềnh\"]",
+        "image": "https://images.unsplash.com/photo-1523293915678-d126868e96f1?w=800"
+    },
+    {
+        "name": "Điểm Tái Chế Cộng Đồng GreenLife",
+        "address": "Phòng 301, nhà A1, khu tập thể ĐH Kinh tế Quốc dân",
+        "latitude": 21.0030,
+        "longitude": 105.8450,
+        "hours": "Thứ 7, CN cuối tháng",
+        "wasteTypes": "[\"Giấy\", \"Vỏ hộp sữa\", \"Pin\"]",
+        "image": "https://images.unsplash.com/photo-1503596476-1c12a8ab9a86?w=800"
+    },
+    {
+        "name": "Trạm Xanh - Gamuda Gardens",
+        "address": "KĐT Gamuda Gardens, Hoàng Mai, Hà Nội",
+        "latitude": 20.9750,
+        "longitude": 105.8650,
+        "hours": "8:00 - 17:00",
+        "wasteTypes": "[\"Nhựa\", \"Giấy\", \"Quần áo\"]",
+        "image": "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=800"
+    },
+    {
+        "name": "Siêu thị Go! Thăng Long - Thùng Thu Gom",
+        "address": "222 Trần Duy Hưng, Cầu Giấy, Hà Nội",
+        "latitude": 21.0090,
+        "longitude": 105.7950,
+        "hours": "8:00 - 22:00",
+        "wasteTypes": "[\"Pin cũ\"]",
+        "image": "https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?w=800"
+    },
+    {
+        "name": "Chợ Hàng Bè - Điểm Tập Kết Dầu Thừa",
+        "address": "Gia Ngư, Hàng Bạc, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0330,
+        "longitude": 105.8530,
+        "hours": "6:00 - 18:00",
+        "wasteTypes": "[\"Dầu ăn thừa\"]",
+        "image": "https://images.unsplash.com/photo-1596522354195-e84e9c0a5dc2?w=800"
+    },
+    {
+        "name": "Lagom Vietnam - Thu gom vỏ hộp sữa",
+        "address": "Số 1 Ngọc Hà, Ba Đình, Hà Nội",
+        "latitude": 21.0350,
+        "longitude": 105.8300,
+        "hours": "8:00 - 17:00",
+        "wasteTypes": "[\"Vỏ hộp sữa\"]",
+        "image": "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=800"
+    },
+    {
+        "name": "AEON Mall Long Biên - Trạm Tái Chế",
+        "address": "27 Cổ Linh, Long Biên, Hà Nội",
+        "latitude": 21.0260,
+        "longitude": 105.9000,
+        "hours": "10:00 - 22:00",
+        "wasteTypes": "[\"Nhựa\", \"Lon nhôm\", \"Giấy\"]",
+        "image": "https://images.unsplash.com/photo-1526951521990-620dc14c214b?w=800"
+    },
+    {
+        "name": "Hợp Tác Xã Môi Trường Thành Công",
+        "address": "Ngõ 49 Huỳnh Thúc Kháng, Đống Đa, Hà Nội",
+        "latitude": 21.0180,
+        "longitude": 105.8110,
+        "hours": "6:00 - 18:00",
+        "wasteTypes": "[\"Rác nhựa\", \"Bìa carton\"]",
+        "image": "https://images.unsplash.com/photo-1503596476-1c12a8ab9a86?w=800"
+    },
+    {
+        "name": "Điểm thu mua phế liệu Chiến Thắng",
+        "address": "15 Chiến Thắng, Hà Đông, Hà Nội",
+        "latitude": 20.9850,
+        "longitude": 105.7900,
+        "hours": "7:00 - 19:00",
+        "wasteTypes": "[\"Kim loại\", \"Nhựa\", \"Giấy\"]",
+        "image": "https://images.unsplash.com/photo-1523293915678-d126868e96f1?w=800"
+    },
+    {
+        "name": "Cửa Hàng Xăng Dầu Số 21 - Thu gom pin",
+        "address": "Nguyễn Hoàng Tôn, Tây Hồ, Hà Nội",
+        "latitude": 21.0650,
+        "longitude": 105.8050,
+        "hours": "6:00 - 22:00",
+        "wasteTypes": "[\"Pin\"]",
+        "image": "https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?w=800"
+    }
+]

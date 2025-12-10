@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { DIY_IDEAS } from '@/lib/diyData';
+// import { DIY_IDEAS } from '@/lib/diyData'; // Removing static import
 import { Search, Sparkles, X, Clock, Wrench, Play, ChevronRight, Filter, Lightbulb, Recycle } from 'lucide-react';
 
 type DifficultyLevel = 'Dễ' | 'Trung bình' | 'Khó';
@@ -15,16 +15,31 @@ const difficultyColors: Record<DifficultyLevel, { bg: string; text: string; dot:
 export default function ExploreDIY() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [selectedIdea, setSelectedIdea] = useState<typeof DIY_IDEAS[0] | null>(null);
+    const [selectedIdea, setSelectedIdea] = useState<any | null>(null);
+    const [diyIdeas, setDiyIdeas] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        fetch('/api/diy/ideas')
+            .then(res => res.json())
+            .then(data => {
+                setDiyIdeas(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, []);
 
     // Get unique categories
     const categories = useMemo(() => {
-        const cats = DIY_IDEAS.map(idea => idea.category);
+        const cats = diyIdeas.map(idea => idea.category);
         return [...new Set(cats)];
-    }, []);
+    }, [diyIdeas]);
 
     const filteredIdeas = useMemo(() => {
-        return DIY_IDEAS.filter((idea) => {
+        return diyIdeas.filter((idea) => {
             const query = searchTerm.toLowerCase();
             const matchesSearch = !searchTerm ||
                 idea.title.toLowerCase().includes(query) ||
@@ -35,7 +50,8 @@ export default function ExploreDIY() {
 
             return matchesSearch && matchesCategory;
         });
-    }, [searchTerm, selectedCategory]);
+    }, [searchTerm, selectedCategory, diyIdeas]);
+
 
     return (
         <div className="min-h-screen">
@@ -98,8 +114,8 @@ export default function ExploreDIY() {
                         <button
                             onClick={() => setSelectedCategory(null)}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${!selectedCategory
-                                    ? 'bg-purple-500 text-white shadow-md'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                ? 'bg-purple-500 text-white shadow-md'
+                                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                                 }`}
                         >
                             Tất cả
@@ -109,8 +125,8 @@ export default function ExploreDIY() {
                                 key={cat}
                                 onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === cat
-                                        ? 'bg-purple-500 text-white shadow-md'
-                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                    ? 'bg-purple-500 text-white shadow-md'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                                     }`}
                             >
                                 {cat}
@@ -137,7 +153,20 @@ export default function ExploreDIY() {
                 </div>
 
                 {/* Ideas Grid */}
-                {filteredIdeas.length > 0 ? (
+                {loading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 animate-pulse h-96">
+                                <div className="h-48 bg-gray-200 dark:bg-gray-700" />
+                                <div className="p-5 space-y-4">
+                                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : filteredIdeas.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredIdeas.map((idea, index) => {
                             const difficulty = idea.difficulty as DifficultyLevel;
@@ -285,7 +314,7 @@ export default function ExploreDIY() {
                                         Nguyên liệu
                                     </h3>
                                     <ul className="space-y-3">
-                                        {selectedIdea.materials?.map((item, index) => (
+                                        {selectedIdea.materials?.map((item: string, index: number) => (
                                             <li key={index} className="flex items-start text-gray-700 dark:text-gray-300">
                                                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                                 {item}
@@ -301,7 +330,7 @@ export default function ExploreDIY() {
                                         Các bước thực hiện
                                     </h3>
                                     <ol className="space-y-4">
-                                        {selectedIdea.steps?.map((step, index) => (
+                                        {selectedIdea.steps?.map((step: string, index: number) => (
                                             <li key={index} className="flex items-start">
                                                 <span className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
                                                     {index + 1}

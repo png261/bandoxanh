@@ -1,0 +1,167 @@
+[
+    {
+        "name": "Tủ Quần Áo 0 Đồng - Bà Triệu",
+        "address": "226 Bà Triệu, Hai Bà Trưng, Hà Nội",
+        "latitude": 21.0145,
+        "longitude": 105.8512,
+        "hours": "24/7",
+        "acceptedItems": "Quần áo cũ còn sạch sẽ, dùng tốt",
+        "beneficiary": "Ai thiếu đến lấy - Ai thừa ủng hộ",
+        "image": "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Tủ Quần Áo 0 Đồng - Thái Hà",
+        "address": "70 Thái Hà, Đống Đa, Hà Nội",
+        "latitude": 21.0123,
+        "longitude": 105.8210,
+        "hours": "24/7",
+        "acceptedItems": "Quần áo cũ sạch sẽ, gấp gọn",
+        "beneficiary": "Người lao động nghèo",
+        "image": "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "E2K - Điểm quyên góp Hồ Tùng Mậu",
+        "address": "18, ngách 1, ngõ 199 Hồ Tùng Mậu, Nam Từ Liêm, Hà Nội",
+        "latitude": 21.0389,
+        "longitude": 105.7634,
+        "hours": "8:00 - 20:00",
+        "acceptedItems": "Quần áo, sách truyện, văn phòng phẩm",
+        "beneficiary": "Dự án 2.000 đồng - Hỗ trợ hoàn cảnh khó khăn",
+        "image": "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Nhóm Thiện Nguyện 74 Liên Cơ",
+        "address": "74 Liên Cơ, Đại Mỗ, Nam Từ Liêm, Hà Nội",
+        "latitude": 21.0156,
+        "longitude": 105.7523,
+        "hours": "8:00 - 18:00",
+        "acceptedItems": "Quần áo ấm, chăn màn, đồ dùng học tập",
+        "beneficiary": "Trẻ em vùng cao, gia đình khó khăn",
+        "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Sạp Hàng S-Nối - Quỹ Từ Thiện Ngọc Đức",
+        "address": "P1204, N17.3, KĐT Sài Đồng, Long Biên, Hà Nội",
+        "latitude": 21.0367,
+        "longitude": 105.9123,
+        "hours": "9:00 - 17:00 (T2-T7)",
+        "acceptedItems": "Quần áo cũ, đồ dùng gia đình",
+        "beneficiary": "Gây quỹ hỗ trợ em nhỏ, gia đình khó khăn",
+        "image": "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Điểm Quyên Góp Sách - Phố 19/12",
+        "address": "Phố Sách 19/12, Trần Hưng Đạo, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0250,
+        "longitude": 105.8480,
+        "hours": "8:00 - 21:00",
+        "acceptedItems": "Sách cũ, truyện tranh, tạp chí",
+        "beneficiary": "Thư viện vùng cao",
+        "image": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Mái Ấm Thánh Tâm",
+        "address": "Xuy Xá, Mỹ Đức, Hà Nội",
+        "latitude": 20.7200,
+        "longitude": 105.7500,
+        "hours": "8:00 - 17:00",
+        "acceptedItems": "Gạo, mỳ tôm, quần áo, sữa",
+        "beneficiary": "Trẻ em khuyết tật, mồ côi",
+        "image": "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Chùa Bồ Đề - Nơi nhận từ thiện",
+        "address": "Phố Phú Viên, Bồ Đề, Long Biên, Hà Nội",
+        "latitude": 21.0380,
+        "longitude": 105.8700,
+        "hours": "7:00 - 18:00",
+        "acceptedItems": "Lương thực, thực phẩm chay, quần áo",
+        "beneficiary": "Trẻ em mồ côi, người già neo đơn",
+        "image": "https://images.unsplash.com/photo-1518331483807-f642f1f96981?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Làng Trẻ Em SOS Hà Nội",
+        "address": "Số 2 Phạm Thận Duật, Mai Dịch, Cầu Giấy, Hà Nội",
+        "latitude": 21.0390,
+        "longitude": 105.7780,
+        "hours": "8:00 - 17:00 (liên hệ trước)",
+        "acceptedItems": "Đồ dùng học tập, sách vở, xe đạp cũ",
+        "beneficiary": "Trẻ em mồ côi, hoàn cảnh đặc biệt",
+        "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Hội Chữ Thập Đỏ Quận Ba Đình",
+        "address": "Số 6 Đặng Dung, Ba Đình, Hà Nội",
+        "latitude": 21.0410,
+        "longitude": 105.8400,
+        "hours": "8:00 - 17:00 (T2-T6)",
+        "acceptedItems": "Tiền mặt, nhu yếu phẩm cứu trợ thiên tai",
+        "beneficiary": "Nạn nhân thiên tai, người nghèo",
+        "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Quỹ Trò Nghèo Vùng Cao - Cơm Có Thịt",
+        "address": "Số 12 lô 11B, Trung Yên 10, Cầu Giấy, Hà Nội",
+        "latitude": 21.0150,
+        "longitude": 105.7950,
+        "hours": "8:00 - 17:30",
+        "acceptedItems": "Đóng góp tài chính, áo ấm mới",
+        "beneficiary": "Học sinh nghèo vùng cao",
+        "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Blue Dragon Children's Foundation",
+        "address": "Nghi Tàm, Tây Hồ, Hà Nội",
+        "latitude": 21.0550,
+        "longitude": 105.8250,
+        "hours": "Liên hệ website",
+        "acceptedItems": "Đồ chơi, sách tiếng Anh, quần áo trẻ em",
+        "beneficiary": "Trẻ em đường phố, nạn nhân mua bán người",
+        "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Thùng Quyên Góp - Vincom Bà Triệu",
+        "address": "191 Bà Triệu, Hai Bà Trưng, Hà Nội",
+        "latitude": 21.0110,
+        "longitude": 105.8500,
+        "hours": "9:30 - 22:00",
+        "acceptedItems": "Quần áo cũ",
+        "beneficiary": "Tổ chức từ thiện đối tác",
+        "image": "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Nhà Văn Hóa - Phường Nghĩa Tân",
+        "address": "Nghĩa Tân, Cầu Giấy, Hà Nội",
+        "latitude": 21.0420,
+        "longitude": 105.7940,
+        "hours": "Khi có đợt quyên góp",
+        "acceptedItems": "Đồ cứu trợ bão lũ",
+        "beneficiary": "Đồng bào lũ lụt",
+        "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    },
+    {
+        "name": "Góc Sẻ Chia - Ecopark",
+        "address": "KĐT Ecopark, Văn Giang, Hưng Yên",
+        "latitude": 20.9650,
+        "longitude": 105.9250,
+        "hours": "Cuối tuần",
+        "acceptedItems": "Đồ chơi, sách cũ",
+        "beneficiary": "Trẻ em nghèo lân cận",
+        "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800",
+        "beneficiaryImage": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800"
+    }
+]

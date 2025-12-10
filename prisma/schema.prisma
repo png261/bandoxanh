@@ -346,3 +346,19 @@ model VegetarianDish {
 
   @@map("vegetarian_dishes")
 }
+
+model DiyIdea {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  image       String
+  difficulty  String
+  description String
+  materials   String[]
+  steps       String[]
+  videoUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("diy_ideas")
+}

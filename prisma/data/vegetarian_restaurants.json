@@ -1,0 +1,152 @@
+[
+    {
+        "name": "Zenith Vegan Restaurant & Café",
+        "address": "99B ngõ 275 Âu Cơ, Tây Hồ, Hà Nội",
+        "latitude": 21.0589,
+        "longitude": 105.8195,
+        "priceRange": "80.000 - 200.000 VNĐ",
+        "hours": "9:00 - 16:00 hàng ngày",
+        "menu": "Cơm bento, phở chay, mì soba, tacos, pizza, pasta. Kết hợp món Âu - Á.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    },
+    {
+        "name": "Nhà hàng Chay Vị Lai",
+        "address": "67 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0245,
+        "longitude": 105.8465,
+        "priceRange": "100.000 - 300.000 VNĐ",
+        "hours": "10:30 - 14:00, 17:30 - 22:00",
+        "menu": "Lẩu chay, salad, soup, tráng miệng. Ẩm thực chay Á - Âu theo mùa.",
+        "image": "https://images.unsplash.com/photo-1582576163090-09d3b6f8a969?w=800"
+    },
+    {
+        "name": "Ưu Đàm Chay",
+        "address": "55 Nguyễn Du, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0178,
+        "longitude": 105.8510,
+        "priceRange": "100.000 - 250.000 VNĐ",
+        "hours": "T2-T5: 9:00-22:00, T6-CN: 9:00-22:30",
+        "menu": "Sâm đất tấn bí đỏ, pizza sầu riêng, cơm, lẩu. Phong cách Phật Giáo.",
+        "image": "https://images.unsplash.com/photo-1594040226829-71248acf2e82?w=800"
+    },
+    {
+        "name": "Sadhu Chay - Lotte Mall",
+        "address": "Tầng 3 Lotte Mall West Lake, Tây Hồ, Hà Nội",
+        "latitude": 21.0667,
+        "longitude": 105.8156,
+        "priceRange": "250.000 - 400.000 VNĐ",
+        "hours": "10:00 - 22:00",
+        "menu": "Buffet chay phục vụ tại bàn. Món ăn chế biến tinh tế, thanh tịnh.",
+        "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800"
+    },
+    {
+        "name": "Cồ Đàm Chay",
+        "address": "68 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0227,
+        "longitude": 105.8509,
+        "priceRange": "150.000 - 350.000 VNĐ",
+        "hours": "10:00 - 22:00",
+        "menu": "Ẩm thực chay sáng tạo, thẩm mỹ cao trong không gian sang trọng.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    },
+    {
+        "name": "Veggie Castle - Ngọc Khánh",
+        "address": "38 Ngọc Khánh, Ba Đình, Hà Nội",
+        "latitude": 21.0235,
+        "longitude": 105.8156,
+        "priceRange": "100.000 - 180.000 VNĐ",
+        "hours": "10:00 - 21:00",
+        "menu": "Buffet thuần chay, thực đơn thay đổi hàng ngày. Rau củ tươi sạch.",
+        "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=800"
+    },
+    {
+        "name": "Buffet Chay Hương Thiền",
+        "address": "261 Xã Đàn, Nam Đồng, Đống Đa, Hà Nội",
+        "latitude": 21.0108,
+        "longitude": 105.8311,
+        "priceRange": "80.000 - 150.000 VNĐ",
+        "hours": "10:00 - 21:00",
+        "menu": "Buffet chay hơn 100 món thuần chay Việt và món giả mặn.",
+        "image": "https://images.unsplash.com/photo-1582576163090-09d3b6f8a969?w=800"
+    },
+    {
+        "name": "Haan Vegan",
+        "address": "71 Đào Tấn, Ngọc Khánh, Ba Đình, Hà Nội",
+        "latitude": 21.0267,
+        "longitude": 105.8123,
+        "priceRange": "60.000 - 120.000 VNĐ",
+        "hours": "10:00 - 21:00",
+        "menu": "Lẩu Thái chay, bún riêu cua chay, phở xào, nem Hà Nội. Menu thay đổi mỗi ngày.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    },
+    {
+        "name": "Minh Chay Vegan",
+        "address": "30 Hàng Gai, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0320,
+        "longitude": 105.8520,
+        "priceRange": "100.000 - 250.000 VNĐ",
+        "hours": "9:00 - 22:00",
+        "menu": "Món chay truyền thống và hiện đại.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    },
+    {
+        "name": "Bồ Đề Tâm - Phạm Huy Thông",
+        "address": "34 Phạm Huy Thông, Ba Đình, Hà Nội",
+        "latitude": 21.0255,
+        "longitude": 105.8160,
+        "priceRange": "80.000 - 200.000 VNĐ",
+        "hours": "10:00 - 21:30",
+        "menu": "Cơm chay, lẩu nấm, pizza chay.",
+        "image": "https://images.unsplash.com/photo-1594040226829-71248acf2e82?w=800"
+    },
+    {
+        "name": "Chay An Lạc",
+        "address": "109 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0240,
+        "longitude": 105.8450,
+        "priceRange": "50.000 - 150.000 VNĐ",
+        "hours": "10:00 - 22:00",
+        "menu": "Buffet chay trưa và tối.",
+        "image": "https://images.unsplash.com/photo-1582576163090-09d3b6f8a969?w=800"
+    },
+    {
+        "name": "OM Vegan Garden",
+        "address": "63 đường 9, F361 An Dương, Tây Hồ, Hà Nội",
+        "latitude": 21.0450,
+        "longitude": 105.8350,
+        "priceRange": "100.000 - 300.000 VNĐ",
+        "hours": "9:00 - 22:00",
+        "menu": "Không gian sân vườn, món chay Á Âu.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    },
+    {
+        "name": "The Veg - Organic Vego & Tea",
+        "address": "48 Tràng Tiền, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0250,
+        "longitude": 105.8560,
+        "priceRange": "70.000 - 150.000 VNĐ",
+        "hours": "8:00 - 22:00",
+        "menu": "Đồ ăn chay organic lành mạnh.",
+        "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=800"
+    },
+    {
+        "name": "Loving Hut Nguồn Cội",
+        "address": "3/10 Ngõ 121 Chùa Láng, Đống Đa, Hà Nội",
+        "latitude": 21.0240,
+        "longitude": 105.8020,
+        "priceRange": "40.000 - 100.000 VNĐ",
+        "hours": "9:00 - 21:00",
+        "menu": "Cơm chay văn phòng, lẩu chay.",
+        "image": "https://images.unsplash.com/photo-1582576163090-09d3b6f8a969?w=800"
+    },
+    {
+        "name": "Vegan Bánh Mì",
+        "address": "66B Trần Hưng Đạo, Hoàn Kiếm, Hà Nội",
+        "latitude": 21.0228,
+        "longitude": 105.8505,
+        "priceRange": "25.000 - 50.000 VNĐ",
+        "hours": "7:00 - 21:00",
+        "menu": "Bánh mì chay các loại, sữa hạt.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+    }
+]

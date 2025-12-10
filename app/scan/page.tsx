@@ -408,7 +408,7 @@ function ResultDisplay({ result, tab, onReset }: { result: any; tab: typeof tabs
     const colors = colorClasses[tab.color];
 
     // Waste Classification Result
-    if (tab.id === 'waste' && result.waste_type) {
+    if (tab.id === 'waste' && result.wasteType) {
         return (
             <div className="space-y-4">
                 <div className={`${colors.bgLight} rounded-2xl p-6 border ${colors.border}`}>
@@ -417,12 +417,19 @@ function ResultDisplay({ result, tab, onReset }: { result: any; tab: typeof tabs
                             <Recycle className="w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                            <h3 className={`font-bold text-xl ${colors.text}`}>{result.waste_type}</h3>
-                            <p className="text-gray-600 dark:text-gray-400 mt-1">{result.description}</p>
-                            {result.disposal_method && (
-                                <p className="text-sm text-gray-500 mt-2">
-                                    <strong>Cách xử lý:</strong> {result.disposal_method}
-                                </p>
+                            <h3 className={`font-bold text-xl ${colors.text}`}>{result.wasteType}</h3>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1">{result.recyclingSuggestion}</p>
+                            {result.diyIdeas && result.diyIdeas.length > 0 && (
+                                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                    <p className="font-bold text-sm mb-1">Ý tưởng tái chế:</p>
+                                    <ul className="list-disc pl-4 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                        {result.diyIdeas.map((idea: any, idx: number) => (
+                                            <li key={idx}>
+                                                <strong>{idea.title}</strong>: {Array.isArray(idea.steps) ? idea.steps.join(', ') : idea.steps}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -435,25 +442,37 @@ function ResultDisplay({ result, tab, onReset }: { result: any; tab: typeof tabs
     }
 
     // DIY Result  
-    if (tab.id === 'diy' && result.ideas) {
+    if (tab.id === 'diy' && (result.projects || result.identifiedMaterials)) {
         return (
             <div className="space-y-4">
-                <div className={`${colors.bgLight} rounded-2xl p-4 border ${colors.border}`}>
-                    <h4 className={`font-bold ${colors.text} mb-2`}>Nguyên liệu phát hiện:</h4>
-                    <p className="text-gray-700 dark:text-gray-300">{result.materials}</p>
-                </div>
+                {result.identifiedMaterials && result.identifiedMaterials.length > 0 && (
+                    <div className={`${colors.bgLight} rounded-2xl p-4 border ${colors.border}`}>
+                        <h4 className={`font-bold ${colors.text} mb-2`}>Nguyên liệu phát hiện:</h4>
+                        <p className="text-gray-700 dark:text-gray-300">{result.identifiedMaterials.join(', ')}</p>
+                    </div>
+                )}
                 <div className="space-y-3">
-                    {result.ideas?.map((idea: any, idx: number) => (
+                    {result.projects?.map((idea: any, idx: number) => (
                         <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-md border border-gray-100 dark:border-gray-700">
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{idea.name}</h4>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">{idea.description}</p>
+                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{idea.title}</h4>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">{idea.difficulty} • Materials: {idea.materials ? idea.materials.join(', ') : ''}</p>
                             {idea.steps && (
-                                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500">{idea.steps}</p>
+                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                    <p className="text-xs text-gray-500 font-bold mb-1">Các bước:</p>
+                                    <ol className="list-decimal pl-4 text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
+                                        {Array.isArray(idea.steps) ? idea.steps.map((step: string, sIdx: number) => (
+                                            <li key={sIdx}>{step}</li>
+                                        )) : idea.steps}
+                                    </ol>
                                 </div>
                             )}
                         </div>
                     ))}
+                    {(!result.projects || result.projects.length === 0) && (
+                        <div className="text-center p-4 text-gray-500 text-sm">
+                            Không tìm thấy dự án DIY phù hợp trong cơ sở dữ liệu.
+                        </div>
+                    )}
                 </div>
                 <button onClick={onReset} className={`w-full ${colors.button} text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2`}>
                     Tìm ý tưởng khác <ArrowRight className="w-5 h-5" />

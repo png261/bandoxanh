@@ -79,42 +79,67 @@ export async function POST(request: Request) {
 
 
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: {
-                parts: [
-                    { inlineData: { data: base64Data, mimeType: imageFile.type } },
-                    { text: prompt }
-                ]
-            },
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        ingredients: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                            description: 'Danh sách các nguyên liệu thực phẩm nhận diện được từ hình ảnh.'
-                        },
-                        dishes: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    name: { type: Type.STRING },
-                                    description: { type: Type.STRING },
-                                    recipe: { type: Type.STRING }
-                                },
-                                required: ['name', 'description', 'recipe']
-                            },
-                            description: 'Danh sách 3 món chay gợi ý.'
-                        }
+        // Retry logic
+        const maxRetries = 3;
+        let lastError: Error | null = null;
+        let response;
+
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: {
+                        parts: [
+                            { inlineData: { data: base64Data, mimeType: imageFile.type } },
+                            { text: prompt }
+                        ]
                     },
-                    required: ['ingredients', 'dishes']
-                }
+                    config: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                ingredients: {
+                                    type: Type.ARRAY,
+                                    items: { type: Type.STRING },
+                                    description: 'Danh sách các nguyên liệu thực phẩm nhận diện được từ hình ảnh.'
+                                },
+                                dishes: {
+                                    type: Type.ARRAY,
+                                    items: {
+                                        type: Type.OBJECT,
+                                        properties: {
+                                            name: { type: Type.STRING },
+                                            description: { type: Type.STRING },
+                                            recipe: { type: Type.STRING }
+                                        },
+                                        required: ['name', 'description', 'recipe']
+                                    },
+                                    description: 'Danh sách 3 món chay gợi ý.'
+                                }
+                            },
+                            required: ['ingredients', 'dishes']
+                        }
+                    }
+                });
+                break;
+            } catch (err) {
+                lastError = err as Error;
+                console.error(`Attempt ${attempt + 1} failed:`, err);
+                const errorMessage = String(err);
+                const isRetryable = errorMessage.includes('503') ||
+                    errorMessage.includes('429') ||
+                    errorMessage.includes('UNAVAILABLE') ||
+                    errorMessage.includes('overloaded');
+
+                if (!isRetryable || attempt === maxRetries - 1) throw err;
+                await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
             }
-        });
+        }
+
+        if (!response) {
+            throw lastError || new Error('Failed to get response from AI');
+        }
 
         const replyText = response.text || JSON.stringify({ error: "Không nhận được phản hồi từ API" });
         const replyJson = JSON.parse(replyText);
@@ -123,9 +148,19 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.error('Vegetarian analysis error:', error);
+
+        const errorMessage = String(error);
+        let userMessage = 'Đã xảy ra lỗi khi phân tích hình ảnh.';
+
+        if (errorMessage.includes('503') || errorMessage.includes('UNAVAILABLE')) {
+            userMessage = 'Dịch vụ AI đang quá tải. Vui lòng thử lại sau vài giây.';
+        } else if (errorMessage.includes('429')) {
+            userMessage = 'Đã đạt giới hạn yêu cầu AI. Vui lòng thử lại sau.';
+        }
+
         return NextResponse.json(
-            { error: 'Đã xảy ra lỗi khi phân tích hình ảnh.' },
-            { status: 500 }
+            { error: userMessage },
+            { status: 503 }
         );
     }
 }

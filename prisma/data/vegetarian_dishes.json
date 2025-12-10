@@ -1,0 +1,490 @@
+[
+    {
+        "name": "Đậu phụ sốt cà chua",
+        "description": "Món ăn dân dã, đậm đà đưa cơm.",
+        "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800",
+        "tags": [
+            "Đậu phụ",
+            "Món chính",
+            "Dễ làm"
+        ],
+        "cookTime": "20 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "3 bìa đậu",
+            "2 quả cà chua",
+            "Hành lá",
+            "Gia vị"
+        ],
+        "recipe": "1. Rán vàng đậu. 2. Xào cà chua nhuyễn. 3. Cho đậu vào sốt, nêm gia vị. 4. Thêm hành lá."
+    },
+    {
+        "name": "Canh chua chay",
+        "description": "Canh chua thanh mát giải nhiệt mùa hè.",
+        "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=800",
+        "tags": [
+            "Canh",
+            "Thanh mát",
+            "Mùa hè"
+        ],
+        "cookTime": "30 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Dứa",
+            "Cà chua",
+            "Đậu phụ",
+            "Nấm hương",
+            "Me",
+            "Rau thơm"
+        ],
+        "recipe": "1. Xào cà chua, dứa. 2. Đổ nước, thêm nước me. 3. Thả đậu, nấm. 4. Nêm nếm vớt ra bát rắc rau thơm."
+    },
+    {
+        "name": "Nem rán chay",
+        "description": "Nem giòn rụm với nhân rau củ.",
+        "image": "https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?w=800",
+        "tags": [
+            "Nem",
+            "Đồ chiên",
+            "Tiệc"
+        ],
+        "cookTime": "45 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Bánh đa nem",
+            "Miến",
+            "Mộc nhĩ",
+            "Cà rốt",
+            "Đậu phụ",
+            "Hành tây"
+        ],
+        "recipe": "1. Ngâm miến, mộc nhĩ thái nhỏ. 2. Trộn nhân với gia vị. 3. Cuốn nem. 4. Rán vàng."
+    },
+    {
+        "name": "Nấm kho tiêu",
+        "description": "Món kho đậm đà, hao cơm.",
+        "image": "https://images.unsplash.com/photo-1653559268399-28f094592a85?w=800",
+        "tags": [
+            "Nấm",
+            "Kho",
+            "Mặn"
+        ],
+        "cookTime": "20 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "Nấm rơm/đùi gà",
+            "Tiêu",
+            "Xì dầu",
+            "Đường"
+        ],
+        "recipe": "1. Sơ chế nấm. 2. Ướp gia vị 15p. 3. Kho lửa nhỏ đến khi sệt lại. 4. Rắc tiêu."
+    },
+    {
+        "name": "Salad bơ đậu gà",
+        "description": "Salad giàu protein và chất béo tốt.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "tags": [
+            "Salad",
+            "Healthy",
+            "Giảm cân"
+        ],
+        "cookTime": "10 phút",
+        "servingSize": "1 người",
+        "ingredients": [
+            "1 quả bơ",
+            "100g đậu gà",
+            "Xà lách",
+            "Sốt chanh leo"
+        ],
+        "recipe": "1. Cắt bơ hạt lựu. 2. Trộn bơ, đậu gà, xà lách. 3. Rưới sốt và trộn đều."
+    },
+    {
+        "name": "Mì xào rau củ",
+        "description": "Bữa sáng nhanh gọn đủ chất.",
+        "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800",
+        "tags": [
+            "Mì",
+            "Sáng",
+            "Nhanh"
+        ],
+        "cookTime": "15 phút",
+        "servingSize": "1 người",
+        "ingredients": [
+            "Mì gạo/mì tôm",
+            "Cải ngọt",
+            "Cà rốt",
+            "Nấm"
+        ],
+        "recipe": "1. Chần mì. 2. Xào rau củ chín tới. 3. Cho mì vào đảo nhanh. 4. Nêm xì dầu."
+    },
+    {
+        "name": "Súp bí đỏ kem tươi",
+        "description": "Súp sánh mịn, béo ngậy.",
+        "image": "https://images.unsplash.com/photo-1476718408415-c934f21db215?w=800",
+        "tags": [
+            "Súp",
+            "Âu",
+            "Khai vị"
+        ],
+        "cookTime": "40 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Bí đỏ",
+            "Kem tươi (cooking cream)",
+            "Hành tây",
+            "Bơ"
+        ],
+        "recipe": "1. Xào hành tây với bơ. 2. Cho bí đỏ và nước vào hầm mềm. 3. Xay nhuyễn. 4. Thêm kem tươi đun nóng."
+    },
+    {
+        "name": "Bún riêu chay",
+        "description": "Bún riêu vị thanh từ sữa đậu nành.",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "tags": [
+            "Bún",
+            "Sáng",
+            "Cuối tuần"
+        ],
+        "cookTime": "60 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Sữa đậu nành",
+            "Cà chua",
+            "Đậu phụ",
+            "Bún",
+            "Rau sống"
+        ],
+        "recipe": "1. Đun sữa đậu nành với me để kết tủa riêu. 2. Xào cà chua tạo màu. 3. Nấu nước dùng. 4. Chan bún."
+    },
+    {
+        "name": "Cà tím kho tộ",
+        "description": "Cà tím mềm thơm nức mũi.",
+        "image": "https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?w=800",
+        "tags": [
+            "Cà tím",
+            "Kho",
+            "Cơm nhà"
+        ],
+        "cookTime": "25 phút",
+        "servingSize": "3 người",
+        "ingredients": [
+            "2 quả cà tím",
+            "Tía tô",
+            "Xì dầu",
+            "Tỏi tây"
+        ],
+        "recipe": "1. Cắt khúc cà tím ngâm muối. 2. Chiên sơ cà. 3. Kho với xì dầu, đường. 4. Thêm tía tô."
+    },
+    {
+        "name": "Rau củ luộc kho quẹt chay",
+        "description": "Món ăn thanh đạm chấm kho quẹt đậm đà.",
+        "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800",
+        "tags": [
+            "Luộc",
+            "Chấm",
+            "Dân dã"
+        ],
+        "cookTime": "20 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "Su su",
+            "Cà rốt",
+            "Súp lơ",
+            "Nấm hương",
+            "Xì dầu"
+        ],
+        "recipe": "1. Luộc rau củ vừa chín. 2. Làm kho quẹt: phi thơm tỏi, cho xì dầu, đường, nấm hạt lựu đun sệt."
+    },
+    {
+        "name": "Cơm rang dưa bò chay",
+        "description": "Cơm rang giòn hạt với dưa chua.",
+        "image": "https://images.unsplash.com/photo-1603133872878-684f208fb74b?w=800",
+        "tags": [
+            "Cơm rang",
+            "Sáng",
+            "Chắc bụng"
+        ],
+        "cookTime": "20 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "Cơm nguội",
+            "Dưa chua",
+            "Thịt bò chay khô",
+            "Hành"
+        ],
+        "recipe": "1. Ngâm nở thịt bò chay. 2. Rang cơm săn hạt. 3. Xào dưa bò riêng. 4. Trộn đều."
+    },
+    {
+        "name": "Lẩu nấm",
+        "description": "Lẩu ngọt thanh từ các loại nấm thiên nhiên.",
+        "image": "https://images.unsplash.com/photo-1541095058489-41389d4cf681?w=800",
+        "tags": [
+            "Lẩu",
+            "Tiệc",
+            "Nấm"
+        ],
+        "cookTime": "60 phút",
+        "servingSize": "6 người",
+        "ingredients": [
+            "Nấm các loại",
+            "Ngô ngọt",
+            "Táo đỏ",
+            "Đậu phụ",
+            "Rau"
+        ],
+        "recipe": "1. Hầm nước dùng từ rau củ, ngô, táo. 2. Sơ chế nấm. 3. Nhúng lẩu."
+    },
+    {
+        "name": "Sữa hạt sen",
+        "description": "Sữa thảo mộc an thần, ngủ ngon.",
+        "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=800",
+        "tags": [
+            "Đồ uống",
+            "Sữa hạt",
+            "Sức khỏe"
+        ],
+        "cookTime": "30 phút",
+        "servingSize": "4 cốc",
+        "ingredients": [
+            "100g hạt sen",
+            "Lá dứa",
+            "Đường phèn"
+        ],
+        "recipe": "1. Ngâm hạt sen. 2. Xay nhuyễn với nước. 3. Lọc bã. 4. Đun sôi với lá dứa, thêm đường."
+    },
+    {
+        "name": "Chuối nếp nướng",
+        "description": "Tráng miệng ngọt ngào cốt dừa béo ngậy.",
+        "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800",
+        "tags": [
+            "Tráng miệng",
+            "Bánh",
+            "Vặt"
+        ],
+        "cookTime": "45 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Chuối tây",
+            "Gạo nếp",
+            "Cốt dừa",
+            "Lạc rang"
+        ],
+        "recipe": "1. Nấu xôi trắng cốt dừa. 2. Bọc xôi quanh chuối, gói lá chuối. 3. Nướng vàng. 4. Chan cốt dừa, rắc lạc."
+    },
+    {
+        "name": "Bánh xèo chay",
+        "description": "Bánh xèo giòn tan nhân nấm giá.",
+        "image": "https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?w=800",
+        "tags": [
+            "Bánh",
+            "Cuốn",
+            "Miền Tây"
+        ],
+        "cookTime": "50 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Bột bánh xèo",
+            "Nấm",
+            "Giá đỗ",
+            "Đậu xanh",
+            "Rau sống"
+        ],
+        "recipe": "1. Pha bột với nước cốt dừa, nghệ. 2. Xào nhân. 3. Tráng bánh mỏng, giòn. 4. Ăn kèm rau chấm chua ngọt."
+    },
+    {
+        "name": "Gỏi cuốn",
+        "description": "Món khai vị nhẹ nhàng, healthy.",
+        "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800",
+        "tags": [
+            "Cuốn",
+            "Khai vị",
+            "Healthy"
+        ],
+        "cookTime": "30 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "Bánh tráng",
+            "Bún",
+            "Rau xà lách",
+            "Đậu phụ",
+            "Dưa chuột"
+        ],
+        "recipe": "1. Thái sợi các nguyên liệu. 2. Làm ẩm bánh tráng. 3. Cuốn chặt tay. 4. Chấm tương hột."
+    },
+    {
+        "name": "Chả lá lốt chay",
+        "description": "Chả thơm lừng mùi lá lốt.",
+        "image": "https://images.unsplash.com/photo-1621510456600-47e2072142e6?w=800",
+        "tags": [
+            "Chả",
+            "Rán",
+            "Cơm nhà"
+        ],
+        "cookTime": "25 phút",
+        "servingSize": "3 người",
+        "ingredients": [
+            "Lá lốt",
+            "Đậu phụ",
+            "Mộc nhĩ",
+            "Hạt tiêu"
+        ],
+        "recipe": "1. Nghiền đậu, trộn mộc nhĩ gia vị. 2. Cuốn lá lốt. 3. Rán vàng đều."
+    },
+    {
+        "name": "Kho quẹt chấm rau",
+        "description": "Kho quẹt sệt kẹo chấm rau luộc.",
+        "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800",
+        "tags": [
+            "Chấm",
+            "Mặn",
+            "Dân dã"
+        ],
+        "cookTime": "15 phút",
+        "servingSize": "1 hũ",
+        "ingredients": [
+            "Xì dầu",
+            "Đường",
+            "Tỏi",
+            "Ớt",
+            "Tiêu xanh",
+            "Tóp mỡ chay (bánh mì)"
+        ],
+        "recipe": "1. Phi thơm tỏi. 2. Đun hỗn hợp mắm đường sệt. 3. Thêm tiêu xanh, ớt, tóp mỡ."
+    },
+    {
+        "name": "Bò kho chay",
+        "description": "Bò kho chấm bánh mì đậm đà.",
+        "image": "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=800",
+        "tags": [
+            "Kho",
+            "Bánh mì",
+            "Sáng"
+        ],
+        "cookTime": "60 phút",
+        "servingSize": "4 người",
+        "ingredients": [
+            "Bò lát chay",
+            "Cà rốt",
+            "Sả",
+            "Gia vị bò kho",
+            "Nước dừa"
+        ],
+        "recipe": "1. Ướp bò chay. 2. Xào thơm sả, bò. 3. Đổ nước dừa, cà rốt hầm mềm. 4. Ăn kèm bánh mì, húng quế."
+    },
+    {
+        "name": "Mỳ Ý sốt nấm kem",
+        "description": "Mỳ Ý béo ngậy chuẩn vị Âu.",
+        "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800",
+        "tags": [
+            "Mỳ Ý",
+            "Âu",
+            "Kem"
+        ],
+        "cookTime": "30 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "Mỳ Spaghetti",
+            "Nấm",
+            "Whipping cream",
+            "Phô mai",
+            "Tỏi"
+        ],
+        "recipe": "1. Luộc mỳ. 2. Xào nấm với bơ tỏi. 3. Đổ kem tươi, phô mai nấu sệt. 4. Trộn mỳ."
+    },
+    {
+        "name": "Cơm kẹp rong biển",
+        "description": "Onigirazu tiện lợi mang đi làm.",
+        "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=800",
+        "tags": [
+            "Cơm",
+            "Lunchbox",
+            "Nhật"
+        ],
+        "cookTime": "20 phút",
+        "servingSize": "2 xuất",
+        "ingredients": [
+            "Rong biển lá",
+            "Cơm dẻo",
+            "Đậu phụ rán",
+            "Rau xà lách",
+            "Cà rốt"
+        ],
+        "recipe": "1. Trải rong biển. 2. Dàn cơm, xếp nhân, phủ cơm. 3. Gập 4 góc gói chặt. 4. Cắt đôi."
+    },
+    {
+        "name": "Kimchi cải thảo",
+        "description": "Kimchi truyền thống Hàn Quốc phiên bản chay.",
+        "image": "https://images.unsplash.com/photo-1583224954972-e987c9085955?w=800",
+        "tags": [
+            "Muối",
+            "Hàn Quốc",
+            "Cay"
+        ],
+        "cookTime": "2 ngày",
+        "servingSize": "1 hộp",
+        "ingredients": [
+            "Cải thảo",
+            "Bột ớt",
+            "Lê/Táo",
+            "Hành tây",
+            "Hẹ"
+        ],
+        "recipe": "1. Muối cải 2h, rửa sạch. 2. Xay sốt từ lê, hành. 3. Trộn sốt với cải. 4. Để ngoài 1 ngày rồi cất tủ lạnh."
+    },
+    {
+        "name": "Sườn xào chua ngọt chay",
+        "description": "Sườn non chay chua chua ngọt ngọt.",
+        "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800",
+        "tags": [
+            "Mặn",
+            "Cơm nhà",
+            "Sườn"
+        ],
+        "cookTime": "25 phút",
+        "servingSize": "3 người",
+        "ingredients": [
+            "Sườn non chay",
+            "Cà chua",
+            "Dấm",
+            "Đường"
+        ],
+        "recipe": "1. Ngâm mềm sườn, rán vàng. 2. Pha sốt chua ngọt. 3. Đảo sườn với sốt đến khi keo lại."
+    },
+    {
+        "name": "Canh rong biển đậu hũ",
+        "description": "Canh rong biển kiểu Hàn Quốc.",
+        "image": "https://images.unsplash.com/photo-1606101292058-202db13134bc?w=800",
+        "tags": [
+            "Canh",
+            "Hàn Quốc",
+            "Nhanh"
+        ],
+        "cookTime": "15 phút",
+        "servingSize": "2 người",
+        "ingredients": [
+            "Rong biển khô",
+            "Đậu hũ non",
+            "Dầu mè",
+            "Mè rang"
+        ],
+        "recipe": "1. Ngâm rong biển. 2. Xào rong biển với dầu mè. 3. Đổ nước sôi, thả đậu. 4. Nêm gia vị."
+    },
+    {
+        "name": "Chè hạt sen long nhãn",
+        "description": "Chè thanh mát, bổ dưỡng cung đình Huế.",
+        "image": "https://images.unsplash.com/photo-1594040226829-71248acf2e82?w=800",
+        "tags": [
+            "Chè",
+            "Tráng miệng",
+            "Hè"
+        ],
+        "cookTime": "45 phút",
+        "servingSize": "4 bát",
+        "ingredients": [
+            "Hạt sen tươi",
+            "Long nhãn",
+            "Đường phèn"
+        ],
+        "recipe": "1. Hầm hạt sen mềm. 2. Lồng hạt sen vào long nhãn. 3. Nấu nước đường phèn, thả nhãn lồng sen vào tắt bếp."
+    }
+]

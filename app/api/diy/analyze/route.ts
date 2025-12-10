@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenerativeAI, SchemaType as Type } from '@google/generative-ai';
+import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
 import { checkAndIncrementAIUsage, checkAndIncrementGuestUsage } from '@/lib/aiUsage';
+import { DIY_IDEAS } from '@/lib/diyData';
 
 
 export async function POST(request: Request) {
@@ -60,32 +62,57 @@ export async function POST(request: Request) {
         const CATEGORIES = ["Nhựa", "Giấy", "Kim loại", "Thủy tinh", "Vải", "Hữu cơ", "Điện tử", "Pin"];
 
         const prompt = `Phân tích hình ảnh này và xác định xem vật liệu chính trong ảnh thuộc về danh mục nào sau đây: ${CATEGORIES.join(', ')}. 
-        Chỉ trả về danh sách các danh mục phù hợp nhất (ví dụ: ["Nhựa"] hoặc ["Giấy", "Nhựa"]). Không tự bịa ra danh mục mới.`;
+        Chỉ trả về danh sách các danh mục phù hợp nhất(ví dụ: ["Nhựa"] hoặc["Giấy", "Nhựa"]).Không tự bịa ra danh mục mới.`;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: {
-                parts: [
-                    { inlineData: { data: base64Data, mimeType: imageFile.type } },
-                    { text: prompt }
-                ]
-            },
-            config: {
-                responseMimeType: "application/json",
-                // We ask only for identified categories
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        identifiedCategories: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                            description: 'Danh sách các danh mục vật liệu được xác định.'
-                        }
+        // Retry logic with exponential backoff
+        const maxRetries = 3;
+        let lastError: Error | null = null;
+        let response;
+
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: {
+                        parts: [
+                            { inlineData: { data: base64Data, mimeType: imageFile.type } },
+                            { text: prompt }
+                        ]
                     },
-                    required: ['identifiedCategories']
-                }
+                    config: {
+                        responseMimeType: "application/json",
+                        // We ask only for identified categories
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                identifiedCategories: {
+                                    type: Type.ARRAY,
+                                    items: { type: Type.STRING },
+                                    description: 'Danh sách các danh mục vật liệu được xác định.'
+                                }
+                            },
+                            required: ['identifiedCategories']
+                        }
+                    }
+                });
+                break;
+            } catch (err) {
+                lastError = err as Error;
+                console.error(`Attempt ${attempt + 1} failed: `, err);
+                const errorMessage = String(err);
+                const isRetryable = errorMessage.includes('503') ||
+                    errorMessage.includes('429') ||
+                    errorMessage.includes('UNAVAILABLE') ||
+                    errorMessage.includes('overloaded');
+
+                if (!isRetryable || attempt === maxRetries - 1) throw err;
+                await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
             }
-        });
+        }
+
+        if (!response) {
+            throw lastError || new Error('Failed to get response from AI');
+        }
 
         const replyText = response.text || "{}";
         let replyJson;
@@ -123,9 +150,19 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.error('DIY Analyze error:', error);
+
+        const errorMessage = String(error);
+        let userMessage = 'Đã xảy ra lỗi khi phân tích hình ảnh.';
+
+        if (errorMessage.includes('503') || errorMessage.includes('UNAVAILABLE')) {
+            userMessage = 'Dịch vụ AI đang quá tải. Vui lòng thử lại sau vài giây.';
+        } else if (errorMessage.includes('429')) {
+            userMessage = 'Đã đạt giới hạn yêu cầu AI. Vui lòng thử lại sau.';
+        }
+
         return NextResponse.json(
-            { error: 'Đã xảy ra lỗi khi phân tích hình ảnh.' },
-            { status: 500 }
+            { error: userMessage },
+            { status: 503 }
         );
     }
 }
