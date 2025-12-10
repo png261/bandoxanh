@@ -15,24 +15,14 @@ export default async function FoodDetailPage({ params }: PageProps) {
 
     if (isNaN(dishId)) return notFound();
 
-    // Using raw query as fallback if model name differs
-    const item = await prisma.$queryRaw<Array<{
-        id: number;
-        name: string;
-        description: string;
-        recipe: string | null;
-        image: string | null;
-        tags: string[];
-        ingredients: string[];
-        cookTime: string | null;
-        servingSize: string | null;
-    }>>`SELECT * FROM "VegetarianDish" WHERE id = ${dishId} LIMIT 1`;
 
-    if (!item || item.length === 0) {
+    const dish = await prisma.vegetarianDish.findUnique({
+        where: { id: dishId },
+    });
+
+    if (!dish) {
         return notFound();
     }
-
-    const dish = item[0];
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900">
