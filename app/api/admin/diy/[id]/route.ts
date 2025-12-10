@@ -5,7 +5,7 @@ import { auth } from '@clerk/nextjs/server';
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { userId } = await auth();
@@ -13,7 +13,8 @@ export async function GET(
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const id = parseInt(params.id);
+        const { id: idStr } = await params;
+        const id = parseInt(idStr);
         if (isNaN(id)) {
             return new NextResponse("Invalid ID", { status: 400 });
         }
@@ -35,7 +36,7 @@ export async function GET(
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { userId } = await auth();
@@ -43,7 +44,8 @@ export async function PATCH(
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const id = parseInt(params.id);
+        const { id: idStr } = await params;
+        const id = parseInt(idStr);
         if (isNaN(id)) {
             return new NextResponse("Invalid ID", { status: 400 });
         }
@@ -74,7 +76,7 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { userId } = await auth();
@@ -82,7 +84,8 @@ export async function DELETE(
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const id = parseInt(params.id);
+        const { id: idStr } = await params;
+        const id = parseInt(idStr);
         if (isNaN(id)) {
             return new NextResponse("Invalid ID", { status: 400 });
         }
