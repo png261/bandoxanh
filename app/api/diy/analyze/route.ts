@@ -56,7 +56,25 @@ export async function POST(request: Request) {
         const arrayBuffer = await imageFile.arrayBuffer();
         const base64Data = Buffer.from(arrayBuffer).toString('base64');
 
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+        const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = ai.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        identifiedCategories: {
+                            type: Type.ARRAY,
+                            items: { type: Type.STRING },
+                            description: 'Danh sách các danh mục vật liệu được xác định.'
+                        }
+                    },
+                    required: ['identifiedCategories']
+                }
+            }
+        });
 
         // Define accepted categories to match our database
         const CATEGORIES = ["Nhựa", "Giấy", "Kim loại", "Thủy tinh", "Vải", "Hữu cơ", "Điện tử", "Pin"];
@@ -67,34 +85,16 @@ export async function POST(request: Request) {
         // Retry logic with exponential backoff
         const maxRetries = 3;
         let lastError: Error | null = null;
-        let response;
+        let responseText = "{}";
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: {
-                        parts: [
-                            { inlineData: { data: base64Data, mimeType: imageFile.type } },
-                            { text: prompt }
-                        ]
-                    },
-                    config: {
-                        responseMimeType: "application/json",
-                        // We ask only for identified categories
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                identifiedCategories: {
-                                    type: Type.ARRAY,
-                                    items: { type: Type.STRING },
-                                    description: 'Danh sách các danh mục vật liệu được xác định.'
-                                }
-                            },
-                            required: ['identifiedCategories']
-                        }
-                    }
-                });
+                const result = await model.generateContent([
+                    { inlineData: { data: base64Data, mimeType: imageFile.type } },
+                    prompt
+                ]);
+                const response = await result.response;
+                responseText = response.text();
                 break;
             } catch (err) {
                 lastError = err as Error;
@@ -110,16 +110,11 @@ export async function POST(request: Request) {
             }
         }
 
-        if (!response) {
-            throw lastError || new Error('Failed to get response from AI');
-        }
-
-        const replyText = response.text || "{}";
         let replyJson;
         try {
-            replyJson = JSON.parse(replyText);
+            replyJson = JSON.parse(responseText);
         } catch (e) {
-            console.error("Failed to parse Gemini response:", replyText);
+            console.error("Failed to parse Gemini response:", responseText);
             return NextResponse.json(
                 { error: 'Lỗi xử lý phản hồi từ AI.' },
                 { status: 500 }
