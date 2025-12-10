@@ -112,7 +112,7 @@ export default function RecipeCard({ item }: RecipeCardProps) {
 
     if (!isAiResult) {
         return (
-            <Link href={`/vegetarian/menu/${item.id}`} className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full group cursor-pointer block">
+            <Link href={`/vegetarian`} className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full group cursor-pointer block">
                 <CardContent />
             </Link>
         )

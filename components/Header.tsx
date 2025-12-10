@@ -32,7 +32,7 @@ const NavItems: React.FC<NavItemsProps> = ({ currentPath, navigateTo, onLinkClic
       items: [
         { path: '/map', label: 'Bản đồ Xanh', icon: Map },
         { path: '/scan', label: 'Công cụ AI', icon: Sparkles },
-        { path: '/vegetarian/menu', label: 'Thực đơn xanh', icon: Salad },
+        { path: '/vegetarian', label: 'Thực đơn xanh', icon: Salad },
         { path: '/diy', label: 'Đồ tái chế', icon: Recycle },
         { path: '/community', label: 'Cộng đồng', icon: Users },
         { path: '/about', label: 'Về dự án', icon: InformationCircleIcon },

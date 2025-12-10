@@ -32,7 +32,7 @@ export default function HomePage() {
       description: 'Món ăn thuần chay bổ dưỡng',
       icon: <Salad className="w-8 h-8 text-white" />,
       color: 'bg-orange-500',
-      href: '/vegetarian/menu',
+      href: '/vegetarian',
     },
     {
       title: 'Đồ tái chế',
