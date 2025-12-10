@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import ImageGallery from '@/components/ImageGallery';
 import ImageViewer from '@/components/ImageViewer';
 import BadgeDisplay from '@/components/BadgeDisplay';
@@ -165,131 +165,132 @@ export default function ProfilePage() {
       />
 
       <div
-        className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}
+        className={`pt-24 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}
       >
-        <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-10 max-w-2xl">
-          {/* Back Button */}
-          <button
-            onClick={() => router.push('/community')}
-            className="inline-flex items-center gap-2 text-brand-green dark:text-brand-green-light font-semibold hover:text-brand-green-dark dark:hover:text-white transition-colors mb-4 sm:mb-6 text-sm sm:text-base"
-          >
-            <ArrowLeftIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-            Quay lại Cộng đồng
-          </button>
+        <main className="container mx-auto px-4 max-w-3xl pb-20">
 
-          {/* Profile Header */}
-          <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-4 sm:p-6 border border-gray-100 dark:border-gray-700 mb-8">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+          {/* Main Profile Card */}
+          <div className="bg-white dark:bg-brand-gray-dark rounded-3xl shadow-lg border-2 border-gray-100 dark:border-gray-800 overflow-hidden mb-8 relative">
+            <div className="h-32 bg-gradient-to-r from-brand-green to-emerald-400 opacity-20"></div>
+
+            <div className="px-6 pb-8 -mt-12 flex flex-col items-center relative">
               <img
                 src={profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}`}
                 alt={profile.name}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-brand-green flex-shrink-0"
+                className="w-32 h-32 rounded-full object-cover border-8 border-white dark:border-brand-gray-dark shadow-xl"
               />
-              <div className="flex-1 text-center sm:text-left min-w-0 w-full">
-                <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{profile.name}</h1>
-                </div>
-                {/* User Title/Rank - Mock for now until DB migration */}
-                <div className="mb-2">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-green-400 to-emerald-500 text-white shadow-sm">
-                    🏆 Chiến binh xanh
-                  </span>
-                </div>
-                {profile.bio && (
-                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-3 mt-2 break-words">{profile.bio}</p>
-                )}
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                  Tham gia ngày: {formatDate(profile.joinDate)}
-                </p>
-              </div>
-              {isCurrentUser ? (
-                <button
-                  onClick={() => router.push('/profile/edit')}
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-dark transition-colors text-sm sm:text-base whitespace-nowrap"
-                >
-                  Chỉnh sửa
-                </button>
-              ) : (
-                <div className="w-full sm:w-auto">
-                  <FollowButton userId={Number(userId)} />
-                </div>
-              )}
-            </div>
 
-            {/* Profile Stats */}
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 grid grid-cols-5 gap-2 sm:gap-4">
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl font-bold text-brand-green">{userPosts.length}</p>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Bài viết</p>
+              <h1 className="text-3xl font-black text-gray-900 dark:text-white mt-4 text-center">
+                {profile.name}
+              </h1>
+
+              <div className="mt-2 flex items-center gap-2">
+                <span className="px-4 py-1.5 rounded-full bg-brand-green/10 text-brand-green font-bold text-sm">
+                  🏆 Chiến binh xanh
+                </span>
               </div>
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl font-bold text-brand-green">
-                  {userPosts.reduce((sum, post) => sum + (post.likes || 0), 0)}
+
+              {profile.bio && (
+                <p className="text-gray-600 dark:text-gray-300 mt-4 text-center max-w-lg font-medium">
+                  "{profile.bio}"
                 </p>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Lượt thích</p>
+              )}
+
+              <div className="mt-8 flex gap-4 w-full max-w-sm">
+                {isCurrentUser ? (
+                  <button
+                    onClick={() => router.push('/profile/edit')}
+                    className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white font-bold hover:bg-gray-200 transition-colors"
+                  >
+                    Chỉnh sửa
+                  </button>
+                ) : (
+                  <div className="flex-1">
+                    <FollowButton userId={Number(userId)} className="w-full py-3 text-base rounded-xl" />
+                  </div>
+                )}
               </div>
-              <div className="text-center">
-                <p className="text-xl sm:text-2xl font-bold text-brand-green">
-                  {userPosts.reduce((sum, post) => sum + (post.comments?.length || 0), 0)}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Bình luận</p>
-              </div>
-              <button
-                onClick={() => setFollowersModal({ isOpen: true, type: 'followers' })}
-                className="text-center hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors py-2"
-              >
-                <p className="text-xl sm:text-2xl font-bold text-brand-green">{followStats.followersCount || 0}</p>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Người theo dõi</p>
-              </button>
-              <button
-                onClick={() => setFollowersModal({ isOpen: true, type: 'following' })}
-                className="text-center hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors py-2"
-              >
-                <p className="text-xl sm:text-2xl font-bold text-brand-green">{followStats.followingCount || 0}</p>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Đang theo dõi</p>
-              </button>
             </div>
           </div>
 
-          {/* User Posts */}
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
-              Bài viết của {profile.name}
-            </h2>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white dark:bg-brand-gray-dark p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+              <p className="text-3xl font-black text-brand-green mb-1">{userPosts.length}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Bài viết</p>
+            </div>
+            <div className="bg-white dark:bg-brand-gray-dark p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+              <p className="text-3xl font-black text-pink-500 mb-1">{userPosts.reduce((sum, post) => sum + (post.likes || 0), 0)}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Thích</p>
+            </div>
+            <div
+              onClick={() => setFollowersModal({ isOpen: true, type: 'followers' })}
+              className="bg-white dark:bg-brand-gray-dark p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 text-center cursor-pointer hover:border-brand-green/50 transition-colors"
+            >
+              <p className="text-3xl font-black text-blue-500 mb-1">{followStats.followersCount || 0}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Theo dõi</p>
+            </div>
+            <div
+              onClick={() => setFollowersModal({ isOpen: true, type: 'following' })}
+              className="bg-white dark:bg-brand-gray-dark p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 text-center cursor-pointer hover:border-brand-green/50 transition-colors"
+            >
+              <p className="text-3xl font-black text-purple-500 mb-1">{followStats.followingCount || 0}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Đang theo</p>
+            </div>
+          </div>
 
+          {/* Posts Feed Header */}
+          <div className="flex items-center gap-3 mb-6 px-2">
+            <div className="w-2 h-8 bg-brand-green rounded-full"></div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Hoạt động gần đây</h2>
+          </div>
+
+
+
+          {/* User Posts List */}
+          <div>
             {userPosts.length === 0 ? (
-              <div className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-6 sm:p-8 text-center border border-gray-100 dark:border-gray-700">
-                <p className="text-gray-600 dark:text-gray-400">Chưa có bài viết nào</p>
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-3xl p-12 text-center border-2 border-dashed border-gray-200 dark:border-gray-700">
+                <p className="text-gray-500 font-medium">Chưa có bài viết nào 🍃</p>
               </div>
             ) : (
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-6">
                 {userPosts.map((post) => (
                   <div
                     key={post.id}
-                    className="bg-white dark:bg-brand-gray-dark rounded-2xl shadow-md p-4 sm:p-6 border border-gray-100 dark:border-gray-700"
+                    className="bg-white dark:bg-brand-gray-dark rounded-3xl shadow-sm p-6 border border-gray-100 dark:border-gray-700"
                   >
-                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-2">
-                      {formatDate(post.createdAt)}
-                    </p>
-                    <p className="text-sm sm:text-base text-gray-900 dark:text-gray-100 mb-4 break-words whitespace-pre-wrap overflow-wrap-anywhere">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={profile.avatar || ''}
+                          alt={profile.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                        <div>
+                          <p className="font-bold text-gray-900 dark:text-white leading-none">{profile.name}</p>
+                          <p className="text-xs text-gray-500 mt-1">{formatDate(post.createdAt)}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-base text-gray-800 dark:text-gray-200 mb-4 whitespace-pre-wrap leading-relaxed">
                       {post.content}
                     </p>
 
-                    {/* Images */}
-                    <ImageGallery 
-                      images={parseImages(post.images)} 
+                    <ImageGallery
+                      images={parseImages(post.images)}
                       onImageClick={(index) => setImageViewer({ images: parseImages(post.images), index })}
                     />
 
-                    {/* Post Stats */}
-                    <div className="flex items-center gap-4 sm:gap-6 text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center gap-2">
-                        <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="text-xs sm:text-sm">{post.likes || 0}</span>
+                    <div className="flex items-center gap-6 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                      <div className="flex items-center gap-2 text-gray-500 font-medium">
+                        <HeartIcon className="w-5 h-5 text-gray-400" />
+                        <span>{post.likes || 0}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <ChatBubbleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
+                      <div className="flex items-center gap-2 text-gray-500 font-medium">
+                        <ChatBubbleIcon className="w-5 h-5 text-gray-400" />
+                        <span>{post.comments?.length || 0}</span>
                       </div>
                     </div>
                   </div>
@@ -298,7 +299,7 @@ export default function ProfilePage() {
             )}
           </div>
         </main>
-        <Footer />
+
       </div>
 
       {/* Followers/Following Modal */}

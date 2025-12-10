@@ -3,7 +3,7 @@
 import { SignedIn, SignedOut, useUser, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LeafIcon, UserCircleIcon } from './Icons';
+import { LeafIcon, UserCircleIcon, CreditCardIcon } from './Icons';
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 
@@ -19,6 +19,9 @@ export default function UserButtonComponent({ isCollapsed = false, showActionsIn
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const plan = (clerkUser?.publicMetadata?.plan as string) || 'FREE';
+  const isPro = plan === 'PRO';
 
   useEffect(() => {
     if (clerkUser?.id) {
@@ -151,10 +154,15 @@ export default function UserButtonComponent({ isCollapsed = false, showActionsIn
                   <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {clerkUser.primaryEmailAddress?.emailAddress}
                   </p>
+                  <div className="mt-1">
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold ${isPro ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
+                      {isPro ? 'PRO PLAN' : 'FREE PLAN'}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
-            
+
             {/* Action Buttons */}
             <div className="space-y-1">
               {currentUserId && (
@@ -166,6 +174,13 @@ export default function UserButtonComponent({ isCollapsed = false, showActionsIn
                   Xem hồ sơ
                 </button>
               )}
+              <Link
+                href="/pricing"
+                className="w-full text-left px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white flex items-center gap-3"
+              >
+                <CreditCardIcon className="w-5 h-5" />
+                Nâng cấp gói
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="w-full text-left px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-3"
@@ -179,90 +194,110 @@ export default function UserButtonComponent({ isCollapsed = false, showActionsIn
           </div>
         ) : (
           // Desktop dropdown view
-        <div className="relative w-full" ref={dropdownRef}>
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className={`w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isCollapsed ? 'justify-center' : ''}`}
-          >
-            {clerkUser?.imageUrl ? (
-              <Image
-                src={clerkUser.imageUrl}
-                alt={clerkUser.fullName || 'User'}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-brand-green flex items-center justify-center">
-                <UserCircleIcon className="w-6 h-6 text-white" />
-              </div>
-            )}
-            {!isCollapsed && clerkUser && (
-              <div className="flex-1 text-left overflow-hidden">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                  {clerkUser.fullName || clerkUser.username || 'User'}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {clerkUser.primaryEmailAddress?.emailAddress}
-                </p>
-              </div>
-            )}
-          </button>
-          {isDropdownOpen && (
-            <div className={`absolute ${isCollapsed ? 'left-full ml-2 bottom-0' : 'right-0 bottom-full mb-2'} w-56 bg-white dark:bg-brand-gray-dark rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 py-2`}>
-              {/* User Info */}
-              {clerkUser && !isCollapsed && (
-                <div className="px-4 py-3 border-b dark:border-gray-700">
-                  <div className="flex items-center gap-3">
-                    {clerkUser.imageUrl ? (
-                      <Image
-                        src={clerkUser.imageUrl}
-                        alt={clerkUser.fullName || 'User'}
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-brand-green flex items-center justify-center">
-                        <UserCircleIcon className="w-6 h-6 text-white" />
-                      </div>
-                    )}
-                    <div className="flex-1 overflow-hidden">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                        {clerkUser.fullName || clerkUser.username || 'User'}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {clerkUser.primaryEmailAddress?.emailAddress}
-                      </p>
-                    </div>
-                  </div>
+          <div className="relative w-full" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className={`w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${isCollapsed ? 'justify-center' : ''}`}
+            >
+              {clerkUser?.imageUrl ? (
+                <Image
+                  src={clerkUser.imageUrl}
+                  alt={clerkUser.fullName || 'User'}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-brand-green flex items-center justify-center">
+                  <UserCircleIcon className="w-6 h-6 text-white" />
                 </div>
               )}
-              
-              {/* Menu Items */}
-              <div className="py-1">
-                {currentUserId && (
-                  <button
-                    onClick={handleProfileClick}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white flex items-center gap-2"
-                  >
-                    <UserCircleIcon className="w-4 h-4" />
-                    Xem hồ sơ
-                  </button>
+              {!isCollapsed && clerkUser && (
+                <div className="flex-1 text-left overflow-hidden">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                    {clerkUser.fullName || clerkUser.username || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {clerkUser.primaryEmailAddress?.emailAddress}
+                  </p>
+                  {!isCollapsed && (
+                    <div className="mt-0.5">
+                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold ${isPro ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
+                        {isPro ? 'PRO' : 'FREE'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </button>
+            {isDropdownOpen && (
+              <div className={`absolute ${isCollapsed ? 'left-full ml-2 bottom-0' : 'right-0 bottom-full mb-2'} w-56 bg-white dark:bg-brand-gray-dark rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 py-2`}>
+                {/* User Info */}
+                {clerkUser && !isCollapsed && (
+                  <div className="px-4 py-3 border-b dark:border-gray-700">
+                    <div className="flex items-center gap-3">
+                      {clerkUser.imageUrl ? (
+                        <Image
+                          src={clerkUser.imageUrl}
+                          alt={clerkUser.fullName || 'User'}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-brand-green flex items-center justify-center">
+                          <UserCircleIcon className="w-6 h-6 text-white" />
+                        </div>
+                      )}
+                      <div className="flex-1 overflow-hidden">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                          {clerkUser.fullName || clerkUser.username || 'User'}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {clerkUser.primaryEmailAddress?.emailAddress}
+                        </p>
+                        <div className="mt-1">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold ${isPro ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
+                            {isPro ? 'PRO MEMBER' : 'FREE MEMBER'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
-                <button
-                  onClick={handleSignOut}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Đăng xuất
-                </button>
+
+                {/* Menu Items */}
+                <div className="py-1">
+                  {currentUserId && (
+                    <button
+                      onClick={handleProfileClick}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white flex items-center gap-2"
+                    >
+                      <UserCircleIcon className="w-4 h-4" />
+                      Xem hồ sơ
+                    </button>
+                  )}
+                  <Link
+                    href="/pricing"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white flex items-center gap-2"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <CreditCardIcon className="w-4 h-4" />
+                    Nâng cấp gói
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Đăng xuất
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
         )}
       </SignedIn>
     </div>

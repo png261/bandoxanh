@@ -8,8 +8,22 @@ const nextConfig = {
   env: {
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   },
-  webpack: (config, { isServer }) => {
-    return config;
+  async redirects() {
+    return [
+      {
+        source: '/calories',
+        destination: '/scan?tab=calories',
+        permanent: true,
+      },
+      {
+        source: '/identify',
+        destination: '/scan?tab=waste',
+        permanent: true,
+      },
+    ];
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
+
 interface Stats {
   stations: number;
   events: number;
@@ -15,12 +16,16 @@ interface Stats {
   reactions: number;
   follows: number;
   comments: number;
+  dishes: number;
+  restaurants: number;
+  donations: number;
+  bikes: number;
 }
 
 export default function AdminPage() {
   const router = useRouter();
   const { user, isLoaded } = useUser();
-  
+
   const [stats, setStats] = useState<Stats>({
     stations: 0,
     events: 0,
@@ -30,6 +35,10 @@ export default function AdminPage() {
     reactions: 0,
     follows: 0,
     comments: 0,
+    dishes: 0,
+    restaurants: 0,
+    donations: 0,
+    bikes: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -42,24 +51,38 @@ export default function AdminPage() {
 
     async function fetchStats() {
       try {
-        const [stationsRes, eventsRes, newsRes, postsRes] = await Promise.all([
+        const [
+          stationsRes, eventsRes, newsRes, postsRes,
+          dishesRes, restaurantsRes, donationsRes, bikesRes
+        ] = await Promise.all([
           fetch('/api/stations'),
           fetch('/api/events'),
           fetch('/api/news'),
           fetch('/api/posts'),
+          fetch('/api/vegetarian-dishes'),
+          fetch('/api/restaurants'),
+          fetch('/api/donations'),
+          fetch('/api/bikes'),
         ]);
 
-        const [stations, events, news, posts] = await Promise.all([
+        const [
+          stations, events, news, posts,
+          dishes, restaurants, donations, bikes
+        ] = await Promise.all([
           stationsRes.json(),
           eventsRes.json(),
           newsRes.json(),
           postsRes.json(),
+          dishesRes.json(),
+          restaurantsRes.json(),
+          donationsRes.json(),
+          bikesRes.json(),
         ]);
 
         // Calculate additional stats from posts data
         let totalReactions = 0;
         let totalComments = 0;
-        
+
         if (Array.isArray(posts)) {
           posts.forEach((post: any) => {
             totalReactions += post.likesCount || 0;
@@ -68,14 +91,18 @@ export default function AdminPage() {
         }
 
         setStats({
-          stations: stations.length || 0,
-          events: events.length || 0,
-          news: news.length || 0,
+          stations: Array.isArray(stations) ? stations.length : 0,
+          events: Array.isArray(events) ? events.length : 0,
+          news: Array.isArray(news) ? news.length : 0,
           posts: Array.isArray(posts) ? posts.length : 0,
           users: 0, // Would need a users API endpoint
           reactions: totalReactions,
           follows: 0, // Would need a follows API endpoint
           comments: totalComments,
+          dishes: Array.isArray(dishes) ? dishes.length : 0,
+          restaurants: Array.isArray(restaurants) ? restaurants.length : 0,
+          donations: Array.isArray(donations) ? donations.length : 0,
+          bikes: Array.isArray(bikes) ? bikes.length : 0,
         });
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -86,79 +113,6 @@ export default function AdminPage() {
 
     fetchStats();
   }, [isLoaded, user, router]);
-
-  const sections = [
-    {
-      title: 'Điểm thu gom',
-      description: 'Quản lý các điểm thu gom rác thải',
-      icon: '📍',
-      count: stats.stations,
-      href: '/admin/stations',
-      color: 'text-brand-green',
-      bgColor: 'bg-brand-green-light',
-      borderColor: 'border-brand-green',
-    },
-    {
-      title: 'Sự kiện',
-      description: 'Quản lý các sự kiện tái chế',
-      icon: '📅',
-      count: stats.events,
-      href: '/admin/events',
-      color: 'text-blue-600 dark:text-blue-400',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-      borderColor: 'border-blue-200',
-    },
-    {
-      title: 'Tin tức',
-      description: 'Quản lý tin tức và bài viết',
-      icon: '📰',
-      count: stats.news,
-      href: '/admin/news',
-      color: 'text-purple-600 dark:text-purple-400',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-      borderColor: 'border-purple-200',
-    },
-    {
-      title: 'Bài đăng',
-      description: 'Theo dõi và kiểm duyệt bài viết',
-      icon: '💬',
-      count: stats.posts,
-      href: '/admin/posts',
-      color: 'text-orange-600 dark:text-orange-400',
-      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
-      borderColor: 'border-orange-200',
-    },
-    {
-      title: 'Phản ứng',
-      description: 'Tổng số reactions từ người dùng',
-      icon: '❤️',
-      count: stats.reactions,
-      href: '/community',
-      color: 'text-red-600 dark:text-red-400',
-      bgColor: 'bg-red-50 dark:bg-red-900/20',
-      borderColor: 'border-red-200',
-    },
-    {
-      title: 'Bình luận',
-      description: 'Tổng số bình luận trong cộng đồng',
-      icon: '💭',
-      count: stats.comments,
-      href: '/community',
-      color: 'text-teal-600 dark:text-teal-400',
-      bgColor: 'bg-teal-50 dark:bg-teal-900/20',
-      borderColor: 'border-teal-200',
-    },
-    {
-      title: 'Quản lý Admin',
-      description: 'Thêm và quản lý quyền admin',
-      icon: '👥',
-      count: stats.users,
-      href: '/admin/users',
-      color: 'text-indigo-600 dark:text-indigo-400',
-      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
-      borderColor: 'border-indigo-200',
-    },
-  ];
 
   if (loading) {
     return (
@@ -173,7 +127,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -196,7 +150,7 @@ export default function AdminPage() {
         </div>
 
         {/* Main Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-md p-6 border-2 border-green-100">
             <div className="flex items-center justify-between mb-2">
               <span className="text-3xl">📍</span>
@@ -228,6 +182,22 @@ export default function AdminPage() {
             </div>
             <div className="text-gray-700 font-medium">Bài đăng</div>
           </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6 border-2 border-teal-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">💭</span>
+              <span className="text-3xl font-bold text-teal-600">{stats.comments}</span>
+            </div>
+            <div className="text-gray-700 font-medium">Bình luận</div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-6 border-2 border-red-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">❤️</span>
+              <span className="text-3xl font-bold text-red-600">{stats.reactions}</span>
+            </div>
+            <div className="text-gray-700 font-medium">Reactions</div>
+          </div>
         </div>
 
         {/* Management Sections */}
@@ -235,75 +205,135 @@ export default function AdminPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             📋 Quản lý nội dung
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {/* Existing Cards */}
             <Link
               href="/admin/stations"
-              className="group flex items-center justify-between p-5 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-lg border-2 border-green-200 transition-all"
+              className="group flex flex-col p-5 bg-green-50 rounded-xl border-2 border-green-100 hover:border-green-300 transition-all hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-4xl">📍</span>
-                <div>
-                  <div className="font-bold text-gray-900 text-lg">Điểm thu gom</div>
-                  <div className="text-sm text-gray-600">Quản lý điểm thu gom rác thải</div>
-                </div>
+                <span className="text-2xl text-green-600 group-hover:translate-x-1 transition-transform">→</span>
               </div>
-              <span className="text-2xl text-green-600 group-hover:translate-x-1 transition-transform">→</span>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Điểm thu gom</div>
+                <div className="text-sm text-gray-600">Quản lý điểm thu gom rác thải</div>
+              </div>
             </Link>
 
             <Link
               href="/admin/events"
-              className="group flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-lg border-2 border-blue-200 transition-all"
+              className="group flex flex-col p-5 bg-blue-50 rounded-xl border-2 border-blue-100 hover:border-blue-300 transition-all hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-4xl">📅</span>
-                <div>
-                  <div className="font-bold text-gray-900 text-lg">Sự kiện</div>
-                  <div className="text-sm text-gray-600">Quản lý sự kiện tái chế</div>
-                </div>
+                <span className="text-2xl text-blue-600 group-hover:translate-x-1 transition-transform">→</span>
               </div>
-              <span className="text-2xl text-blue-600 group-hover:translate-x-1 transition-transform">→</span>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Sự kiện</div>
+                <div className="text-sm text-gray-600">Quản lý sự kiện tái chế</div>
+              </div>
             </Link>
 
             <Link
               href="/admin/news"
-              className="group flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-lg border-2 border-purple-200 transition-all"
+              className="group flex flex-col p-5 bg-purple-50 rounded-xl border-2 border-purple-100 hover:border-purple-300 transition-all hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-4xl">📰</span>
-                <div>
-                  <div className="font-bold text-gray-900 text-lg">Tin tức</div>
-                  <div className="text-sm text-gray-600">Quản lý tin tức môi trường</div>
-                </div>
+                <span className="text-2xl text-purple-600 group-hover:translate-x-1 transition-transform">→</span>
               </div>
-              <span className="text-2xl text-purple-600 group-hover:translate-x-1 transition-transform">→</span>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Tin tức</div>
+                <div className="text-sm text-gray-600">Quản lý tin tức môi trường</div>
+              </div>
             </Link>
 
             <Link
               href="/admin/posts"
-              className="group flex items-center justify-between p-5 bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-lg border-2 border-orange-200 transition-all"
+              className="group flex flex-col p-5 bg-orange-50 rounded-xl border-2 border-orange-100 hover:border-orange-300 transition-all hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-4xl">💬</span>
-                <div>
-                  <div className="font-bold text-gray-900 text-lg">Bài đăng</div>
-                  <div className="text-sm text-gray-600">Quản lý bài đăng cộng đồng</div>
-                </div>
+                <span className="text-2xl text-orange-600 group-hover:translate-x-1 transition-transform">→</span>
               </div>
-              <span className="text-2xl text-orange-600 group-hover:translate-x-1 transition-transform">→</span>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Bài đăng</div>
+                <div className="text-sm text-gray-600">Quản lý bài đăng cộng đồng</div>
+              </div>
+            </Link>
+
+            {/* New Modules */}
+
+            <Link
+              href="/admin/vegetarian-dishes"
+              className="group flex flex-col p-5 bg-lime-50 rounded-xl border-2 border-lime-100 hover:border-lime-300 transition-all hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">🥗</span>
+                <span className="bg-lime-200 text-lime-800 text-xs font-bold px-2 py-1 rounded-full">{stats.dishes} món</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Thực đơn chay</div>
+                <div className="text-sm text-gray-600">Quản lý món ăn & công thức</div>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/restaurants"
+              className="group flex flex-col p-5 bg-emerald-50 rounded-xl border-2 border-emerald-100 hover:border-emerald-300 transition-all hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">🍽️</span>
+                <span className="bg-emerald-200 text-emerald-800 text-xs font-bold px-2 py-1 rounded-full">{stats.restaurants} nhà hàng</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Nhà hàng chay</div>
+                <div className="text-sm text-gray-600">Quản lý địa điểm ăn uống</div>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/donations"
+              className="group flex flex-col p-5 bg-pink-50 rounded-xl border-2 border-pink-100 hover:border-pink-300 transition-all hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">🎁</span>
+                <span className="bg-pink-200 text-pink-800 text-xs font-bold px-2 py-1 rounded-full">{stats.donations} điểm</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Điểm quyên góp</div>
+                <div className="text-sm text-gray-600">Quản lý điểm từ thiện</div>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/bikes"
+              className="group flex flex-col p-5 bg-amber-50 rounded-xl border-2 border-amber-100 hover:border-amber-300 transition-all hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">🚲</span>
+                <span className="bg-amber-200 text-amber-800 text-xs font-bold px-2 py-1 rounded-full">{stats.bikes} trạm</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Thuê xe đạp</div>
+                <div className="text-sm text-gray-600">Quản lý trạm xe công cộng</div>
+              </div>
             </Link>
 
             <Link
               href="/admin/users"
-              className="group flex items-center justify-between p-5 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 rounded-lg border-2 border-indigo-200 transition-all"
+              className="group flex flex-col p-5 bg-indigo-50 rounded-xl border-2 border-indigo-100 hover:border-indigo-300 transition-all hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-4xl">👥</span>
-                <div>
-                  <div className="font-bold text-gray-900 text-lg">Người dùng</div>
-                  <div className="text-sm text-gray-600">Quản lý admin & người dùng</div>
-                </div>
+                <span className="text-2xl text-indigo-600 group-hover:translate-x-1 transition-transform">→</span>
               </div>
-              <span className="text-2xl text-indigo-600 group-hover:translate-x-1 transition-transform">→</span>
+              <div>
+                <div className="font-bold text-gray-900 text-lg">Người dùng</div>
+                <div className="text-sm text-gray-600">Quản lý admin & người dùng</div>
+              </div>
             </Link>
           </div>
         </div>

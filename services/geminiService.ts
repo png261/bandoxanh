@@ -1,67 +1,58 @@
 
-
-// FIX: Import 'Type' for defining the response schema, as per @google/genai guidelines for JSON responses.
-import { GoogleGenAI, Type } from "@google/genai";
-
-const fileToGenerativePart = async (file: File) => {
-  const base64EncodedDataPromise = new Promise<string>((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result.split(',')[1]);
-      } else {
-        resolve('');
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-  return {
-    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
-  };
-};
+// Removed client-side GoogleGenAI import to prevent key exposure and usage errors
+import { GptAnalysis } from "@/types";
 
 export const identifyWaste = async (imageFile: File): Promise<string> => {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY is not configured.");
-  }
-  
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const imagePart = await fileToGenerativePart(imageFile);
-    
-    // FIX: The prompt no longer needs to specify the JSON structure, as this is now handled by `responseSchema`.
-    const prompt = `Phân tích hình ảnh này và cho biết đây là loại rác gì (ví dụ: Nhựa, Giấy, Kim loại, Thủy tinh, Pin, Hữu cơ, Điện tử). Đưa ra gợi ý về cách tái chế hoặc xử lý loại rác này một cách phù hợp. Trả lời bằng tiếng Việt.`;
+    const formData = new FormData();
+    formData.append('image', imageFile);
 
-    // FIX: Replaced manual JSON parsing with `responseSchema` to ensure reliable JSON output from the Gemini API.
-    const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: { parts: [imagePart, { text: prompt }] },
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                    wasteType: {
-                        type: Type.STRING,
-                        description: 'Loại rác thải được xác định từ hình ảnh, ví dụ: Nhựa, Giấy, Kim loại, Thủy tinh, Pin, Hữu cơ, Điện tử.'
-                    },
-                    recyclingSuggestion: {
-                        type: Type.STRING,
-                        description: 'Gợi ý về cách tái chế hoặc xử lý loại rác này một cách phù hợp bằng tiếng Việt.'
-                    }
-                },
-                required: ['wasteType', 'recyclingSuggestion']
-            }
-        }
+    const response = await fetch('/api/identify', {
+      method: 'POST',
+      body: formData,
     });
 
-    // FIX: Removed manual string cleaning. With `responseSchema`, the output is a clean JSON string.
-    return response.text || JSON.stringify({ error: "Không nhận được phản hồi từ API" });
-  } catch (error) {
-    console.error("Error identifying waste:", error);
-    if (error instanceof Error) {
-        return JSON.stringify({ error: `Đã xảy ra lỗi khi phân tích hình ảnh: ${error.message}` });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Server error: ${response.status}`);
     }
-    return JSON.stringify({ error: "Đã xảy ra lỗi không xác định khi phân tích hình ảnh." });
+
+    const data = await response.json();
+    // The API now returns the JSON object directly, but the component expects a stringified JSON
+    // because it parses it. To maintain compatibility with the component's existing logic for now:
+    return JSON.stringify(data);
+
+  } catch (error) {
+    console.error("Error identifying waste via API:", error);
+    if (error instanceof Error) {
+      return JSON.stringify({ error: error.message });
+    }
+    return JSON.stringify({ error: "Đã xảy ra lỗi không xác định khi kết nối với máy chủ." });
+  }
+};
+
+export const identifyDiyMaterials = async (imageFile: File): Promise<string> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await fetch('/api/diy/analyze', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return JSON.stringify(data);
+  } catch (error) {
+    console.error("Error identifying DIY materials:", error);
+    if (error instanceof Error) {
+      return JSON.stringify({ error: error.message });
+    }
+    return JSON.stringify({ error: "Đã xảy ra lỗi khi phân tích nguyên liệu." });
   }
 };

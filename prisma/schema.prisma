@@ -31,6 +31,9 @@ model User {
   badges             UserBadge[]
   followers          UserFollow[]        @relation("UserFollowers")
   following          UserFollow[]        @relation("UserFollowing")
+  plan               String              @default("FREE")
+  aiUsageCount       Int                 @default(0)
+  lastUsageReset     DateTime?
 
   @@map("users")
 }
@@ -276,4 +279,70 @@ model Hashtag {
   updatedAt DateTime @updatedAt
 
   @@map("hashtags")
+}
+
+model BikeRental {
+  id           Int      @id @default(autoincrement())
+  name         String
+  address      String
+  latitude     Float
+  longitude    Float
+  price        String
+  hours        String
+  instructions String
+  terms        String
+  image        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("bike_rentals")
+}
+
+model VegetarianRestaurant {
+  id          Int      @id @default(autoincrement())
+  name        String
+  address     String
+  latitude    Float
+  longitude   Float
+  hours       String
+  menu        String
+  priceRange  String
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("vegetarian_restaurants")
+}
+
+model DonationPoint {
+  id               Int      @id @default(autoincrement())
+  name             String
+  address          String
+  latitude         Float
+  longitude        Float
+  hours            String
+  acceptedItems    String
+  beneficiary      String
+  image            String
+  beneficiaryImage String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("donation_points")
+}
+
+model VegetarianDish {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  image       String
+  tags        String[]
+  cookTime    String
+  servingSize String
+  ingredients String[]
+  recipe      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("vegetarian_dishes")
 }

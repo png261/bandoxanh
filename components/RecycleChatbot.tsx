@@ -92,10 +92,11 @@ export default function RecycleChatbot() {
 
   return (
     <>
+
       {/* Chatbot Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-green-300"
+        className="fixed bottom-24 md:bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-green-300"
         aria-label="Toggle chatbot"
       >
         {isOpen ? (
@@ -107,7 +108,7 @@ export default function RecycleChatbot() {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300">
+        <div className="fixed bottom-40 md:bottom-24 right-6 z-50 w-[calc(100vw-3rem)] md:w-96 h-[500px] md:h-[600px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300">
           {/* Header */}
           <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -136,11 +137,10 @@ export default function RecycleChatbot() {
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                    message.role === 'user'
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user'
                       ? 'bg-green-500 text-white rounded-br-sm'
                       : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-bl-sm'
-                  }`}
+                    }`}
                 >
                   <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                 </div>

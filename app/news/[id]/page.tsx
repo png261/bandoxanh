@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+
 import { ArrowLeftIcon } from '@/components/Icons';
 import { useState, useEffect } from 'react';
 import { Theme, NewsArticle } from '@/types';
@@ -35,7 +35,7 @@ const NewsDetailPageComponent: React.FC<NewsDetailPageProps> = ({ articleId, nav
         setLoading(false);
       }
     };
-    
+
     fetchArticle();
   }, [articleId]);
 
@@ -72,14 +72,14 @@ const NewsDetailPageComponent: React.FC<NewsDetailPageProps> = ({ articleId, nav
         <ArrowLeftIcon className="w-5 h-5" />
         Quay lại trang Tin tức
       </button>
-      
+
       <article>
         <span className="px-2.5 py-1 bg-brand-green-light text-brand-green-dark text-xs font-semibold rounded-full">{article.category}</span>
         <h1 className="text-3xl md:text-5xl font-bold text-brand-gray-dark dark:text-gray-100 my-4 leading-tight">{article.title}</h1>
         <p className="text-sm text-brand-gray-DEFAULT dark:text-gray-400 mb-6">{article.date}</p>
-        
+
         <img src={article.imageUrl} alt={article.title} className="w-full h-auto max-h-[500px] object-cover rounded-lg mb-8" loading="lazy" />
-        
+
         <div className="prose lg:prose-lg max-w-none text-brand-gray-dark dark:text-gray-300 leading-relaxed dark:prose-invert prose-p:mb-4">
           {article.content.split('\n').map((paragraph, index) => (
             paragraph.trim() && <p key={index}>{paragraph}</p>
@@ -112,17 +112,17 @@ function NewsDetailPage({ id }: { id: string }) {
 
   return (
     <div className="bg-brand-gray-light dark:bg-black min-h-screen font-sans text-brand-gray-dark dark:text-gray-200">
-      <Header 
+      <Header
         theme={theme}
         toggleTheme={toggleTheme}
         isCollapsed={isSidebarCollapsed}
         setCollapsed={setIsSidebarCollapsed}
       />
-      <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}> 
+      <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
         <main className="container mx-auto px-4 sm:px-6 py-10">
           <NewsDetailPageComponent articleId={articleId} navigateTo={navigateTo} />
         </main>
-        <Footer />
+
       </div>
     </div>
   );
