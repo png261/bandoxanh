@@ -30,7 +30,7 @@ export default function MainLayout({
                 setCollapsed={setIsSidebarCollapsed}
             />
             <div
-                className={`transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'} ${isFullScreen ? 'h-screen pt-20 md:pt-0' : 'pt-20 md:pt-0'
+                className={`transition-all duration-300  ${isFullScreen ? 'h-screen pt-20 md:pt-0' : 'pt-20 md:pt-0'
                     }`}
             >
                 <main className={`${mainClassName} ${isFullScreen ? 'h-full w-full relative' : ''}`}>

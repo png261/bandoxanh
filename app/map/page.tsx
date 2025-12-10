@@ -127,16 +127,8 @@ const MapComponent: React.FC<{
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Track item IDs AND types for proper dependency comparison
-    const getItemType = (item: ItemWithDistance): string => {
-        if (isStation(item)) return 's';
-        if (isEvent(item)) return 'e';
-        if (isBike(item)) return 'b';
-        if (isRestaurant(item)) return 'r';
-        if (isDonation(item)) return 'd';
-        return 'u';
-    };
-    const itemKey = items.map(i => `${getItemType(i)}-${i.id}`).join(',');
+    // Track item IDs for proper dependency comparison
+    const itemIds = items.map(i => i.id).join(',');
 
     useEffect(() => {
         const map = mapRef.current;
@@ -220,9 +212,9 @@ const MapComponent: React.FC<{
 
             const marker = L.marker([item.lat, item.lng], { icon }).addTo(map);
             marker.bindPopup(popupContent);
-            itemMarkersRef.current[`${getItemType(item)}-${item.id}`] = marker;
+            itemMarkersRef.current[item.id] = marker;
         });
-    }, [itemKey]); // Use itemKey with type prefix for proper comparison
+    }, [itemIds]); // Use itemIds string for proper comparison
 
     useEffect(() => {
         const map = mapRef.current;
@@ -254,14 +246,10 @@ const MapComponent: React.FC<{
     }, [hoveredItemId, items]);
 
     useEffect(() => {
-        if (focusedItem && mapRef.current) {
-            const key = `${getItemType(focusedItem)}-${focusedItem.id}`;
-            const marker = itemMarkersRef.current[key];
-
-            if (marker) {
-                mapRef.current.flyTo([focusedItem.lat, focusedItem.lng], 16, { animate: true, duration: 1 });
-                marker.openPopup();
-            }
+        if (focusedItem && mapRef.current && itemMarkersRef.current[focusedItem.id]) {
+            const marker = itemMarkersRef.current[focusedItem.id];
+            mapRef.current.flyTo([focusedItem.lat, focusedItem.lng], 15, { animate: true, duration: 1 });
+            marker.openPopup();
         }
     }, [focusedItem]);
 
@@ -316,7 +304,6 @@ const MapContent = () => {
     const { stations, events, bikes, restaurants, donationPoints, loading, fetchStations, fetchEvents, fetchBikes, fetchRestaurants, fetchDonationPoints } = useMapStore();
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchStations();
         fetchEvents();
         fetchBikes();
@@ -455,17 +442,14 @@ const MapContent = () => {
                                 Tìm thấy {filteredItems.length} địa điểm
                             </p>
                             <div className="space-y-4 pb-20 md:pb-0">
-                                {filteredItems.map(item => {
-                                    const itemType = isStation(item) ? 's' : isEvent(item) ? 'e' : isBike(item) ? 'b' : isRestaurant(item) ? 'r' : isDonation(item) ? 'd' : 'u';
-                                    return (
-                                        <div key={`${itemType}-${item.id}`} onMouseEnter={() => setHoveredItemId(item.id)} onMouseLeave={() => setHoveredItemId(null)}>
-                                            <InfoCard item={item} onClick={() => {
-                                                setFocusedItem(item);
-                                                if (window.innerWidth < 768) setIsPanelOpen(false); // Close panel on mobile selection
-                                            }} />
-                                        </div>
-                                    );
-                                })}
+                                {filteredItems.map(item => (
+                                    <div key={item.id} onMouseEnter={() => setHoveredItemId(item.id)} onMouseLeave={() => setHoveredItemId(null)}>
+                                        <InfoCard item={item} onClick={() => {
+                                            setFocusedItem(item);
+                                            if (window.innerWidth < 768) setIsPanelOpen(false); // Close panel on mobile selection
+                                        }} />
+                                    </div>
+                                ))}
                             </div>
                         </>
                     )}
@@ -510,7 +494,7 @@ export default function MapPage() {
             />
 
             {/* Map Content - positioned after sidebar */}
-            <div className={`flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 `}>
+            <div className={`flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
                 {/* Mobile Header Spacer */}
                 <div className="h-20 md:h-0 flex-shrink-0" />
 
