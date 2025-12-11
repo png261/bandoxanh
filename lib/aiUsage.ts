@@ -2,6 +2,16 @@
 import { prisma } from './prisma';
 
 export async function checkAndIncrementAIUsage(clerkId: string) {
+    // TEMPORARY: Allow unlimited AI usage for all users
+    // Remove this block to restore limits
+    return {
+        allowed: true,
+        limit: Infinity,
+        usage: 0,
+        plan: 'UNLIMITED'
+    };
+
+    /* Original code - uncomment to restore limits:
     const user = await prisma.user.findUnique({
         where: { clerkId },
     });
@@ -63,6 +73,7 @@ export async function checkAndIncrementAIUsage(clerkId: string) {
         usage: currentUsage + 1,
         plan: (user as any).plan || 'FREE'
     };
+    */
 }
 
 // In-memory cache for guest usage (resets when server restarts)
@@ -70,6 +81,16 @@ export async function checkAndIncrementAIUsage(clerkId: string) {
 const guestUsageCache: Map<string, { count: number; date: string }> = new Map();
 
 export async function checkAndIncrementGuestUsage(ip: string) {
+    // TEMPORARY: Allow unlimited AI usage for guests
+    // Remove this block to restore limits
+    return {
+        allowed: true,
+        limit: Infinity,
+        usage: 0,
+        plan: 'GUEST_UNLIMITED'
+    };
+
+    /* Original code - uncomment to restore limits:
     const GUEST_LIMIT = 2; // 2 free trials per day for guests
     const today = new Date().toDateString();
 
@@ -109,4 +130,5 @@ export async function checkAndIncrementGuestUsage(ip: string) {
         usage: cached.count,
         plan: 'GUEST'
     };
+    */
 }
