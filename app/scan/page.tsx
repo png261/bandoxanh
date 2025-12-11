@@ -442,38 +442,82 @@ function ResultDisplay({ result, tab, onReset }: { result: any; tab: typeof tabs
     }
 
     // DIY Result  
-    if (tab.id === 'diy' && (result.projects || result.identifiedMaterials)) {
+    if (tab.id === 'diy' && (result.projects || result.identifiedItem)) {
         return (
             <div className="space-y-4">
-                {result.identifiedMaterials && result.identifiedMaterials.length > 0 && (
-                    <div className={`${colors.bgLight} rounded-2xl p-4 border ${colors.border}`}>
-                        <h4 className={`font-bold ${colors.text} mb-2`}>Nguyên liệu phát hiện:</h4>
-                        <p className="text-gray-700 dark:text-gray-300">{result.identifiedMaterials.join(', ')}</p>
+                {/* Identified Item Card */}
+                {result.identifiedItem && (
+                    <div className={`${colors.bgLight} rounded-2xl p-5 border ${colors.border}`}>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className={`${colors.bg} text-white p-2 rounded-lg`}>
+                                <Lightbulb className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h4 className={`font-bold text-lg ${colors.text}`}>Vật được nhận diện</h4>
+                            </div>
+                        </div>
+                        <p className="text-xl font-bold text-gray-900 dark:text-white mb-1">{result.identifiedItem}</p>
+                        {result.material && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Chất liệu: <span className="font-medium">{result.material}</span>
+                            </p>
+                        )}
                     </div>
                 )}
-                <div className="space-y-3">
-                    {result.projects?.map((idea: any, idx: number) => (
-                        <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-md border border-gray-100 dark:border-gray-700">
-                            <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{idea.title}</h4>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">{idea.difficulty} • Materials: {idea.materials ? idea.materials.join(', ') : ''}</p>
-                            {idea.steps && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 font-bold mb-1">Các bước:</p>
-                                    <ol className="list-decimal pl-4 text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
-                                        {Array.isArray(idea.steps) ? idea.steps.map((step: string, sIdx: number) => (
-                                            <li key={sIdx}>{step}</li>
-                                        )) : idea.steps}
-                                    </ol>
+
+                {/* DIY Ideas */}
+                {result.projects && result.projects.length > 0 && (
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-purple-500" />
+                            Ý tưởng DIY từ {result.identifiedItem || 'vật liệu này'}
+                        </h4>
+                        {result.projects.map((idea: any, idx: number) => (
+                            <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-md border border-gray-100 dark:border-gray-700">
+                                <div className="flex items-start justify-between mb-2">
+                                    <h4 className="text-lg font-bold text-gray-900 dark:text-white">{idea.title}</h4>
+                                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${idea.difficulty === 'Dễ' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                            idea.difficulty === 'Trung bình' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                        }`}>
+                                        {idea.difficulty}
+                                    </span>
                                 </div>
-                            )}
-                        </div>
-                    ))}
-                    {(!result.projects || result.projects.length === 0) && (
-                        <div className="text-center p-4 text-gray-500 text-sm">
-                            Không tìm thấy dự án DIY phù hợp trong cơ sở dữ liệu.
-                        </div>
-                    )}
-                </div>
+
+                                {idea.materials && idea.materials.length > 0 && (
+                                    <div className="mb-3">
+                                        <p className="text-xs text-gray-500 font-bold mb-1">Nguyên liệu cần thêm:</p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {idea.materials.map((mat: string, mIdx: number) => (
+                                                <span key={mIdx} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-600 dark:text-gray-300">
+                                                    {mat}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {idea.steps && idea.steps.length > 0 && (
+                                    <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+                                        <p className="text-xs text-gray-500 font-bold mb-2">Các bước thực hiện:</p>
+                                        <ol className="list-decimal pl-4 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                            {idea.steps.map((step: string, sIdx: number) => (
+                                                <li key={sIdx}>{step}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {(!result.projects || result.projects.length === 0) && (
+                    <div className="text-center p-4 text-gray-500 text-sm">
+                        Không tìm thấy ý tưởng DIY phù hợp. Vui lòng thử lại với ảnh khác.
+                    </div>
+                )}
+
                 <button onClick={onReset} className={`w-full ${colors.button} text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2`}>
                     Tìm ý tưởng khác <ArrowRight className="w-5 h-5" />
                 </button>

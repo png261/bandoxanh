@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
 import { auth } from '@clerk/nextjs/server';
 import { checkAndIncrementAIUsage, checkAndIncrementGuestUsage } from '@/lib/aiUsage';
-import { DIY_IDEAS } from '@/lib/diyData';
 
 
 export async function POST(request: Request) {
@@ -32,7 +31,6 @@ export async function POST(request: Request) {
             );
         }
 
-
         // Parse form data
         const formData = await request.formData();
         const imageFile = formData.get('image') as File;
@@ -57,11 +55,17 @@ export async function POST(request: Request) {
 
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-        // Define accepted categories to match our database
-        const CATEGORIES = ["Nhựa", "Giấy", "Kim loại", "Thủy tinh", "Vải", "Hữu cơ", "Điện tử", "Pin"];
+        const prompt = `Bạn là chuyên gia tái chế sáng tạo. Phân tích hình ảnh này và:
 
-        const prompt = `Phân tích hình ảnh này và xác định xem vật liệu chính trong ảnh thuộc về danh mục nào sau đây: ${CATEGORIES.join(', ')}. 
-        Chỉ trả về danh sách các danh mục phù hợp nhất(ví dụ: ["Nhựa"] hoặc["Giấy", "Nhựa"]).Không tự bịa ra danh mục mới.`;
+1. Xác định CỤ THỂ đây là vật gì (ví dụ: "ống hút nhựa", "chai nhựa", "hộp sữa giấy", "lon bia", "quần jean cũ", v.v.)
+2. Xác định chất liệu của vật đó (Nhựa, Giấy, Kim loại, Thủy tinh, Vải, v.v.)
+3. Đề xuất 3-5 ý tưởng DIY sáng tạo có thể làm từ vật này, kèm theo:
+   - Tên sản phẩm
+   - Độ khó (Dễ/Trung bình/Khó)
+   - Nguyên liệu cần thêm
+   - Các bước thực hiện chi tiết
+
+Trả lời bằng tiếng Việt, thực tế và có thể thực hiện được tại nhà.`;
 
         // Retry logic with exponential backoff
         const maxRetries = 3;
@@ -83,13 +87,44 @@ export async function POST(request: Request) {
                         responseSchema: {
                             type: Type.OBJECT,
                             properties: {
-                                identifiedCategories: {
+                                identifiedItem: {
+                                    type: Type.STRING,
+                                    description: 'Tên cụ thể của vật được nhận diện (ví dụ: ống hút nhựa, chai nhựa 1.5L, lon bia, hộp sữa giấy)'
+                                },
+                                material: {
+                                    type: Type.STRING,
+                                    description: 'Chất liệu chính của vật (Nhựa, Giấy, Kim loại, Thủy tinh, Vải, Hữu cơ)'
+                                },
+                                diyIdeas: {
                                     type: Type.ARRAY,
-                                    items: { type: Type.STRING },
-                                    description: 'Danh sách các danh mục vật liệu được xác định.'
+                                    description: 'Danh sách các ý tưởng DIY có thể làm từ vật này',
+                                    items: {
+                                        type: Type.OBJECT,
+                                        properties: {
+                                            title: {
+                                                type: Type.STRING,
+                                                description: 'Tên sản phẩm DIY'
+                                            },
+                                            difficulty: {
+                                                type: Type.STRING,
+                                                description: 'Độ khó: Dễ, Trung bình, hoặc Khó'
+                                            },
+                                            materials: {
+                                                type: Type.ARRAY,
+                                                items: { type: Type.STRING },
+                                                description: 'Danh sách nguyên liệu cần thêm'
+                                            },
+                                            steps: {
+                                                type: Type.ARRAY,
+                                                items: { type: Type.STRING },
+                                                description: 'Các bước thực hiện chi tiết'
+                                            }
+                                        },
+                                        required: ['title', 'difficulty', 'materials', 'steps']
+                                    }
                                 }
                             },
-                            required: ['identifiedCategories']
+                            required: ['identifiedItem', 'material', 'diyIdeas']
                         }
                     }
                 });
@@ -124,23 +159,11 @@ export async function POST(request: Request) {
             );
         }
 
-        // Filter projects from our database
-        const identifiedCategories = replyJson.identifiedCategories || [];
-
-        const matchedProjects = DIY_IDEAS.filter(idea =>
-            identifiedCategories.includes(idea.category)
-        ).map(idea => ({
-            title: idea.title,
-            difficulty: idea.difficulty,
-            materials: idea.materials,
-            steps: idea.steps,
-            videoUrl: idea.videoUrl
-        }));
-
-        // Fallback if no exact match or empty materials
+        // Return the result with identified item and DIY ideas
         const result = {
-            identifiedMaterials: identifiedCategories,
-            projects: matchedProjects.length > 0 ? matchedProjects : []
+            identifiedItem: replyJson.identifiedItem || 'Không xác định được',
+            material: replyJson.material || 'Không xác định',
+            projects: replyJson.diyIdeas || []
         };
 
         return NextResponse.json({ ...result, remaining: usageCheck.limit - usageCheck.usage });

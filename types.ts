@@ -157,7 +157,8 @@ export interface DiyProject {
 }
 
 export interface DiyAnalysis {
-  identifiedMaterials: string[];
+  identifiedItem: string;
+  material: string;
   projects: DiyProject[];
 }
 
