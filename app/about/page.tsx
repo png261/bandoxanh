@@ -251,7 +251,7 @@ export default function About() {
         isCollapsed={isSidebarCollapsed}
         setCollapsed={setIsSidebarCollapsed}
       />
-      <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+      <div className="transition-all duration-300 md:pl-20">
         <main className="container mx-auto px-4 md:px-8 py-8 md:pt-0 pt-20">
           <AboutPageComponent theme={theme} />
         </main>

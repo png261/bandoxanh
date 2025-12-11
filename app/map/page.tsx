@@ -5,8 +5,6 @@ import { useSearchParams } from 'next/navigation';
 import { Station, WasteType, RecyclingEvent, BikeRental, VegetarianRestaurant, DonationPoint } from '@/types';
 import { MapPinIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, CalendarIcon, HeartIcon } from '@/components/Icons';
 import { useMapStore } from '@/store/mapStore';
-import { useSidebar } from '@/hooks/useSidebar'
-import { useTheme } from '@/hooks/useTheme';
 import { Clock, Info, Recycle, Bike, Salad, Gift, LayoutGrid } from 'lucide-react';
 
 declare var L: any;
@@ -272,19 +270,19 @@ const InfoCard = ({ item, onClick }: { item: ItemWithDistance, onClick: () => vo
     else { colorClass = 'text-gray-700'; Icon = MapPinIcon; details = ''; }
 
     return (
-        <div onClick={onClick} className={`group p-4 rounded-3xl border-2 ${colorClass} hover:shadow-lg cursor-pointer transition-all bg-white dark:bg-gray-800 dark:border-gray-700 mb-4 transform hover:scale-[1.02]`}>
-            <div className="flex justify-between items-start mb-2">
-                <h4 className="font-extrabold text-lg text-gray-800 dark:text-white line-clamp-1 group-hover:text-brand-green transition-colors">{item.name}</h4>
-                {item.distance && <span className="text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded-full whitespace-nowrap">{item.distance.toFixed(1)} km</span>}
+        <div onClick={onClick} className={`group p-3 md:p-4 rounded-2xl md:rounded-3xl border-2 ${colorClass} hover:shadow-lg cursor-pointer transition-all bg-white dark:bg-gray-800 dark:border-gray-700 mb-2 md:mb-4 transform hover:scale-[1.02]`}>
+            <div className="flex justify-between items-start mb-1 md:mb-2">
+                <h4 className="font-extrabold text-base md:text-lg text-gray-800 dark:text-white line-clamp-1 group-hover:text-brand-green transition-colors">{item.name}</h4>
+                {item.distance && <span className="text-[10px] md:text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full whitespace-nowrap ml-2">{item.distance.toFixed(1)} km</span>}
             </div>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-1 flex items-center gap-1.5 font-medium">
-                <MapPinIcon className="w-4 h-4 flex-shrink-0" /> {item.address}
+            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2 md:mb-3 line-clamp-1 flex items-center gap-1 md:gap-1.5 font-medium">
+                <MapPinIcon className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" /> {item.address}
             </p>
 
             {details && (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/50 dark:bg-black/20 text-xs font-bold uppercase tracking-wider opacity-90">
-                    <Icon className="w-4 h-4" /> {details}
+                <div className="inline-flex items-center gap-1.5 md:gap-2 px-2 py-1 md:px-3 md:py-1.5 rounded-lg bg-white/50 dark:bg-black/20 text-[10px] md:text-xs font-bold uppercase tracking-wider opacity-90">
+                    <Icon className="w-3.5 h-3.5 md:w-4 md:h-4" /> {details}
                 </div>
             )}
         </div>
@@ -362,11 +360,11 @@ const MapContent = () => {
         <div className="flex flex-col md:flex-row h-full w-full relative overflow-hidden">
             {/* Sidebar Panel */}
             <div className={`
-          absolute inset-x-0 bottom-0 top-auto h-[60vh] md:h-full md:static md:w-[400px] 
+          absolute inset-x-0 bottom-0 top-auto h-[90vh] md:h-full md:static md:w-[400px] 
           bg-white border-t md:border-t-0 md:border-r border-gray-200 
           z-30 flex flex-col transition-all duration-300 ease-in-out shadow-2xl md:shadow-none
           rounded-t-3xl md:rounded-none flex-shrink-0
-          ${isPanelOpen ? 'translate-y-0 md:ml-0' : 'translate-y-[calc(100%-80px)] md:-ml-[400px] md:translate-y-0'}
+          ${isPanelOpen ? 'translate-y-0 md:ml-0' : 'translate-y-[calc(100%-200px)] md:-ml-[400px] md:translate-y-0'}
       `}>
 
                 {/* Toggle Handle (Mobile) */}
@@ -377,40 +375,40 @@ const MapContent = () => {
                     <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
                 </div>
 
-                <div className="p-5 border-b border-gray-100 bg-white md:bg-gray-50/50">
+                <div className="p-3 md:p-5 border-b border-gray-100 bg-white md:bg-gray-50/50">
                     <div className="relative">
                         <input
                             type="text"
                             placeholder="Tìm địa điểm..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-4 py-4 rounded-2xl border-none bg-gray-100 focus:bg-white focus:ring-4 focus:ring-brand-green/20 outline-none transition-all shadow-sm text-lg font-medium"
+                            className="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 rounded-xl md:rounded-2xl border-none bg-gray-100 focus:bg-white focus:ring-4 focus:ring-brand-green/20 outline-none transition-all shadow-sm text-base md:text-lg font-medium"
                         />
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                            <MapPinIcon className="w-6 h-6" />
+                        <div className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <MapPinIcon className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 mt-6">
+                    <div className="grid grid-cols-6 md:grid-cols-3 gap-1.5 md:gap-2 mt-4 md:mt-6">
                         {categories.map(cat => (
                             <button
                                 key={cat.id}
                                 onClick={() => setViewMode(cat.id as any)}
                                 className={`
-                    flex flex-col items-center justify-center p-2.5 rounded-xl transition-all
+                    flex flex-col items-center justify-center p-1.5 md:p-2.5 rounded-lg md:rounded-xl transition-all touch-manipulation
                     ${viewMode === cat.id ? cat.activeClass + ' shadow-lg scale-105' : cat.inactiveClass + ' hover:bg-gray-200'}
                 `}
                             >
-                                <div className="mb-0.5">{cat.icon}</div>
-                                <span className="text-[10px] font-bold">{cat.label}</span>
+                                <div className="mb-0 md:mb-0.5 [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-6 md:[&>svg]:h-6">{cat.icon}</div>
+                                <span className="text-[8px] md:text-[10px] font-bold hidden md:block">{cat.label}</span>
                             </button>
                         ))}
                     </div>
 
                     {userLocation && (
-                        <div className="mt-6">
-                            <div className="flex justify-between text-sm font-bold text-gray-500 mb-2">
-                                <span>Bán kính tìm kiếm</span>
+                        <div className="mt-4 md:mt-6">
+                            <div className="flex justify-between text-xs md:text-sm font-bold text-gray-500 mb-1.5 md:mb-2">
+                                <span>Bán kính</span>
                                 <span className="text-brand-green">{distanceFilter} km</span>
                             </div>
                             <input
@@ -419,33 +417,33 @@ const MapContent = () => {
                                 max="50"
                                 value={distanceFilter}
                                 onChange={(e) => setDistanceFilter(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                className="w-full h-1.5 md:h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
                             />
                         </div>
                     )}
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 bg-gray-50/30">
+                <div className="flex-1 overflow-y-auto p-2 md:p-4 bg-gray-50/30">
                     {loading ? (
-                        <div className="space-y-4">
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2 flex items-center gap-2">
-                                <span className="w-4 h-4 border-2 border-brand-green border-t-transparent rounded-full animate-spin"></span>
-                                Đang tải địa điểm...
+                        <div className="space-y-2 md:space-y-4">
+                            <p className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-2 md:mb-4 px-1 md:px-2 flex items-center gap-2">
+                                <span className="w-3 h-3 md:w-4 md:h-4 border-2 border-brand-green border-t-transparent rounded-full animate-spin"></span>
+                                Đang tải...
                             </p>
                             {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="p-4 rounded-3xl border-2 border-gray-100 bg-white animate-pulse">
-                                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
-                                    <div className="h-4 bg-gray-100 rounded w-full mb-2"></div>
-                                    <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+                                <div key={i} className="p-3 md:p-4 rounded-2xl md:rounded-3xl border-2 border-gray-100 bg-white animate-pulse">
+                                    <div className="h-4 md:h-5 bg-gray-200 rounded w-3/4 mb-2 md:mb-3"></div>
+                                    <div className="h-3 md:h-4 bg-gray-100 rounded w-full mb-1.5 md:mb-2"></div>
+                                    <div className="h-2.5 md:h-3 bg-gray-100 rounded w-1/2"></div>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <>
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">
-                                Tìm thấy {filteredItems.length} địa điểm
+                            <p className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wider mb-2 md:mb-4 px-1 md:px-2">
+                                {filteredItems.length} địa điểm
                             </p>
-                            <div className="space-y-4 pb-20 md:pb-0">
+                            <div className="space-y-2 md:space-y-4 pb-20 md:pb-0">
                                 {filteredItems.map(item => (
                                     <div key={`${item.type}-${item.id}`} onMouseEnter={() => setHoveredItemId(`${item.type}-${item.id}`)} onMouseLeave={() => setHoveredItemId(null)}>
                                         <InfoCard item={item} onClick={() => {
@@ -482,33 +480,12 @@ const MapContent = () => {
 };
 
 
-import Header from '@/components/Header';
-
 export default function MapPage() {
-    const { isCollapsed: isSidebarCollapsed, setCollapsed: setIsSidebarCollapsed } = useSidebar();
-    const { theme, toggleTheme } = useTheme();
-
     return (
-        <div className="h-screen flex overflow-hidden bg-gray-50 dark:bg-black">
-            <Header
-                theme={theme}
-                toggleTheme={toggleTheme}
-                isCollapsed={isSidebarCollapsed}
-                setCollapsed={setIsSidebarCollapsed}
-            />
-
-            {/* Map Content - positioned after sidebar */}
-            <div className={`flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
-                {/* Mobile Header Spacer */}
-                <div className="h-20 md:h-0 flex-shrink-0" />
-
-                {/* Map fills remaining space */}
-                <div className="flex-1 relative overflow-hidden">
-                    <Suspense fallback={<div className="w-full h-full flex items-center justify-center">Đang tải bản đồ...</div>}>
-                        <MapContent />
-                    </Suspense>
-                </div>
-            </div>
+        <div className="h-full w-full overflow-hidden">
+            <Suspense fallback={<div className="w-full h-full flex items-center justify-center">Đang tải bản đồ...</div>}>
+                <MapContent />
+            </Suspense>
         </div>
     );
 }

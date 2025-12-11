@@ -29,9 +29,9 @@ export default function MainLayout({
                 isCollapsed={isSidebarCollapsed}
                 setCollapsed={setIsSidebarCollapsed}
             />
+            {/* Content wrapper with proper spacing for sidebar (desktop) and header (mobile) */}
             <div
-                className={`transition-all duration-300  ${isFullScreen ? 'h-screen pt-20 md:pt-0' : 'pt-20 md:pt-0'
-                    }`}
+                className={`transition-all duration-300 pt-20 md:pt-0 md:pl-20 ${isFullScreen ? 'h-screen' : ''}`}
             >
                 <main className={`${mainClassName} ${isFullScreen ? 'h-full w-full relative' : ''}`}>
                     {children}

@@ -72,26 +72,26 @@ export default function ExploreDIY() {
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed">
+                        <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-10 leading-relaxed px-2">
                             Biến đồ cũ thành đồ mới với những ý tưởng
                             <span className="text-purple-600 dark:text-purple-400 font-medium"> sáng tạo và dễ thực hiện</span>
                         </p>
 
                         {/* Search Box */}
-                        <div className="max-w-xl mx-auto">
+                        <div className="max-w-xl mx-auto px-2 sm:px-0">
                             <div className="relative group">
-                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
+                                <Search className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
                                 <input
                                     type="text"
-                                    placeholder="Tìm ý tưởng (chai nhựa, giấy, vải...)"
+                                    placeholder="Tìm ý tưởng..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-14 pr-12 py-4 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 dark:focus:border-purple-500 shadow-lg shadow-gray-100/50 dark:shadow-none transition-all text-lg"
+                                    className="w-full pl-12 sm:pl-14 pr-10 sm:pr-12 py-3 sm:py-4 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl sm:rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 dark:focus:border-purple-500 shadow-lg shadow-gray-100/50 dark:shadow-none transition-all text-base sm:text-lg"
                                 />
                                 {searchTerm && (
                                     <button
                                         onClick={() => setSearchTerm('')}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                                     >
                                         <X className="w-4 h-4 text-gray-400" />
                                     </button>
@@ -103,17 +103,17 @@ export default function ExploreDIY() {
             </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                 {/* Filter Categories */}
-                <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                        <Filter className="w-5 h-5 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Danh mục:</span>
+                <div className="mb-6 sm:mb-8">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                        <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Danh mục:</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         <button
                             onClick={() => setSelectedCategory(null)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${!selectedCategory
+                            className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all touch-manipulation ${!selectedCategory
                                 ? 'bg-purple-500 text-white shadow-md'
                                 : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                                 }`}
@@ -124,7 +124,7 @@ export default function ExploreDIY() {
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === cat
+                                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all touch-manipulation ${selectedCategory === cat
                                     ? 'bg-purple-500 text-white shadow-md'
                                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                                     }`}

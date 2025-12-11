@@ -71,7 +71,7 @@ export default function ProfilePage() {
           isCollapsed={isSidebarCollapsed}
           setCollapsed={setIsSidebarCollapsed}
         />
-        <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+        <div className="pt-20 md:pt-0 transition-all duration-300 md:pl-20">
           <div className="flex justify-center items-center min-h-[60vh] px-4">
             <div className="text-center max-w-md">
               <div className="w-20 h-20 bg-brand-green-light rounded-full flex items-center justify-center mx-auto mb-6">
@@ -137,7 +137,7 @@ export default function ProfilePage() {
           isCollapsed={isSidebarCollapsed}
           setCollapsed={setIsSidebarCollapsed}
         />
-        <div className={`pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+        <div className="pt-20 md:pt-0 transition-all duration-300 md:pl-20">
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Không tìm thấy người dùng</h2>
@@ -165,7 +165,7 @@ export default function ProfilePage() {
       />
 
       <div
-        className={`pt-24 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}
+        className="pt-24 md:pt-0 transition-all duration-300 md:pl-20"
       >
         <main className="container mx-auto px-4 max-w-3xl pb-20">
 

@@ -186,24 +186,24 @@ export default function PricingPage() {
                 setCollapsed={setIsSidebarCollapsed}
             />
 
-            <div className={`pt-24 pb-20 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+            <div className="pt-24 pb-20 transition-all duration-300 md:pl-20">
                 <div className="container mx-auto px-4 max-w-6xl">
 
                     {/* Page Header */}
-                    <div className="text-center max-w-2xl mx-auto mb-16">
+                    <div className="text-center max-w-2xl mx-auto mb-8 md:mb-16 px-2">
                         <span className="inline-block px-4 py-1.5 rounded-full bg-brand-green/10 text-brand-green font-bold text-sm mb-4">
                             GÓI THÀNH VIÊN
                         </span>
-                        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 leading-tight">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 md:mb-6 leading-tight">
                             Đầu tư cho <span className="text-brand-green">Tương Lai Xanh</span> 🌏
                         </h1>
-                        <p className="text-xl text-gray-500 dark:text-gray-400 font-medium">
+                        <p className="text-base sm:text-lg md:text-xl text-gray-500 dark:text-gray-400 font-medium">
                             Nâng cấp để mở khóa toàn bộ sức mạnh AI và đóng góp trực tiếp vào các dự án làm sạch môi trường.
                         </p>
                     </div>
 
                     {/* Pricing Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8 items-start">
                         {tiers.map((tier) => (
                             <div
                                 key={tier.id}
@@ -245,10 +245,10 @@ export default function PricingPage() {
                                     }}
                                     disabled={(tier.id === 'FREE' && isSignedIn) || (tier.id === 'PRO' && currentPlan === 'PRO' && subscription?.cancelAtPeriodEnd) || loadingPlan !== null}
                                     className={`w-full py-4 rounded-xl font-bold text-lg transition-all active:scale-95 mb-8 flex items-center justify-center gap-2 ${tier.id === 'FREE' && isSignedIn
-                                            ? 'bg-gray-100 text-gray-400 cursor-default'
-                                            : (tier.id === 'PRO' && currentPlan === 'PRO'
-                                                ? (subscription?.cancelAtPeriodEnd ? 'bg-gray-100 text-gray-500 cursor-default' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100')
-                                                : `${tier.buttonColor} text-white hover:brightness-110 shadow-lg`)
+                                        ? 'bg-gray-100 text-gray-400 cursor-default'
+                                        : (tier.id === 'PRO' && currentPlan === 'PRO'
+                                            ? (subscription?.cancelAtPeriodEnd ? 'bg-gray-100 text-gray-500 cursor-default' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100')
+                                            : `${tier.buttonColor} text-white hover:brightness-110 shadow-lg`)
                                         }`}
                                 >
                                     {tier.highlight && loadingPlan === tier.id && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}

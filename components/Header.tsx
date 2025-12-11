@@ -109,38 +109,26 @@ const Header: React.FC<HeaderProps> = ({ isCollapsed, setCollapsed, theme, toggl
 
   return (
     <>
-      {/* --- Sidebar for Desktop --- */}
-      <aside className={`bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 ${isCollapsed ? 'w-24 overflow-visible' : 'w-72'}`}>
+      {/* --- Sidebar for Desktop (Always Collapsed - Icon Only) --- */}
+      <aside className="bg-white dark:bg-brand-gray-dark border-r border-gray-200 dark:border-gray-700 h-screen fixed left-0 top-0 flex-col z-30 hidden md:flex transition-all duration-300 w-20 overflow-visible">
         {/* Header with Logo */}
-        <div className={`flex justify-center items-center border-b dark:border-gray-700 h-20 overflow-hidden ${isCollapsed ? 'px-2 justify-center' : 'px-6'}`}>
+        <div className="flex justify-center items-center border-b dark:border-gray-700 h-20 overflow-hidden px-2">
           <div
             className="flex items-center cursor-pointer"
             onClick={() => navigateTo('/map')}
           >
-            <Image src={logo} alt="BandoXanh Logo" width={150} height={80} />
+            <Image src={logo} alt="BandoXanh" width={40} height={40} className="rounded-xl" />
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className={`flex-grow py-4 ${isCollapsed ? 'overflow-visible' : 'overflow-y-auto'}`}>
-          <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={isCollapsed} isAdmin={isAdmin} />
+        <nav className="flex-grow py-4 overflow-visible">
+          <NavItems currentPath={pathname} navigateTo={navigateTo} isCollapsed={true} isAdmin={isAdmin} />
         </nav>
 
-        {/* Footer with Toggle and UserButton */}
-        <div className={`p-3 border-t dark:border-gray-700 space-y-2 ${isCollapsed ? '' : 'pb-4'}`}>
-          {/* Toggle button - always visible at bottom */}
-          <button
-            onClick={() => setCollapsed(!isCollapsed)}
-            className="w-full flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            aria-label={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
-          >
-            {isCollapsed ? (
-              <ChevronRightIcon className="w-6 h-6" />
-            ) : (
-              <ChevronLeftIcon className="w-6 h-6" />
-            )}
-          </button>
-          <UserButton isCollapsed={isCollapsed} />
+        {/* Footer with UserButton only */}
+        <div className="p-2 border-t dark:border-gray-700">
+          <UserButton isCollapsed={true} />
         </div>
       </aside>
 

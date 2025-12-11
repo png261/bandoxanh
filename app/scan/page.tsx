@@ -612,29 +612,31 @@ function AIScannerContent() {
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex justify-center mb-8">
-                <div className="bg-white dark:bg-gray-800 p-1.5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 inline-flex gap-1">
-                    {tabs.map((tab) => {
-                        const Icon = tab.icon;
-                        const isActive = activeTab === tab.id;
-                        const colors = colorClasses[tab.color];
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => handleTabChange(tab.id)}
-                                className={`
-                                    flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all
-                                    ${isActive
-                                        ? `${colors.bgLight} ${colors.text} shadow-md ring-2 ${colors.ring}`
-                                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }
-                                `}
-                            >
-                                <Icon className="w-5 h-5" />
-                                <span className="hidden sm:inline">{tab.label}</span>
-                            </button>
-                        );
-                    })}
+            <div className="flex justify-center mb-8 px-2">
+                <div className="bg-white dark:bg-gray-800 p-1.5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-x-auto max-w-full hide-scrollbar">
+                    <div className="flex gap-1 min-w-max">
+                        {tabs.map((tab) => {
+                            const Icon = tab.icon;
+                            const isActive = activeTab === tab.id;
+                            const colors = colorClasses[tab.color];
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => handleTabChange(tab.id)}
+                                    className={`
+                                        flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap touch-manipulation
+                                        ${isActive
+                                            ? `${colors.bgLight} ${colors.text} shadow-md ring-2 ${colors.ring}`
+                                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                        }
+                                    `}
+                                >
+                                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <span className="hidden xs:inline sm:inline">{tab.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 

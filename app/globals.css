@@ -48,3 +48,13 @@ body {
 .leaflet-tile-pane {
   filter: hue-rotate(60deg) saturate(1.2) brightness(1.05);
 }
+
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

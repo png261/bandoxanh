@@ -258,7 +258,7 @@ export default function CommunityPage() {
         isCollapsed={isSidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
-      <div className={`min-h-screen pt-20 md:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:pl-24' : 'md:pl-72'}`}>
+      <div className="min-h-screen pt-20 md:pt-0 transition-all duration-300 md:pl-20">
 
         {/* Hero Header */}
         <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-800">
@@ -268,8 +268,8 @@ export default function CommunityPage() {
               <button
                 onClick={() => setPageTab('forum')}
                 className={`group flex items-center gap-3 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${pageTab === 'forum'
-                    ? 'bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 shadow-lg shadow-green-100/50 dark:shadow-none'
-                    : 'text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                  ? 'bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 shadow-lg shadow-green-100/50 dark:shadow-none'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
                   }`}
               >
                 <Users className={`w-5 h-5 transition-transform ${pageTab === 'forum' ? 'scale-110' : 'group-hover:scale-110'}`} />
@@ -278,8 +278,8 @@ export default function CommunityPage() {
               <button
                 onClick={() => setPageTab('news')}
                 className={`group flex items-center gap-3 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${pageTab === 'news'
-                    ? 'bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 shadow-lg shadow-green-100/50 dark:shadow-none'
-                    : 'text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                  ? 'bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 shadow-lg shadow-green-100/50 dark:shadow-none'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
                   }`}
               >
                 <Newspaper className={`w-5 h-5 transition-transform ${pageTab === 'news' ? 'scale-110' : 'group-hover:scale-110'}`} />
@@ -304,8 +304,8 @@ export default function CommunityPage() {
                   <button
                     onClick={() => setActiveTab('explore')}
                     className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium rounded-xl transition-all duration-300 ${activeTab === 'explore'
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md'
-                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md'
+                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
                       }`}
                   >
                     <Compass className="w-4 h-4" />
@@ -314,8 +314,8 @@ export default function CommunityPage() {
                   <button
                     onClick={() => setActiveTab('following')}
                     className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium rounded-xl transition-all duration-300 ${activeTab === 'following'
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md'
-                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md'
+                      : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
                       }`}
                   >
                     <UserCheck className="w-4 h-4" />
