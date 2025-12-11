@@ -19,10 +19,10 @@ import {
 
 // --- DATA ---
 const teamMembers = [
-  { name: 'Mai Thị Ngọc Ánh', role: 'Co-Founder', avatar: 'https://ui-avatars.com/api/?name=Mai+Thi+Ngoc+Anh&background=10B981&color=fff' },
-  { name: 'Lê Thị Quỳnh Mai', role: 'Founder', avatar: 'https://ui-avatars.com/api/?name=Le+Thi+Quynh+Mai&background=10B981&color=fff' },
-  { name: 'Phạm Thảo Ngân', role: 'Co-Founder', avatar: 'https://ui-avatars.com/api/?name=Pham+Thao+Ngan&background=10B981&color=fff' },
-  { name: 'Nguyễn Hữu Phương', role: 'Co-Founder', avatar: 'https://ui-avatars.com/api/?name=Nguyen+Huu+Phuong&background=10B981&color=fff' },
+  { name: 'Mai Thị Ngọc Ánh', role: 'Co-Founder', avatar: '/images/anh.jpg' },
+  { name: 'Lê Thị Quỳnh Mai', role: 'Founder', avatar: '/images/mai.jpg' },
+  { name: 'Phạm Thảo Ngân', role: 'Co-Founder', avatar: '/images/ngan.jpg' },
+  { name: 'Nguyễn Hữu Phương', role: 'Co-Founder', avatar: '/images/phuong.jpg' },
 ];
 
 const testimonials = [
@@ -80,24 +80,6 @@ const AboutPageComponent: React.FC<AboutPageProps> = ({ theme }) => {
         <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
           Nền tảng công nghệ kết nối cộng đồng, biến những hành động nhỏ mỗi ngày thành tác động lớn cho môi trường.
         </p>
-      </section>
-
-      {/* --- STATS GRID --- */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Người dùng', value: '1.5K+', icon: GroupsIcon, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/10' },
-          { label: 'Điểm thu gom', value: '350+', icon: MapIcon, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/10' },
-          { label: 'Rác phân loại', value: '1.4K+', icon: RecyclingIcon, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-900/10' },
-          { label: 'Tăng trưởng', value: '215%', icon: TrendingUpIcon, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-900/10' },
-        ].map((stat, idx) => (
-          <div key={idx} className={`${stat.bg} rounded-3xl p-6 text-center border border-transparent dark:border-white/5`}>
-            <div className={`w-12 h-12 mx-auto rounded-2xl ${stat.color} bg-white dark:bg-black/20 flex items-center justify-center mb-3 shadow-sm`}>
-              <stat.icon />
-            </div>
-            <div className={`text-3xl font-black ${stat.color} mb-1`}>{stat.value}</div>
-            <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</div>
-          </div>
-        ))}
       </section>
 
       {/* --- MISSION --- */}
