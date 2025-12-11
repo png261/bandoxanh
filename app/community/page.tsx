@@ -53,6 +53,12 @@ export default function CommunityPage() {
     addPost,
     deletePost,
     updatePost,
+    setExplorePosts,
+    setFollowingPosts,
+    setExploreLoading,
+    setFollowingLoading,
+    isExploreCacheValid,
+    isFollowingCacheValid,
   } = useFeedTabStore();
 
   // Get current posts and loading state based on active tab
@@ -62,6 +68,50 @@ export default function CommunityPage() {
   // Global state
   const { isCollapsed: isSidebarCollapsed, setCollapsed: setSidebarCollapsed } = useSidebar();
   const { theme, toggleTheme } = useTheme();
+
+  // Fetch posts on mount and when tab changes
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (activeTab === 'explore') {
+        if (isExploreCacheValid() && explorePosts.length > 0) return;
+        setExploreLoading(true);
+        try {
+          const response = await fetch('/api/posts');
+          if (response.ok) {
+            const data = await response.json();
+            setExplorePosts(data);
+          }
+        } catch (error) {
+          console.error('Error fetching explore posts:', error);
+        } finally {
+          setExploreLoading(false);
+        }
+      } else {
+        if (isFollowingCacheValid() && followingPosts.length > 0) return;
+        setFollowingLoading(true);
+        try {
+          const response = await fetch('/api/posts/following');
+          if (response.ok) {
+            const data = await response.json();
+            setFollowingPosts(data);
+          } else {
+            // Fallback to all posts if following API doesn't exist
+            const allResponse = await fetch('/api/posts');
+            if (allResponse.ok) {
+              const data = await allResponse.json();
+              setFollowingPosts(data);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching following posts:', error);
+        } finally {
+          setFollowingLoading(false);
+        }
+      }
+    };
+
+    fetchPosts();
+  }, [activeTab]);
 
   // Local state for new post
   const [newPostContent, setNewPostContent] = React.useState('');
@@ -130,16 +180,54 @@ export default function CommunityPage() {
       setUploading(true);
       const imageUrls: string[] = [];
 
+      // Upload images if any
+      if (postImages.length > 0) {
+        const uploadPromises = postImages.map(async (file) => {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          try {
+            const uploadRes = await fetch('/api/upload', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (uploadRes.ok) {
+              const data = await uploadRes.json();
+              return data.url;
+            } else {
+              console.error('Failed to upload image');
+              return null;
+            }
+          } catch (err) {
+            console.error('Error uploading image:', err);
+            return null;
+          }
+        });
+
+        const results = await Promise.all(uploadPromises);
+        results.forEach(url => {
+          if (url) imageUrls.push(url);
+        });
+      }
+
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           content: newPostContent,
-          images: imageUrls
+          images: imageUrls,
+          authorId: user.id,
+          name: user.fullName || user.firstName || 'Anonymous',
+          email: user.emailAddresses?.[0]?.emailAddress,
+          avatar: user.imageUrl
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create post');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create post');
+      }
 
       const newPost = await response.json();
       addPost(newPost);
@@ -195,10 +283,19 @@ export default function CommunityPage() {
       const response = await fetch(`/api/posts/${postId}/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: commentText })
+        body: JSON.stringify({
+          content: commentText,
+          authorId: user.id,
+          name: user.fullName || user.firstName || 'Anonymous',
+          email: user.emailAddresses?.[0]?.emailAddress,
+          avatar: user.imageUrl
+        })
       });
 
-      if (!response.ok) throw new Error('Failed to add comment');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add comment');
+      }
 
       setCommentText('');
       setCommentingPostId(null);

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const { userId: clerkId } = await auth();
@@ -28,7 +30,7 @@ export async function GET() {
     const followingIds = following.map((f: any) => f.followingId);
 
     if (followingIds.length === 0) {
-      return NextResponse.json({ posts: [] });
+      return NextResponse.json([]);
     }
 
     // Get posts from users being followed
@@ -95,11 +97,11 @@ export async function GET() {
       authorId: post.authorId.toString(),
       author: post.author
         ? {
-            id: post.author.id.toString(),
-            name: post.author.name,
-            email: post.author.email,
-            avatar: post.author.avatar,
-          }
+          id: post.author.id.toString(),
+          name: post.author.name,
+          email: post.author.email,
+          avatar: post.author.avatar,
+        }
         : undefined,
       comments: post.comments.map((comment: any) => ({
         id: comment.id.toString(),
@@ -110,24 +112,24 @@ export async function GET() {
         authorId: comment.authorId?.toString(),
         author: comment.author
           ? {
-              id: comment.author.id.toString(),
-              name: comment.author.name,
-              email: comment.author.email,
-              avatar: comment.author.avatar,
-            }
+            id: comment.author.id.toString(),
+            name: comment.author.name,
+            email: comment.author.email,
+            avatar: comment.author.avatar,
+          }
           : undefined,
       })),
       poll: post.poll
         ? {
-            id: post.poll.id.toString(),
-            question: post.poll.question,
-            options: post.poll.options || [],
-            votedBy: post.poll.votedBy || [],
-          }
+          id: post.poll.id.toString(),
+          question: post.poll.question,
+          options: post.poll.options || [],
+          votedBy: post.poll.votedBy || [],
+        }
         : undefined,
     }));
 
-    return NextResponse.json({ posts: transformedPosts });
+    return NextResponse.json(transformedPosts);
   } catch (error) {
     console.error('Error fetching following feed:', error);
     return NextResponse.json(

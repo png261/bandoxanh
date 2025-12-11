@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const posts = await prisma.post.findMany({
@@ -33,7 +35,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
     if (!body.content && !body.images) {
       return NextResponse.json(
