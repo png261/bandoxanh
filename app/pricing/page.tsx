@@ -75,6 +75,7 @@ export default function PricingPage() {
 
     // Use metadata if available, else assume FREE
     const currentPlan = (user?.publicMetadata?.plan as string) || 'FREE';
+    const polarStandardProductId = process.env.NEXT_PUBLIC_POLAR_STANDARD_PRODUCT_ID;
     const polarProProductId = process.env.NEXT_PUBLIC_POLAR_PRO_PRODUCT_ID;
 
     const handleUpgrade = async (planId: string) => {
@@ -83,13 +84,16 @@ export default function PricingPage() {
             return;
         }
 
-        if (planId === 'ENTERPRISE') {
-            toast.success("Chúng tôi sẽ liên hệ sớm!");
-            return;
+        // Determine productId based on selected plan
+        let productId: string | undefined;
+        if (planId === 'STANDARD') {
+            productId = polarStandardProductId;
+        } else if (planId === 'PRO') {
+            productId = polarProProductId;
         }
 
-        if (!polarProProductId) {
-            toast.error("Chưa cấu hình thanh toán (Missing Product ID)");
+        if (!productId) {
+            toast.error("Chưa cấu hình thanh toán cho gói này");
             return;
         }
 
@@ -98,7 +102,7 @@ export default function PricingPage() {
             const response = await fetch('/api/polar/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId: polarProProductId }),
+                body: JSON.stringify({ productId }),
             });
 
             const data = await response.json();
@@ -118,10 +122,11 @@ export default function PricingPage() {
         }
     };
 
+
     const tiers = [
         {
             id: 'FREE',
-            name: 'Khởi Đầu',
+            name: 'Miễn Phí',
             price: '0đ',
             period: '/mãi mãi',
             description: 'Bắt đầu hành trình xanh của bạn.',
@@ -135,7 +140,29 @@ export default function PricingPage() {
                 'Tham gia cộng đồng',
             ],
             unavailable: [
-                'Phân tích năng cao',
+                'Phân tích nâng cao',
+                'Ý tưởng DIY sáng tạo',
+                'Hỗ trợ ưu tiên',
+            ]
+        },
+        {
+            id: 'STANDARD',
+            name: 'Tiêu Chuẩn',
+            price: '79k',
+            period: '/tháng',
+            description: 'Phù hợp cho người bắt đầu nghiêm túc.',
+            icon: <Zap className="w-8 h-8 text-blue-500" />,
+            color: 'border-blue-500/20 bg-blue-50/50 dark:bg-blue-900/10',
+            buttonColor: 'bg-blue-600',
+            features: [
+                'Mọi quyền lợi miễn phí',
+                '30 lần phân tích rác/ngày',
+                'Phân tích chi tiết',
+                'Ý tưởng DIY cơ bản',
+                'Huy hiệu "Người Xanh"',
+            ],
+            unavailable: [
+                'Đóng góp quỹ làm sạch biển',
                 'Hỗ trợ ưu tiên',
             ]
         },
@@ -150,28 +177,12 @@ export default function PricingPage() {
             buttonColor: 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-orange-200 dark:shadow-none',
             highlight: true,
             features: [
-                'Mọi quyền lợi miễn phí',
+                'Mọi quyền lợi Standard',
                 '100 lần phân tích rác/ngày',
-                'Phân tích chi tiết & DIY',
+                'Phân tích chi tiết & DIY nâng cao',
                 'Huy hiệu "Chiến Binh Xanh"',
                 'Đóng góp quỹ làm sạch biển',
-            ],
-            unavailable: []
-        },
-        {
-            id: 'ENTERPRISE',
-            name: 'Tổ Chức',
-            price: 'Liên hệ',
-            period: '',
-            description: 'Giải pháp cho trường học & công ty.',
-            icon: <Building2 className="w-8 h-8 text-blue-500" />,
-            color: 'border-blue-500/20 bg-blue-50/50 dark:bg-blue-900/10',
-            buttonColor: 'bg-blue-600',
-            features: [
-                'Không giới hạn quyền truy cập',
-                'Tổ chức chiến dịch riêng',
-                'Dashboard quản lý cho tổ chức',
-                'Hỗ trợ 24/7',
+                'Hỗ trợ ưu tiên',
             ],
             unavailable: []
         },
@@ -234,7 +245,8 @@ export default function PricingPage() {
                                 <button
                                     onClick={() => {
                                         if (tier.id === 'FREE' && isSignedIn) return;
-                                        if (tier.id === 'PRO' && currentPlan === 'PRO' && subscription) {
+                                        // Handle cancel for both STANDARD and PRO
+                                        if ((tier.id === 'STANDARD' || tier.id === 'PRO') && currentPlan === tier.id && subscription) {
                                             if (!subscription.cancelAtPeriodEnd) {
                                                 handleCancel(subscription.id);
                                             }
@@ -243,18 +255,18 @@ export default function PricingPage() {
                                         if (tier.id === 'FREE') openSignIn();
                                         else handleUpgrade(tier.id);
                                     }}
-                                    disabled={(tier.id === 'FREE' && isSignedIn) || (tier.id === 'PRO' && currentPlan === 'PRO' && subscription?.cancelAtPeriodEnd) || loadingPlan !== null}
+                                    disabled={(tier.id === 'FREE' && isSignedIn) || ((tier.id === 'STANDARD' || tier.id === 'PRO') && currentPlan === tier.id && subscription?.cancelAtPeriodEnd) || loadingPlan !== null}
                                     className={`w-full py-4 rounded-xl font-bold text-lg transition-all active:scale-95 mb-8 flex items-center justify-center gap-2 ${tier.id === 'FREE' && isSignedIn
                                         ? 'bg-gray-100 text-gray-400 cursor-default'
-                                        : (tier.id === 'PRO' && currentPlan === 'PRO'
+                                        : ((tier.id === 'STANDARD' || tier.id === 'PRO') && currentPlan === tier.id
                                             ? (subscription?.cancelAtPeriodEnd ? 'bg-gray-100 text-gray-500 cursor-default' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100')
                                             : `${tier.buttonColor} text-white hover:brightness-110 shadow-lg`)
                                         }`}
                                 >
-                                    {tier.highlight && loadingPlan === tier.id && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                                    {loadingPlan === 'CANCEL' && tier.id === 'PRO' ? 'Đang xử lý...' :
+                                    {loadingPlan === tier.id && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+                                    {loadingPlan === 'CANCEL' && (tier.id === 'STANDARD' || tier.id === 'PRO') && currentPlan === tier.id ? 'Đang xử lý...' :
                                         (tier.id === 'FREE' && isSignedIn ? 'Đang sử dụng' :
-                                            (tier.id === 'PRO' && currentPlan === 'PRO' ? (subscription?.cancelAtPeriodEnd ? 'Đã huỷ gia hạn' : 'Huỷ đăng ký') : 'Chọn gói này')
+                                            ((tier.id === 'STANDARD' || tier.id === 'PRO') && currentPlan === tier.id ? (subscription?.cancelAtPeriodEnd ? 'Đã huỷ gia hạn' : 'Huỷ đăng ký') : 'Chọn gói này')
                                         )}
                                 </button>
 

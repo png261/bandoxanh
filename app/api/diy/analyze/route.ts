@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI, SchemaType as Type } from '@google/generative-ai';
-import { prisma } from '@/lib/prisma';
+import { GoogleGenAI, Type } from '@google/genai';
 import { auth } from '@clerk/nextjs/server';
 import { checkAndIncrementAIUsage, checkAndIncrementGuestUsage } from '@/lib/aiUsage';
 import { DIY_IDEAS } from '@/lib/diyData';
@@ -56,25 +55,7 @@ export async function POST(request: Request) {
         const arrayBuffer = await imageFile.arrayBuffer();
         const base64Data = Buffer.from(arrayBuffer).toString('base64');
 
-
-        const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = ai.getGenerativeModel({
-            model: 'gemini-1.5-flash',
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        identifiedCategories: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                            description: 'Danh sách các danh mục vật liệu được xác định.'
-                        }
-                    },
-                    required: ['identifiedCategories']
-                }
-            }
-        });
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
         // Define accepted categories to match our database
         const CATEGORIES = ["Nhựa", "Giấy", "Kim loại", "Thủy tinh", "Vải", "Hữu cơ", "Điện tử", "Pin"];
@@ -85,16 +66,33 @@ export async function POST(request: Request) {
         // Retry logic with exponential backoff
         const maxRetries = 3;
         let lastError: Error | null = null;
-        let responseText = "{}";
+        let response;
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                const result = await model.generateContent([
-                    { inlineData: { data: base64Data, mimeType: imageFile.type } },
-                    prompt
-                ]);
-                const response = await result.response;
-                responseText = response.text();
+                response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: {
+                        parts: [
+                            { inlineData: { data: base64Data, mimeType: imageFile.type } },
+                            { text: prompt }
+                        ]
+                    },
+                    config: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                identifiedCategories: {
+                                    type: Type.ARRAY,
+                                    items: { type: Type.STRING },
+                                    description: 'Danh sách các danh mục vật liệu được xác định.'
+                                }
+                            },
+                            required: ['identifiedCategories']
+                        }
+                    }
+                });
                 break;
             } catch (err) {
                 lastError = err as Error;
@@ -110,6 +108,11 @@ export async function POST(request: Request) {
             }
         }
 
+        if (!response) {
+            throw lastError || new Error('Failed to get response from AI');
+        }
+
+        const responseText = response.text || "{}";
         let replyJson;
         try {
             replyJson = JSON.parse(responseText);
@@ -123,7 +126,6 @@ export async function POST(request: Request) {
 
         // Filter projects from our database
         const identifiedCategories = replyJson.identifiedCategories || [];
-        const { DIY_IDEAS } = await import('@/lib/diyData');
 
         const matchedProjects = DIY_IDEAS.filter(idea =>
             identifiedCategories.includes(idea.category)
@@ -161,4 +163,3 @@ export async function POST(request: Request) {
         );
     }
 }
-
