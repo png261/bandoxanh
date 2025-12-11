@@ -99,6 +99,7 @@ export const useMapStore = create<MapState>((set, get) => ({
         const data = await res.json();
         const transformedStations = data.map((s: any) => ({
           id: s.id,
+          type: 'station' as const,
           name: s.name,
           address: s.address,
           lat: s.latitude,
@@ -126,6 +127,7 @@ export const useMapStore = create<MapState>((set, get) => ({
         const data = await res.json();
         const transformedEvents = data.map((e: any) => ({
           id: e.id,
+          type: 'event' as const,
           name: e.name,
           address: e.address,
           lat: e.latitude,
@@ -148,7 +150,17 @@ export const useMapStore = create<MapState>((set, get) => ({
       if (res.ok) {
         const data = await res.json();
         setBikes(data.map((i: any) => ({
-          ...i, lat: i.latitude, lng: i.longitude
+          id: i.id,
+          type: 'bike' as const,
+          name: i.name,
+          address: i.address,
+          lat: i.latitude,
+          lng: i.longitude,
+          hours: i.hours,
+          price: i.price,
+          available: i.available,
+          instructions: i.instructions,
+          image: i.image,
         })));
       }
     } catch (e) { console.error(e); }
@@ -161,7 +173,17 @@ export const useMapStore = create<MapState>((set, get) => ({
       if (res.ok) {
         const data = await res.json();
         setRestaurants(data.map((i: any) => ({
-          ...i, lat: i.latitude, lng: i.longitude
+          id: i.id,
+          type: 'restaurant' as const,
+          name: i.name,
+          address: i.address,
+          lat: i.latitude,
+          lng: i.longitude,
+          hours: i.hours,
+          menu: i.menu,
+          priceRange: i.priceRange,
+          rating: i.rating,
+          image: i.image,
         })));
       }
     } catch (e) { console.error(e); }
@@ -174,7 +196,16 @@ export const useMapStore = create<MapState>((set, get) => ({
       if (res.ok) {
         const data = await res.json();
         setDonationPoints(data.map((i: any) => ({
-          ...i, lat: i.latitude, lng: i.longitude
+          id: i.id,
+          type: 'donation' as const,
+          name: i.name,
+          address: i.address,
+          lat: i.latitude,
+          lng: i.longitude,
+          hours: i.hours,
+          acceptedItems: i.acceptedItems,
+          beneficiary: i.beneficiary,
+          image: i.image,
         })));
       }
     } catch (e) { console.error(e); }

@@ -13,6 +13,7 @@ export enum WasteType {
 
 export interface Station {
   id: number;
+  type?: 'station';
   name: string;
   address: string;
   lat: number;
@@ -85,6 +86,7 @@ export interface NewsArticle {
 
 export interface RecyclingEvent {
   id: number;
+  type?: 'event';
   name: string;
   address: string;
   lat: number;
@@ -98,6 +100,7 @@ export interface RecyclingEvent {
 
 export interface BikeRental {
   id: number;
+  type?: 'bike';
   name: string;
   address: string;
   lat: number;
@@ -105,11 +108,14 @@ export interface BikeRental {
   availableBikes: number;
   price: string;
   image: string;
+  hours?: string;
+  available?: number;
   instructions?: string;
 }
 
 export interface VegetarianRestaurant {
   id: number;
+  type?: 'restaurant';
   name: string;
   address: string;
   lat: number;
@@ -118,11 +124,13 @@ export interface VegetarianRestaurant {
   priceRange: string;
   cuisine: string;
   image: string;
+  hours?: string;
   menu?: string;
 }
 
 export interface DonationPoint {
   id: number;
+  type?: 'donation';
   name: string;
   address: string;
   lat: number;

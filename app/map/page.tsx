@@ -11,12 +11,12 @@ import { Clock, Info, Recycle, Bike, Salad, Gift, LayoutGrid } from 'lucide-reac
 
 declare var L: any;
 
-// --- Type Guards ---
-const isStation = (item: any): item is Station => 'wasteTypes' in item;
-const isEvent = (item: any): item is RecyclingEvent => 'date' in item && 'organizer' in item;
-const isBike = (item: any): item is BikeRental => 'instructions' in item && 'price' in item;
-const isRestaurant = (item: any): item is VegetarianRestaurant => 'menu' in item && 'priceRange' in item;
-const isDonation = (item: any): item is DonationPoint => 'acceptedItems' in item && 'beneficiary' in item;
+// --- Type Guards using explicit 'type' field ---
+const isStation = (item: any): item is Station => item.type === 'station';
+const isEvent = (item: any): item is RecyclingEvent => item.type === 'event';
+const isBike = (item: any): item is BikeRental => item.type === 'bike';
+const isRestaurant = (item: any): item is VegetarianRestaurant => item.type === 'restaurant';
+const isDonation = (item: any): item is DonationPoint => item.type === 'donation';
 
 type AnyLocation = Station | RecyclingEvent | BikeRental | VegetarianRestaurant | DonationPoint;
 type ItemWithDistance = AnyLocation & { distance: number | null };
@@ -101,7 +101,7 @@ const getDonationIcon = (_point: DonationPoint, isHovered: boolean = false) => {
 // --- Map Component ---
 const MapComponent: React.FC<{
     items: ItemWithDistance[];
-    hoveredItemId: number | null;
+    hoveredItemId: string | null;
     userLocation: { lat: number; lng: number } | null;
     focusedItem: ItemWithDistance | null;
 }> = ({ items, hoveredItemId, userLocation, focusedItem }) => {
@@ -127,8 +127,8 @@ const MapComponent: React.FC<{
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Track item IDs for proper dependency comparison
-    const itemIds = items.map(i => i.id).join(',');
+    // Track item IDs for proper dependency comparison (use type-prefixed IDs for uniqueness)
+    const itemIds = items.map(i => `${i.type}-${i.id}`).join(',');
 
     useEffect(() => {
         const map = mapRef.current;
@@ -210,9 +210,10 @@ const MapComponent: React.FC<{
           </div>`;
             }
 
+            const markerKey = `${item.type}-${item.id}`;
             const marker = L.marker([item.lat, item.lng], { icon }).addTo(map);
             marker.bindPopup(popupContent);
-            itemMarkersRef.current[item.id] = marker;
+            itemMarkersRef.current[markerKey] = marker;
         });
     }, [itemIds]); // Use itemIds string for proper comparison
 
@@ -229,10 +230,12 @@ const MapComponent: React.FC<{
     }, [userLocation]);
 
     useEffect(() => {
-        Object.entries(itemMarkersRef.current).forEach(([id, marker]: [string, any]) => {
-            const itemId = parseInt(id, 10);
-            const isHovered = itemId === hoveredItemId;
-            const item = items.find(s => s.id === itemId);
+        Object.entries(itemMarkersRef.current).forEach(([markerKey, marker]: [string, any]) => {
+            const isHovered = markerKey === hoveredItemId;
+            // Parse type and id from markerKey (format: 'type-id')
+            const [type, idStr] = markerKey.split('-');
+            const itemId = parseInt(idStr, 10);
+            const item = items.find(s => s.id === itemId && s.type === type);
             if (item) {
                 if (isStation(item)) marker.setIcon(getStationIcon(item, isHovered));
                 else if (isEvent(item)) marker.setIcon(getEventIcon(item, isHovered));
@@ -246,8 +249,9 @@ const MapComponent: React.FC<{
     }, [hoveredItemId, items]);
 
     useEffect(() => {
-        if (focusedItem && mapRef.current && itemMarkersRef.current[focusedItem.id]) {
-            const marker = itemMarkersRef.current[focusedItem.id];
+        const markerKey = focusedItem ? `${focusedItem.type}-${focusedItem.id}` : null;
+        if (focusedItem && mapRef.current && markerKey && itemMarkersRef.current[markerKey]) {
+            const marker = itemMarkersRef.current[markerKey];
             mapRef.current.flyTo([focusedItem.lat, focusedItem.lng], 15, { animate: true, duration: 1 });
             marker.openPopup();
         }
@@ -293,7 +297,7 @@ const MapContent = () => {
     const MAX_DISTANCE = 20;
     const [searchTerm, setSearchTerm] = useState('');
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+    const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
     const [isPanelOpen, setIsPanelOpen] = useState(true);
     const [focusedItem, setFocusedItem] = useState<ItemWithDistance | null>(null);
 
@@ -443,7 +447,7 @@ const MapContent = () => {
                             </p>
                             <div className="space-y-4 pb-20 md:pb-0">
                                 {filteredItems.map(item => (
-                                    <div key={item.id} onMouseEnter={() => setHoveredItemId(item.id)} onMouseLeave={() => setHoveredItemId(null)}>
+                                    <div key={`${item.type}-${item.id}`} onMouseEnter={() => setHoveredItemId(`${item.type}-${item.id}`)} onMouseLeave={() => setHoveredItemId(null)}>
                                         <InfoCard item={item} onClick={() => {
                                             setFocusedItem(item);
                                             if (window.innerWidth < 768) setIsPanelOpen(false); // Close panel on mobile selection
