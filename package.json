@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "analyze": "ANALYZE=true next build",
     "db:seed": "node -r ts-node/register prisma/seed.ts",
     "postinstall": "prisma generate"
   },
@@ -39,13 +40,17 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.8",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.22",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.0",
+    "postcss": "^8.5.6",
     "prisma": "^6.18.0",
+    "tailwindcss": "3.4.17",
     "typescript": "~5.8.2"
   }
 }

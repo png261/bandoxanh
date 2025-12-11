@@ -114,35 +114,7 @@ export default function RootLayout({
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
-          <script src="https://cdn.tailwindcss.com"></script>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                tailwind.config = {
-                  darkMode: 'class',
-                  theme: {
-                    extend: {
-                      colors: {
-                        'brand-green': {
-                          light: '#dcfce7',
-                          DEFAULT: '#22c55e',
-                          dark: '#166534',
-                        },
-                        'brand-gray': {
-                          light: '#f9fafb',
-                          DEFAULT: '#6b7280',
-                          dark: '#1f2937',
-                        }
-                      },
-                      fontFamily: {
-                        sans: ['Roboto', 'sans-serif'],
-                      },
-                    },
-                  },
-                }
-              `,
-            }}
-          />
+          {/* Tailwind CDN removed - now using proper build with tree-shaking */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
           <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
